@@ -515,3 +515,86 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
+
+
+#### 🧬结构
+
+<img src="images/npm.png" alt="npm" style="zoom:150%;" />
+
++ ###### *`node_modules` 文件夹用来存放所有已安装到项目中的第三方包*
+
++ ###### *`package-lock.json` 配置文件用来记录 `node_modules `目录下的每一个包的下载信息*
+
++ ###### *`package.json` 的包管理配置文件，规定在项目根目录中*
+
+
+
+
+
+
+
+### 创建 package.json
+
+> ==***可以在<span style=color:red;>执行命令时所处的目录</span>中，快速创建 `package.json` 这个包管理配置文件***==
+>
+> ```cmd
+> npm init -y
+> ```
+>
+> :grey_exclamation:***只能在英文的目录下成功运行***
+>
+> :grey_exclamation:***运行 `npm install` 命令安装包的时候，自动把包的名称和版本号记录到 `package.json`中***
+
+
+
+
+
+
+
+#### dependencies
+
+> ❕***记录项目使用 `npm install` 命令安装了的包***
+
+<center><img src="images/package.png" alt="dependencies" style="zoom:70%;" title="dependencies" /></center>
+
+
+
+
+
+
+
+
+
+### 安装包
+
+> ```cmd
+> npm install 完整的包名 // 自动安装最新版本的包
+> npm i 完整的包名 // 简写方式
+> npm i 完整的包名@num1.num2.num3 // 安装指定版本的包
+> ```
+>
+> :grey_exclamation:==***同时安装多个包使用<span style=color:red;>空格</span>隔开***==
+>
+> :grey_exclamation:==***包的版本号是以 <span style=color:red;>点分十进制</span> 形式进行定义***==
+>
+> ​		**`num1`**	:	<span style=color:red;>**大版本**</span>
+>
+> ​		**`num2`**	:	<span style=color:skyblue;>**功能版本**</span>
+>
+> ​		**`num3`**	:	<span style=color:purple;>**Bug修复版本**</span>
+
+
+
+
+
+
+
+#### 一次性安装所有的包
+
+> :grey_exclamation:***可以运行 `npm install` 命令（或 `npm i`）一次性安装所有的依赖包***
+>
+> ```js
+> npm install
+> npm i
+> ```
+
