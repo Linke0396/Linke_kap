@@ -423,7 +423,7 @@ resp.end(str); // 将内容响应给客户端
 
 ### module
 
-> ***每个 `js` 自定义模块中都有一个 module 对象，它里面<span style=color:red;>存储了和当前模块有关的信息</span>***
+> ***每个 `js` 自定义模块中都有一个 `module` 对象，它里面<span style=color:red;>存储了和当前模块有关的信息</span>***
 
 <center><img src="images/module.png" alt="module" style="zoom:67%;" title="module"/></center>
 
@@ -495,9 +495,9 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
-## npm与包
+## ✨npm与包
 
-### 包
+### 💼包
 
 ==***`Node.js` 中的<span style=color:red;>第三方模块</span>又叫做<span style=color:red;>包</span>***==
 
@@ -533,7 +533,7 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
-### 创建 package.json
+### 🟢创建 package.json
 
 > ==***可以在<span style=color:red;>执行命令时所处的目录</span>中，快速创建 `package.json` 这个包管理配置文件***==
 >
@@ -544,6 +544,8 @@ _this // { age: 11, getName: [Function (anonymous)] }
 > :grey_exclamation:***只能在英文的目录下成功运行***
 >
 > :grey_exclamation:***运行 `npm install` 命令安装包的时候，自动把包的名称和版本号记录到 `package.json`中***
+>
+> ❗==***项目初始化，就执行该命令***==
 
 
 
@@ -554,23 +556,35 @@ _this // { age: 11, getName: [Function (anonymous)] }
 #### dependencies
 
 > ❕***记录项目使用 `npm install` 命令安装了的包***
+>
+> ==***如果某些包在<span style=color:red;>开发</span>和<span style=color:red;>项目上线之后</span>都需要用到，则把这些包记录到 `dependencies` 节点***==
 
-<center><img src="images/package.png" alt="dependencies" style="zoom:70%;" title="dependencies" /></center>
-
-
-
-
+<center><img src="images/dependencies.png" alt="dependencies" style="zoom:70%;" title="dependencies" /></center>
 
 
 
 
 
-### 安装包
+#### devDependencies
+
+> ==***如果某些包<span style=color:red;>只在项目开发阶段</span>会用到，在<span style=color:red;>项目上线之后不会用到</span>，则把这些包记录到 `devDependencies` 节点中***==
+
+<center><img src="images/devDependencies.png" alt="devDependencies" style="zoom:70%;" title="devDependencies" /></center>
+
+
+
+
+
+
+
+
+
+### ➕安装包
 
 > ```cmd
-> npm install 完整的包名 // 自动安装最新版本的包
-> npm i 完整的包名 // 简写方式
-> npm i 完整的包名@num1.num2.num3 // 安装指定版本的包
+> npm install 包名 # 自动安装最新版本的包
+> npm i 包名 # 简写方式
+> npm i 包名@num1.num2.num3 # 安装指定版本的包
 > ```
 >
 > :grey_exclamation:==***同时安装多个包使用<span style=color:red;>空格</span>隔开***==
@@ -593,8 +607,135 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 > :grey_exclamation:***可以运行 `npm install` 命令（或 `npm i`）一次性安装所有的依赖包***
 >
-> ```js
+> ```cmd
 > npm install
 > npm i
 > ```
+>
+> 1️⃣==***执行 `npm install` 命令时，`npm` 包管理工具会先读取 `package.json` 中的 `dependencies` 节点***==
+>
+> 2️⃣==***读取到记录的所有依赖包名称和版本号之后，`npm` 包管理工具会把这些一次性下载到项目中***==
+
+
+
+
+
+
+
+#### 将包记录到 **devDependencies**
+
+```cmd
+npm install --save-dev 包名 # 完整写法
+npm i -D 包名	# 简写
+```
+
+
+
+
+
+
+
+
+
+### ➖卸载包
+
+>```cmd
+>npm uninstall 需要卸载的包名
+>```
+>
+>:grey_exclamation:==***`npm uninstall` 命令执行成功后，会把卸载的包，自动从 `package.json` 的 `dependencies` 中移除掉***==
+
+
+
+
+
+
+
+
+
+### 切换 **npm** 的下包镜像源
+
+==***<span style=color:red;>镜像（Mirroring）</span>是一种文件存储形式，一个磁盘上的数据在另一个磁盘上存在一个完全相同的副本即为镜像***==
+
+```cmd
+# 查询当前的下包镜像源
+npm config get registry
+# 将下包镜像源切换为淘宝镜像源
+npm config set registry=https://registry.npmmirror.com/
+# 重新查询当前的下包镜像源是否切换成功
+npm config get registry
+```
+
+
+
+
+
+
+
+#### nrm
+
+==***可以安装 `nrm `这个小工具，可以快速查看和切换下包的镜像源***==
+
+```cmd
+# 安装 nrm 为全局可用工具
+npm i -g nrm
+# 查询所有可用的镜像源
+nrm ls
+# 将npm下包镜像源切换为 taobao 镜像
+nrm use taobao
+```
+
+
+
+
+
+
+
+
+
+### 包的分类
+
++ ###### 项目包
+
++ ###### 全局包
+
+
+
+
+
+#### 🔲项目包
+
+> ==***安装到项目的 `node_modules` 目录中的包，都是项目包***==
+>
+> :grey_exclamation:**项目包又分为两：**
+>
+> + ###### *<span style=color:red;>开发依赖包</span>（被记录到 `devDependencies` 节点中的包，只在开发期间会用到）*
+>
+> + ###### *<span style=color:red;>核心依赖包</span>（被记录到 `dependencies` 节点中的包，在开发期间和项目上线之后都会用到）*
+
+```cmd
+npm i -D 包名	# 开发依赖包(被记录到 devDependencies 节点中)
+npm i 包名	# 核心依赖包(被记录到 dependencies 节点中)
+```
+
+
+
+
+
+#### 🔳全局包
+
+> ==***在执行 `npm install` 命令时，如果提供了 `-g` 参数，则会把包安装为<span style=color:red;>全局包</span>***==
+>
+> :grey_exclamation:==***全局包会被安装到 `C:\Users\用户目录\AppData\Roaming\npm\node_modules` 目录下***==
+>
+> ❗==***只有<span style=color:red;>工具性质的包</span>，才有全局安装的必要性***==
+
+```cmd
+npm i -g 包名			# 全局安装指定的包
+npm uninstall -g 包名	# 卸载全局安装的包
+```
+
+
+
+
 
