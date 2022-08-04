@@ -109,7 +109,79 @@ node -v
 
 
 
-## Node.js中模块的分类
+### ⭐模块的加载机制
+
+> ❗==***<span style=color:red;>模块在第一次加载后会被缓存</span>，不论是内置模块、用户自定义模块、还是第三方模块，它们都会优先从缓存中加载，从而提高模块的加载效率***==
+
+
+
+
+
+#### 内置模块的加载机制
+
+> ❗***<span style=color:red;>内置模块的加载优先级最高</span>***
+
+
+
+
+
+
+
+#### 自定义模块的加载机制
+
+> ❗==***自定义模块时，必须指定以 `./` 或 `../` 开头的<span style=color:red;>路径标识符</span>***==
+>
+> :grey_exclamation:==***如果没有指定 `./ `或 `../` 这样的路径标识符，则 `node` 会把它当作<span style=color:red;>内置模块</span>或<span style=color:red;>第三方模块</span>进行加载***==
+
+🔻***导入自定义模块时，如果省略了文件的扩展名；则会<span style=color:red;>按顺序分别尝试加载</span>以下的文件***
+
+1. ###### *按照`确切的文件名`进行加载*
+
+2. ###### *补全 `.js` 扩展名进行加载*
+
+3. ###### *补全 `.json` 扩展名进行加载*
+
+4. ###### *补全 `.node` 扩展名进行加载*
+
+5. ###### *`加载失败`，终端报错*
+
+
+
+
+
+
+
+#### 第三方模块的加载机制
+
+> ❗==***从当前模块的父目录开始，尝试从 `/node_modules` 文件夹中加载第三方模块***==
+>
+> :grey_exclamation:==***<span style=color:red;>如果没有找到对应的第三方模块，则移动到再上一层父目录中，进行加载，直到文件系统的根目录</span>***==
+
+
+
+
+
+
+
+### 目录作为模块
+
+> ==***当把目录作为模块标识符，有三种加载方式***==
+
+1. ###### *在被加载的目录下查找一个叫做 `package.json` 的文件，并寻找 `main` 属性，作为 `require()` 加载的入口*
+
+2. ###### *如果目录里没有 `package.json` 文件，或者 `main` 入口不存在或无法解析，则会试图加载目录下的 `index.js` 文件*
+
+3. ###### *以上两步都失败了，则会在终端打印错误消息，报告模块的缺失：`Error: Cannot find module 'moduleName'`*
+
+
+
+
+
+
+
+
+
+##  🌟Node.js中模块的分类
 
 ==***根据模块来源的不同，将模块分为了 `3` 大类***==
 
@@ -547,6 +619,10 @@ _this // { age: 11, getName: [Function (anonymous)] }
 >
 > ❗==***项目初始化，就执行该命令***==
 
+<img src="images/package.png" alt="package.json" style="zoom:55%;" title="package.json" />
+
+
+
 
 
 
@@ -651,6 +727,21 @@ npm i -D 包名	# 简写
 
 
 
+### ⭕查询包
+
+> ❕==***查询项目所依赖的包***==
+>
+> ```cmd
+> npm list
+> npm ls
+> ```
+
+
+
+
+
+
+
 
 
 ### 切换 **npm** 的下包镜像源
@@ -672,7 +763,7 @@ npm config get registry
 
 
 
-#### nrm
+### nrm
 
 ==***可以安装 `nrm `这个小工具，可以快速查看和切换下包的镜像源***==
 
@@ -739,3 +830,211 @@ npm uninstall -g 包名	# 卸载全局安装的包
 
 
 
+
+
+### 包的结构规范
+
+<img src="images/npm%E7%BB%93%E6%9E%84.png" alt="npm结构" style="zoom:55%;" title="npm结构" />
+
+1. ###### ==***包必须以<span style=color:red;>单独的目录</span>而存在***==
+2. ###### ==***包的顶级目录下要必须包含 `package.json` 包管理配置文件***==
+3. ==***`package.json` 中必须包含 `name`，`version`，`main` 这三个属性***==
+
+
+
+
+
+
+
+#### 模块化拆分
+
+> 1. ==***将不同的功能进行模块化拆分***==
+> 2. ==***在 `index.js` 中，导入被拆分模块，得到需要向外共享的方法***==
+> 3. ==***在 `index.js` 中，使用 `module.exports` 把对应的方法共享出去***==
+
+
+
+
+
+#### 说明文档
+
+==***包根目录中的 `README.md` 文件，是<span style=color:red;>包的使用说明文档</span>***==
+
++ ###### *安装方式*
+
++ ###### *导入方式*
+
++ ###### *开源协议*
+
++ ###### *各个模块帮助*
+
+
+
+
+
+
+
+
+
+### 发布包
+
+1. 1️⃣==***将下包的服务器地址</span>切换为 `npm` 的<span style=color:red;>官方服务器</span>***==
+2. 2️⃣==***可以在终端中执行 `npm login` 命令***==
+3. 3️⃣==***在包的根目录运行 `npm publish 包名` 命令***==
+
+
+
+
+
+#### 删除已发布的包
+
+> ```cmd
+> npm unpublish --force 包名
+> ```
+>
+> ❕==***`npm unpublish` 命令只能删除 <span style=color:red;>`72` 小时以内发布</span>的包***==
+>
+> ❕==***`npm unpublish` 删除的包，在 <span style=color:red;>`24` 小时内</span>不允许重复发布***==
+
+
+
+
+
+
+
+
+
+## 🔷Express
+
+***`Express` 是基于 `Node.js` 平台，<span style=color:skyblue;>快速</span>、<span style=color:skyblue;>开放</span>、<span style=color:skyblue;>极简</span>的 <span style=color:red;>`Web` 开发框架</span>***
+
+>==***`Express` 的作用和 `Node.js` 内置的 `http` 模块类似，是<span style=color:red;>专门用来创建 `Web` 服务器的</span>***==
+>
+>==***本质就是一个 `	npm` 上的第三方包***==
+
+
+
+
+
+
+
+### 服务器
+
++ ###### *==**`Web` 网站服务器**==：专门对外提供 `Web` 网页资源的服务器*
+
++ ###### *==**`API` 接口服务器**==：专门对外提供 `API` 接口的服务器*
+
+
+
+
+
+### 安装
+
+```cmd
+npm install express --save
+```
+
+
+
+
+
+### 创建基本 Web 服务器
+
+1. ###### 1️⃣*导入 `express` 模块*
+
+   + ```js
+     const express = require('express');
+     ```
+
+2. ###### 2️⃣*创建 `web `服务器*
+
+   + ```js
+     const app = express();
+     ```
+
+3. 3️⃣***调用 `app.listen()` 启动服务器***
+
+   + ```js
+     /* app.listen(端口号, 启动成功后的回调函数) */
+     app.listen(80, () => {
+     	console.log('express server running at http://127.0.0.1');
+     });
+     ```
+
+
+
+
+
+
+
+### 应用
+
++ ##### *路由 HTTP 请求*
+
++ ##### *配置中间件*
+
++ ##### *渲染 HTML 视图*
+
++ ##### *注册模板引擎*
+
+
+
+
+
+#### app.get()
+
+> ```js
+> app.get(path, callback [, callback ...])
+> ```
+>
+> ###### 		**`path`**	:	客户端请求的 `URL`
+>
+> ###### 		**`callback`**	:	请求的处理函数
+>
+> ​					`req`	:	请求对象`Reqeust`
+>
+> ​					`resp`	:	响应对象`Resposne`
+
+
+
+
+
+
+
+
+
+#### app.post()
+
+> ```js
+> app.post(path, callback [, callback ...])
+> ```
+>
+> ###### 		**`path`**	:	客户端请求的 `URL`
+>
+> ###### 		**`callback`**	:	请求的处理函数
+>
+> ​					`req`	:	请求对象`Reqeust`
+>
+> ​					`resp`	:	响应对象`Resposne`
+
+
+
+
+
+
+
+### ▶Request
+
+==***该对象表示 `HTTP 请求`，并具有<span style=color:skyblue;>请求查询字符串</span>、<span style=color:skyblue;>参数</span>、<span style=color:skyblue;>正文</span>、<span style=color:skyblue;>`HTTP` 标头</span>等的<span style=color:red;>属性</span>***==
+
+
+
+
+
+
+
+
+
+### ◀Response
+
+==***该对象表示 `Express` 应用在收到 `HTTP` 请求时发送的 `HTTP` 响应***==
