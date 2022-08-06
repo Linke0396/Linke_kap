@@ -1463,9 +1463,12 @@ use. 1 2
   + > ==***通过 `app.use()/app.get()/app.post()` 绑定到 `app` 实例上的中间件，叫做<span style=color:red;>应用级别</span>的中间件***==
     >
     > ```js
+    > const express = require('express');
+    > const app = express();
+    > 
     > // 应用级别的全局中间件
     > app.use((req, res, next) => {
-    >   next();
+    > next();
     > });
     > 
     > // 应用级别的局部中间件
@@ -1481,40 +1484,134 @@ use. 1 2
   + > ==***绑定到 `express.Router()` 实例上的中间件，叫做<span style=color:red;>路由级别</span>的中间件***==
     >
     > ```js
-    > # router.js
     > const express = require('express');
+    > const app = express();
     > const router = express.Router();
     > 
+    > // 路由级别的中间件
     > router.use((req, res, next) => {
     >     console.log('路由级别的中间件函数');
     >     next();
     > });
     > 
-    > router.get('/get', (req, res) => {
-    >     res.send('User GET.');
-    > });
-    > 
-    > module.exports = router;
-    > 
-    > 
-    > # index.js
-    > const express = require('express');
-    > const app = express();
-    > 
-    > const userRouter = require('./router');
-    > 
-    > app.use('/user', userRouter);
-    > 
-    > app.listen(80, () => {
-    >     console.log('express server running at http://127.0.0.1');
-    > });
+    > app.use('/', router);
     > ```
 
 + ###### *<span style=color:red;>错误级别</span>的中间件*
 
+  + >==***专门用来捕获整个项目中发生的<span style=color:red;>异常错误</span>，形参`（err, req, res, next）`***==
+    >
+    >:grey_exclamation:==***<span style=color:red;>错误级别</span>的中间件，必须<span style=color:red;>注册在所有路由之后</span>***==
+    >
+    >```js
+    >const express = require('express');
+    >const app = express();
+    >
+    >// 挂载路由
+    >app.get('/get', (req, res) => {
+    >    throw new Error('服务器内部发生错误!'); // 路由发生错误并抛出
+    >});
+    >
+    >// 错误级别的中间件
+    >app.use('/', (err, req, res, next) => {
+    >    console.log(err.name, err.message); // 服务器打印错误信息
+    >    res.send(`${err.name}: ${err.message}`); // 向客户端响应错误信息
+    >});
+    >
+    >app.listen(80);
+    >```
+
 + ###### *<span style=color:red;>Express 内置</span>的中间件*
 
+  + >1. ==***`express.static` 快速托管静态资源的内置中间件***==
+    >2. ==***`express.json` 解析 `JSON` 格式的请求体数据<span style=color:red;>（4.16.0+）</span>***==
+    >3. ==***`express.urlencoded` 解析 `URL-encoded` 格式的请求体数据<span style=color:red;>（4.16.0+）</span>***==
+    >
+    >```js
+    >// 配置解析 application/json 格式数据的内置中间件
+    >app.use(express.json());
+    >
+    >// 配置解析 application/x-www-form-urlencoded 数据格式的内置中间件
+    >app.use(express.urlencoded({ extended: false }));
+    >```
+
 + ###### *<span style=color:red;>第三方</span>的中间件*
+
+  + >==***由<span style=color:red;>第三方开发</span>出来的中间件，叫做<span style=color:red;>第三方中间</span>件***==
+    >
+    >+ ###### *安装*
+    >
+    >  + ```cmd
+    >    # 安装 body-parser 中间件
+    >    npm i -D body-parser
+    >    ```
+    >
+    >+ ###### *使用*
+    >
+    >  + ```js
+    >    const bodyParser = require("body-parser");
+    >       
+    >    // 解析 json 格式数据
+    >    app.use(bodyParser.json());
+    >    // 解析 application/x-www-form-urlencoded 格式数据
+    >    app.use(bodyParser.urlencoded({ extended: false }));
+    >    ```
+    >
+    >:grey_exclamation:==***`express@4.16.0` 之前的版本，使用 `body-parser` 第三方中间件，来解析请求体数据***==
+
+
+
+
+
+
+
+
+
+
+#### 自定义中间件
+
+1. ###### 1️⃣*定义中间件函数*
+
+2. ###### 2️⃣*监听 `req` 的 `data` 事件*
+
+3. ###### 3️⃣*监听 `req` 的 `end` 事件*
+
+4. ###### 4️⃣*使用 `querystring` 内置模块<span style=color:red;>(专门用来处理查询字符串)</span>解析请求体数据*
+
+5. ###### 5️⃣*将解析出来的数据对象挂载为 `req.body`*
+
+6. ###### 6️⃣*将自定义中间件封装为模块*
+
+```js
+# bodyParser.js
+// 4(1). 导入 querystring 内置模块
+const qs = require('querystring');
+
+// 1.定义全局中间件
+function bodyParser(req, res, next) {
+    let str = '';
+    // 2.监听 req 的 data 事件(获取客户端发送到服务器的数据)
+    req.on('data', (chunk) => str += chunk); // 拼接请求体数据
+    // 3.监听 req 的 end 事件(请求体数据接收完毕触发的事件)
+    req.on('end', () => {
+        // 4(2). 调用 parse() 方法将查询字符串转换为对象
+        const body = qs.parse(str);
+        // 5 将解析出来的对象 挂载为 req.body 属性
+        req.body = body;
+        next();
+    });
+}
+
+// 6.暴露模块
+module.exports = bodyParser;
+
+
+# index.js
+const bodyParser = require('bodyParser'); // 导入 自定义模块
+app.use(bodyParser); // 挂载全局中间件
+```
+
+
 
 
 

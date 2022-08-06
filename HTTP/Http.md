@@ -206,10 +206,10 @@ axios({
 ```html
 // 函数必须声明在 jsonp 的前面
 <script>
-function success(data) {
-    console.log(data);
-}
- </script>
+    function success(data) {
+        console.log(data);
+    }
+</script>
 
 // jsonp
 <script src="http://localhost:8080/TestRequest/user/jsonp?callback=success&id=1"></script>
@@ -240,6 +240,7 @@ function jsonp(options) {
     }
 }
 
+// 调用 jsonp()
 jsonp({
     url: 'http://localhost:8080/TestRequest/user/jsonp',
     data: {
@@ -268,6 +269,10 @@ jsonp({
 > *请求，克服了 `Ajax` 只能同源使用的限制*
 >
 > ###### *使用 `CORS` 的时候，客户端的代码不需要修改，在服务端作相应的配置皆可*
+
+
+
+
 
 
 
