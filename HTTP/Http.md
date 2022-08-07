@@ -258,23 +258,169 @@ jsonp({
 
 
 
+#### 接口
+
+> :grey_exclamation:==***如果项目中已经配置了 `CORS` 跨域资源共享，为了防止冲突，必须在配置 `CORS` 中间件之前声明 `JSONP` 的接口***==
+
+```js
+app.get('/api/jsonp', (req, res) => {
+    // 获取函数名称
+    const callback = req.query.callback;
+    // 服务器数据
+    const data = req.query;
+    // 拼接函数调用的字符串,并响应
+    res.send(`${callback}(${JSON.stringify(data)})`);
+});
+```
+
+
+
+
+
 
 
 
 
 ### **CORS**
 
-> :grey_exclamation:==***CORS***==*`(Cross-Origin Resource Sharing)`* *<span style=color:red;>**跨域资源共享**</span>，它允许浏览器向跨域服务器发送 `Ajax`*
+> :grey_exclamation:==***CORS***==*`(Cross-Origin Resource Sharing)`* *<span style=color:red;>**跨域资源共享**</span>，**由一系列 `HTTP `响应头组成，***
 >
-> *请求，克服了 `Ajax` 只能同源使用的限制*
+> ***这些<span style=color:red;>HTTP 响应头决定浏览器是否阻止前端`JS`代码跨域获取资源</span>***
 >
-> ###### *使用 `CORS` 的时候，客户端的代码不需要修改，在服务端作相应的配置皆可*
+> ###### :grey_exclamation:*使用 `CORS` 的时候，客户端的代码不需要修改，在服务端作相应的配置皆可*
+
+<img src="images/cors.png" alt="cors" style="zoom:60%;border:2px solid;" title="CORS" />
+
+
+
+
+
+#### 响应头
+
+|             响应头字段             |                             作用                             |
+| :--------------------------------: | :----------------------------------------------------------: |
+| **`Access-Control-Allow-Origin`**  | **指定允许访问该资源的外域 `URL`，可用<span style=color:skyblue>通配符`*`</span>** |
+| **`Access-Control-Allow-Headers`** |                        **预检请求头**                        |
+| **`Access-Control-Allow-Methods`** |             **指明请求所允许使用的 `HTTP` 方法**             |
+
+
+
+
+
+#### 🔅分类
+
++ ###### ==***简单请求`（simple request）`***==：*只会发生一次请求*
+
++ ###### ==***非简单请求`（not-so-simple request）`***==：*会发生两次请求，`OPTION`预检请求成功之后，才会发起真正的请求*
+
+
+
+
+
+##### 简单请求
+
+> :grey_exclamation:==***简单请求发送一次请求，数据拿回来，但是被浏览器同源策略拦截了***==
+>
+> ❗<span style=color:red;>**满足条件**</span>
+>
+> 1. ==***请求方式：`GET`、`POST`、`HEAD` 三者之一***==
+>
+> 2. ==***`HTTP`的头信息不超出以下几种字段***==
+>
+>    + ```txt
+>      Accept、Accept-Language、Content-Language、DPR、
+>      Downlink、Save-Data、Viewport-Width、Width
+>      ```
+>
+>    + ```txt
+>      Content-Type:
+>      只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain
+>      ```
 
 
 
 
 
 
+
+##### 非简单请求
+
+>==***会在正式通信之前，增加一次`HTTP`查询请求，称为<span style=color:red;>预检</span>请求`	(preflight)`，只有<span style=color:red;>预检</span>通过后才再发送一次请求用于数据传输***==
+>
+>❗❗==***浏览器发送`OPTION` 请求先询问服务器，当前网页所在的域名是<span style=color:red;>否在服务器的许可名单</span>之中，以及<span style=color:red;>可以使用哪些`HTTP`动词和头信息字段</span>。只有得到肯定答复，浏览器才会发出正式的请求，否则就报错***==
+>
+>❗<span style=color:red;>**满足条件**</span>
+>
+>1. ==***请求方式为 `GET`、`POST`、`HEAD` 之外的请求类型***==
+>2. ==***请求头中包含自定义头部字段***==
+>3. ==***发送 `application/json` 格式的数据***==
+
+
+
+
+
+
+
+#### 🌟支持跨域
+
++ **简单请求**
+
+  + ```js
+    // 服务器设置响应头：Access-Control-Allow-Origin = ‘域名’ 或 ‘*’
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    ```
+
++ **非简单请求**
+
+  + ```js
+    /*
+    	“预检”请求时，允许请求方式则需服务器设置响应头: Access-Control-Request-Method
+    	“预检”请求时，允许请求头则需服务器设置响应头: Access-Control-Request-Headers
+    */
+    if (req.method == 'OPTIONS') {
+    	res.setHeader('Access-Control-Allow-Methods', 'POST');
+    	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    }
+    ```
+
+
+
+
+
+
+
+#### 中间件
+
++ ##### *自定义中间件函数*
+
+  + ```js
+    // 挂载全局中间件
+    app.use((req, res, next) => {
+        // 简单请求解决
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        // 非简单请求的解决
+        if (req.method == 'OPTIONS') {
+            res.setHeader('Access-Control-Allow-Methods', '*');
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        }
+        next();
+    });
+    ```
+
++ ##### *第三方中间件*
+
+  + ```cmd
+    # 安装
+    npm install cors
+    ```
+
+  + ```js
+    // 引入 cors 第三方模块解决跨域
+    const cors = require('cors');
+    
+    // 挂载全局中间件
+    app.use(cors());
+    ```
 
 
 

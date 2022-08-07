@@ -3450,21 +3450,19 @@ Object.assign(config1, config2) // {id: 2, name: 'du', sex: 11, age: 'male'}
 + ###### <span style=color:red;>***默认输出和正常输出的区别***</span>
 
   + ```js
-    // default输出
+    // sdefault输出
     export default function crc32() { // 输出
       // ...
     }
-    
     import crc32 from 'crc32'; // 输入
     
     // 单个输出
     export function crc32() { // 输出
       // ...
-    };
-    
+    }
     import {crc32} from 'crc32'; // 输入
     ```
-
+  
 + <span style=color:red;>***同时输入默认方法和其他接口***</span>
 
   + ```js

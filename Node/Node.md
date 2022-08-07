@@ -610,7 +610,8 @@ _this // { age: 11, getName: [Function (anonymous)] }
 > ==***可以在<span style=color:red;>执行命令时所处的目录</span>中，快速创建 `package.json` 这个包管理配置文件***==
 >
 > ```cmd
-> npm init -y
+> npm init --yes
+> npm init -y # 简写方式
 > ```
 >
 > :grey_exclamation:***只能在英文的目录下成功运行***
@@ -1550,7 +1551,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >       
+    >             
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -1617,3 +1618,10 @@ app.use(bodyParser); // 挂载全局中间件
 
 
 
+
+
+
+
+## ▫▫▫终
+
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
