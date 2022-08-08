@@ -3589,7 +3589,11 @@ import { /* ... */ } from '模块文件的位置';
 > ==***顶层对象，任何环境下，`globalThis`都是存在的，指向全局环境下的`this`***==
 
 ```javascript
-console.log(globalThis); // Window { ... }
+/* javascript */
+globalThis // Window { ... }
+
+/* node */
+globalThis // [global] { ... }
 ```
 
 

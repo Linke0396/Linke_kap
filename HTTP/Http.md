@@ -731,6 +731,83 @@ app.get('/api/jsonp', (req, res) => {
 
 
 
+# 🌍Web 开发模式
+
+1. ##### 基于<span style=color:red;>服务端渲染</span>的传统 `Web` 开发模式
+
+2. ##### 基于<span style=color:red;>前后端分离</span>的新型 `Web` 开发模式
+
+
+
+
+
+## 服务端渲染的**Web** 开发模式
+
+==***<span style=color:red;>服务端渲染的概念</span>：服务器发送给客户端的 `HTML` 页面，是在服务器通过字符串的拼接，动态生成的***==
+
+<img src="images/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%B8%B2%E6%9F%93.png" alt="服务器渲染" style="zoom:60%;border: 2px solid;" title="服务器渲染" />
+
+
+
+### 优缺点
+
+|      优点       |               缺点               |
+| :-------------: | :------------------------------: |
+| **前端耗时少**  |       **占用服务器端资源**       |
+| **有利于`SEO`** | **不利于前后端分离，开发效率低** |
+
+
+
+
+
+## 前后端分离的**Web** 开发模式
+
+==***<span style=color:red;>前后端分离的概念</span>：前后端分离的开发模式，依赖于 `Ajax` 技术，后端只负责提供 `API`接口，前端使用 `Ajax`调用接口***==
+
+<img src="images/%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB.png" alt="前后端分离" style="zoom:60%;border: 2px solid;" title="前后端分离" />
+
+
+
+### 优缺点
+
+|             优点             |         缺点         |
+| :--------------------------: | :------------------: |
+|       **提升开发效率**       | **不利于** **`SEO`** |
+| **减轻了服务器端的渲染压力** |                      |
+|         **异步加载**         |                      |
+
+
+
+
+
+
+
+## 💳前后端的身份认证
+
+==***身份认证`（Authentication）`又称 <span style=color:red;>身份验证</span> 、<span style=color:red;>鉴权</span>，是指<span style=color:red;>通过一定的手段，完成对用户身份的确认</span>***==
+
+
+
+
+
+### 不同开发模式下的身份验证
+
+1. ###### *<span style=color:red;>服务端渲染</span>推荐使用 <span style=color:skyblue;>`Session` 认证机制</span>*
+
+2. ###### *<span style=color:red;>前后端分离</span>推荐使用 <span style=color:red;>`JWT` 认证机制</span>*
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -740,6 +817,3 @@ app.get('/api/jsonp', (req, res) => {
 # ▫▫▫终
 
 <center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
-
-
-

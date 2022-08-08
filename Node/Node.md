@@ -1551,7 +1551,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >             
+    >                
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -1611,6 +1611,131 @@ module.exports = bodyParser;
 const bodyParser = require('bodyParser'); // 导入 自定义模块
 app.use(bodyParser); // 挂载全局中间件
 ```
+
+
+
+
+
+
+
+
+
+## 🐬MySQL
+
+***`MySQL`是一个<span style=color:red;>关系型数据库</span>管理系统***
+
+<center><img src="images/MySQL.jpg" alt="MySQL" style="zoom:50%;border:3px solid;" title="MySQL" /></center>
+
+
+
+
+
+### 模块安装
+
+🔗[mysql - npm (npmjs.com)](https://www.npmjs.com/package/mysql)
+
+```cmd
+npm i mysql
+```
+
+
+
+
+
+### 建立连接
+
+```js
+// 导入 mysql 第三方模块
+const mysql = require('mysql');
+
+// 建立与 MySQL 数据库的连接
+const pool = mysql.createPool({
+    host: '127.0.0.1',  // 数据库的 IP 地址
+    user: 'root',       // 用户名
+    password: '200396', // 密码
+    database: 'study'   // 使用的数据库
+});
+```
+
+
+
+
+
+
+
+### 基本使用
+
+>```js
+>query(sqlString, callback)
+>query(sqlString, values, callback)
+>query(options, callback)
+>query(options, values, callback)
+>```
+>
+>###### 		**`sql`**	:	`sql`字符串
+>
+>###### 		**`values`**	:	替代占位符`[]/object`或 <u>单个占位符时可使用值替代</u>
+>
+>###### 		**`options`**	:	配置
+>
+>###### 		**`callback`**	:	回调函数
+>
+>​				**`err`**	:	发出错误时的错误信息对象
+>
+>​				**`results`**	:	执行`sql`语句的结果
+>
+>​				**`fields`**	:	每个字段的详细信息
+
+```js
+// select
+pool.query('SELECT * FROM `users`', (err, results, fields) => {
+    if (err) return console.log(err.message); //出现错误时的错误信息对象
+    console.log(results); // sql执行结果
+    // console.log(fields); // 字段信息
+});
+```
+
+
+
+
+
+#### 简洁方式
+
++ ###### <span style=font-family:consolas,Microsoft YaHei>insert</span>
+
+  + ```js
+    // insert
+    let sql = 'INSERT INTO `users` (`username`, `password`) VALUES(?, ?)'; // ? 表示占位符
+    pool.query(sql, ['小小', '789'], (err, results) => { // 与数组形式依次为 ? 占位符赋值
+        if (err) return console.log(err.message);
+        console.log(results.affectedRows);
+    });
+    
+    // insert 便捷方式(如果数据对象的每个属性和数据表的字段一一对应,即可使用该方式)
+    let obj = { username: '依依', password: '789' };
+    pool.query('INSERT INTO `users` SET ?', obj, (err, results) => { // 将对象替换占位符的值
+        if (err) return console.log(err.message);
+        console.log(results.affectedRows);
+    });
+    ```
+
++ ###### <span style=font-family:consolas,Microsoft YaHei>update</span>
+
+  + ```js
+    // update
+    let sql = 'UPDATE `users` SET username=?, password=? WHERE id=?';
+    pool.query(, ['dudu', '000', 1], (err, results) => {
+        if (err) return console.log(err.message);
+        console.log(results.affectedRows);
+    });
+    
+    // update 便捷方式(数组依次为占位符的位置)
+    let obj = { username: 'keke', password: '999' };
+    pool.query('UPDATE `users` SET ? WHERE id=?', [obj, 2], (err, results) => {
+        if (err) return console.log(err.message);
+        console.log(results.affectedRows);
+    });
+    ```
 
 
 
