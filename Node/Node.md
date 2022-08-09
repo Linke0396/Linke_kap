@@ -1551,7 +1551,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                
+    >                         
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -1734,6 +1734,143 @@ pool.query('SELECT * FROM `users`', (err, results, fields) => {
     pool.query('UPDATE `users` SET ? WHERE id=?', [obj, 2], (err, results) => {
         if (err) return console.log(err.message);
         console.log(results.affectedRows);
+    });
+    ```
+
+
+
+
+
+## 🔴Session
+
+### 模块安装
+
+🔗[express-session - npm (npmjs.com)](https://www.npmjs.com/package/express-session)
+
+```cmd
+npm i express-session
+```
+
+
+
+### 中间件
+
+```js
+// 导入 session 第三个模块
+const session = require('express-session');
+
+// 配置并挂载全局中间件
+app.use(session({
+      secret: 'keyboard cat',	// 设置签名密钥 内容可以任意填写
+      resave: false,			// 是否每次都重新保存会话
+      saveUninitialized: true	// 是否自动保存未初始化的会话
+}));
+```
+
+
+
+
+
+### 基本使用
+
++ ###### *`req.session`*
+
+  + ```js
+    let obj = { username: 'keke', password: '2396' };
+    // 存储数据
+    req.session.data = obj;
+    // 获取数据
+    req.session.data.username; // keke
+    req.session.data.passwrod; // 2396
+    // 获取全部数据
+    req.session.data; // { username: 'keke', password: '2396' }
+    ```
+
++ ###### *`req.session.destroy`*
+
+  + ```js
+    req.session.destroy();
+    req.session.destroy(function(err) {
+    	// 销毁会话后执行的回调函数
+    })
+    ```
+
+
+
+
+
+## 🟠JWT
+
+### 模块安装
+
+```cmd
+npm i jsonwebtoken # 生成 JWT 字符串
+npm i express-jwt # 将 JWT 字符串解析还原成 JSON 对象
+npm i jsonwebtoken express-jwt # 简写方式
+```
+
+
+
+
+
+
+
+### 中间件
+
+```js
+// 导入 JWT 字符串的包
+const jwt = require('jsonwebtoken');
+
+// 导入解析还原 JWT 字符串的包
+const { expressjwt: expressJWT } = require("express-jwt");
+
+// 定义用于加密和解密的密钥
+const secretKey = 'linke 🌙';
+```
+
+
+
+
+
+### 基本使用
+
++ > ###### *生成 `JWT` 字符串*
+  >
+  > ```js
+  > jwt.sign(payload, secretOrPrivateKey, [options, callback])
+  > ```
+  >
+  > ###### 		**`payload`**	:	`JSON` 的对象
+  >
+  > ###### 		**`secretOrPrivateKey`**	:	加密密钥
+  >
+  > ###### 		**`options`**	:	配置
+  >
+  > ###### 		**`callback`**	:	回调函数
+  >
+  > ```js
+  > jwt.sign(req.body, secretKey, { expiresIn: '30s' }) // expiresIn设置过期时间
+  > ```
+
++ ###### 解析 `JWT` 字符串
+
+  + ```js
+    // 配置并挂载需要将 JWT 字符串还原为 JSON 对象的中间件
+    app.use(
+      expressJWT({ secret: secretKey, algorithms: ['HS256'] }) //使用 HS256密钥解析 JWT 字符串
+        .unless({ path: [/^\/sign/] }) // 用正则指定不需要访问权限的路径
+    );
+    // 获取解析的数据,解析成功后，会将数据自动挂载到 【req.user / req.auth】 上
+    req.auth // { /*...*/ }
+    ```
+
++ ###### 捕获解析 `JWT` 失败后产生的错误
+
+  + ```js
+    app.use((err, req, res, next) => {
+        if (err.name === 'UnauthorizedError') 
+            es.send({ status: 401, message: '无效的token' });
+        res.send({ status: 500, message: '未知错误' });
     });
     ```
 

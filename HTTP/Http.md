@@ -802,7 +802,57 @@ app.get('/api/jsonp', (req, res) => {
 
 
 
+### Session 认证机制
 
+💡==***`Session` 认证机制需要配合 `Cookie` 才能实现。由于 `Cookie` 默认不支持跨域访问，所以，当涉及到前端跨域请求后端接口的时候，需要做很多额外的配置，才能实现跨域 `Session` 认证***==
+
+> :grey_exclamation:==***当前端请求后端接口<span style=color:red;>不存在跨域问题的时候，推荐使用 `Session `身份认证机制</span>***==
+
+<img src="images/session.png" alt="session" style="zoom:100%;border: 2px solid;" title="Session工作原理" />
+
+
+
+
+
+
+
+### JWT 认证机制
+
+***`JWT（JSON Web Token）`是目前最流行的<span style=color:red;>跨域认证解决方案</span>***
+
+<img src="images/jwt.png" alt="JWT" style="zoom:90%;border: 2px solid;" title="JWT" />
+
+
+
+
+
+#### 组成
+
+> ```js
+> Header.Payload.Signature
+> ```
+>
+> ###### 		**`Header`**	:	头部，<span style=color:skyblue>**安全性相关**</span>
+>
+> ###### 		`Payload`	:	有效荷载，<span style=color:red>**真正有效信息**</span>
+>
+> ###### 		**`Signature`**	:	签名，<span style=color:skyblue>**安全性相关**</span>
+
+<center><img src="images/jwt%E5%AD%97%E7%AC%A6%E4%B8%B2.png" alt="jwt字符串" style="zoom:40%;border: 3px solid;" title="JWT字符串" /></center>
+
+
+
+
+
+#### 使用方式
+
+==***将服务器返回的 `JWT` 字符串储存在 `localStorage` 或 `sessionStorage` 中***==
+
+> :grey_exclamation:==***<u>客户端每次与服务器通信，都要将这个 `JWT` 的字符串放在 `HTTP` 请求头的 `Authorization` 字段中，从而进行身份认证</u>***==
+
+```js
+Authorization: Bearer <token>
+```
 
 
 
