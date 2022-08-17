@@ -27,7 +27,8 @@
 ### 查询版本号
 
 ```cmd
-node -v
+node --version
+node -v # 简写
 ```
 
 
@@ -408,7 +409,8 @@ path.extname(filePath) // .js
 #### 1️⃣导入模块
 
 ```js
-const http = require('http');
+const http = require('node:http'); // 方式1
+const http = require('http'); // 方式2
 ```
 
 
@@ -476,14 +478,270 @@ str // 请求url:/, 请求方式method:GET
 
 ==***响应对象***==
 
+>**`write(data)`**	:	设置响应体的内容
+>
 >**`end(data)`**	:	将内容响应给客户端
 >
 >**`setHeader(key, value)`**	:	设置响应头，可解决乱码问题
+>
+>**`writeHead(statusCode, headers)`**	:	设置响应
 
 ```js
 res.setHeader('Content-Type', 'text/html; charset=utf-8'); // 设置内容的编码格式
 res.end(str); // 将内容响应给客户端
+res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); // 响应状态码200,并设置响应头
 ```
+
+
+
+
+
+
+
+
+
+### url 模块
+
+==***`url` 模块是 `Node.js` 官方提供的、用来处理请求`url`的模块***==
+
+<img src="images/url.png" alt="url" style="zoom:90%;" title="url" />
+
+
+
+
+
+
+
+#### 1️⃣导入模块
+
+```js
+const url = require('node:url'); // 方式1
+const url = require('url'); // 方式2
+```
+
+
+
+
+
+
+
+#### 基本使用
+
+> ```js
+> // 旧版
+> parse(urlString[, flag])
+> // 新版
+> new URL(urlString[, base])
+> ```
+>
+> ​		**`urlString`**	:	`url`字符串
+>
+> ​		**`flag`**	:	是否解析`url`字符串，默认`false`
+>
+> ​		**`base`**	:	要解析的基本 `URL`， 绝对`urlString`可忽略
+
+```js
+/* 请求url: http://127.0.0.1/user?id=1&name=linke */
+
+// ---------------- 旧版 ----------------
+const obj = url.parse(req.url, true);
+obj.query		// { id: '1', name: 'linke' }
+obj.pathname	// /user
+
+// ---------------- 新版 ----------------
+const urlObj = new URL(req.url, 'http://127.0.0.1');
+urlObj.pathname		// /user
+const params = urlObj.searchParams; // { 'id' => '1', 'name' => 'linke' }
+params.get('id') // 1
+```
+
+
+
+
+
+
+
+
+
+#### 序列化url
+
+> ```js
+> // 旧版
+> format(urlObject)
+> // 新版
+> format(URL[, options])
+> ```
+>
+> ​		**`urlObject`**	:	需要转换的`url`对象
+>
+> ​		**`options`**	:	配置对象
+>
+> ​					`auth`	:	序列化是否包含用户名与密码，默认`true`
+>
+> ​					`fragment`	:	序列化是否包含片段，默认`true`
+>
+> ​					`search`	:	序列化否包含搜索查询，默认`true`
+>
+> ​					`unicode`	:	序列化是否对`Unicode`字符进行编码，默认`true`
+
+```js
+// ---------------- 旧版 ----------------
+const urlObj = {
+  protocol: "http",
+  slashes: null,
+  auth: null,
+  host: '127.0.0.1:80',
+  port: '80',
+  hostname: "127.0.0.1",
+  hash: null,
+  search: '?id=1&name=linke',
+  query: { id: '1', name: 'linke' },
+  pathname: '/user',
+  path: '/user?id=1&name=linke',
+  href: '/user?id=1&name=linke'
+}
+url.format(urlObj) // http://127.0.0.1:80/user?id=1&name=linke
+
+// ---------------- 新版 ----------------
+const urlObject = new URL('http://2396@霖刻/user?id=1&name=linke');
+url.format(urlObject, { unicode: true, search: false }) // http://2396@霖刻/user
+```
+
+
+
+
+
+
+
+#### 拼接url
+
+> ```js
+> // 旧版
+> resolve(from, to)
+> // 新版
+> new URL(urlString[, base])
+> ```
+>
+> ​		**`from`**	:	拼接·`url`字符串
+>
+> ​		**`to`**	:	拼接`url`字符串
+
+```js
+// ---------------- 旧版 ----------------
+url.resolve('/one/two/three', 'four')	// /one/two/four
+url.resolve('/one/', "two")		   // /one/two
+url.resolve('http://127.0.0.1', '/user')	// http://127.0.0.1/user
+url.resolve('http://127.0.0.1/', 'user')	// http://127.0.0.1/user
+url.resolve('http://127.0.0.1?id=1', 'user') // http://127.0.0.1/user
+
+// ---------------- 新版 ----------------
+const urlObject = new URL('/user', 'http://127.0.0.1');
+urlObject.href // http://127.0.0.1/user
+```
+
+
+
+
+
+
+
+#### 解码路径字符串
+
+> ```js
+> fileURLToPath(url)
+> ```
+>
+> ​		**`url`**	:	`URL` 字符串或 `URL` 对象，必须是有效绝对路径
+
+```js
+const { fileURLToPath } = require('node:url');
+
+fileURLToPath("file://01_hello.js") // \\01_hello.js\
+```
+
+
+
+
+
+#### 转换为文件 URL
+
+> ```js
+> pathToFileURL(path)
+> ```
+>
+> ​		**`path`**	:	转换为文件 `URL` 的路径
+
+```js
+const { pathToFileURL } = require('node:url');
+
+pathToFileURL(__dirname).href // file:///C:...
+```
+
+
+
+
+
+
+
+### querystring 模块
+
+==***`url` 模块是 `Node.js` 官方提供的、用来处理请求`查询字符串`的模块***==
+
+
+
+
+
+
+
+#### 1️⃣导入模块
+
+```js
+const querystring = require('node:querystring'); // 方式1
+const querystring = require('querystring'); // 方式2
+```
+
+
+
+
+
+
+
+#### 基本使用
+
+```js
+let str = 'id=1&name=linke';
+
+// 转换对象
+const params = querystring.parse(str); // { id: '1', name: 'linke' }
+
+// 查询查询字符串
+querystring.stringify(params) // id=1&name=linke
+```
+
+
+
+
+
+
+
+#### 编码解码
+
+```js
+const path = 'http://127.0.0.1/user?id=1&name=linke';
+
+// 编码
+const escStr = querystring.escape(path);
+escStr // http%3A%2F%2F127.0.0.1%2Fuser%3Fid%3D1%26name%3Dlinke
+
+// 解码
+querystring.unescape(escStr) // http://127.0.0.1/user?id=1&name=linke
+```
+
+
+
+
+
+
 
 
 
@@ -567,6 +825,67 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
+## 🌙ES模块化
+
+> :grey_exclamation:==***在 `package.json` 文件中设置 `type` 属性值***==
+>
+> ❗==***如果项目设置`type`为`module`值，则无法使用 `CommonJS` 规范***==
+>
+> ```json
+> "type": "module"
+> ```
+
+
+
+
+
+
+
+
+
+## 定时器
+
+> ###### *`setTimeout(callback, delay)`	:	循环定时器*
+>
+> ###### *`setInterval(callback, delay)`	:	一次定时器*
+>
+> ###### ***`setImmediate(callback[, arg][, ...])`	:	立即执行定时器***
+
+```js
+// 循环定时器
+let timer = setInterval(() => {
+    console.log('interval');
+}, 1000);
+
+// 一次定时器
+setTimeout(() => {
+    console.log('timeout');
+    clearInterval(timer);
+}, 0);
+
+// 立即执行定时器
+setImmediate(() => {
+    console.log('immediate');
+});
+
+
+// 执行结果
+immediate
+timeout
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## ✨npm与包
 
 ### 💼包
@@ -612,6 +931,7 @@ _this // { age: 11, getName: [Function (anonymous)] }
 > ```cmd
 > npm init --yes
 > npm init -y # 简写方式
+> npm init # 设置详细配置
 > ```
 >
 > :grey_exclamation:***只能在英文的目录下成功运行***
@@ -654,6 +974,24 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
+#### 包的锁定版本
+
+<center><img src="images/%E5%8C%85%E7%89%88%E6%9C%AC.png" alt="包版本" style="zoom:70%;" /></center>
+
+> ###### ***`^`**	:	表示会将包安装为 `number.*.*`版本*
+>
+> ###### ***`~`**	:	表示会将包安装为`number.number.*`版本*
+>
+> ###### ***`*`**	:	表示会将包安装为`最新`版本*
+
+
+
+
+
+
+
+
+
 
 
 ### ➕安装包
@@ -662,6 +1000,7 @@ _this // { age: 11, getName: [Function (anonymous)] }
 > npm install 包名 # 自动安装最新版本的包
 > npm i 包名 # 简写方式
 > npm i 包名@num1.num2.num3 # 安装指定版本的包
+> npm i 包名 --save # 兼容版本
 > ```
 >
 > :grey_exclamation:==***同时安装多个包使用<span style=color:red;>空格</span>隔开***==
@@ -728,6 +1067,18 @@ npm i -D 包名	# 简写
 
 
 
+### 💱更新包
+
+```cmd
+npm update 包名@指定包的版本 # 默认更新最新版本
+```
+
+
+
+
+
+
+
 ### ⭕查询包
 
 > ❕==***查询项目所依赖的包***==
@@ -735,6 +1086,8 @@ npm i -D 包名	# 简写
 > ```cmd
 > npm list
 > npm ls
+> npm info 包名 # 查询包详细信息
+> npm outdated # 检查包是否过时
 > ```
 
 
@@ -771,11 +1124,47 @@ npm config get registry
 ```cmd
 # 安装 nrm 为全局可用工具
 npm i -g nrm
+# 查询版本号
+nrm -V
 # 查询所有可用的镜像源
 nrm ls
 # 将npm下包镜像源切换为 taobao 镜像
 nrm use taobao
 ```
+
+
+
+
+
+### yarn
+
+> :grey_exclamation:==***速度快，`yarn` 缓存每个下载过的包，所以再次使用是无需重复下载***==
+>
+> :grey_exclamation:==***`yarn` 会通过算法校验每个安装包的完整性***==
+
+```cmd
+# 安装 yarn 为全局可用工具
+npm i -g yarn
+
+# 初始项目
+yarn init -y
+
+# 安装包
+yarn add 包 # 默认安装最新版本
+yarn add 包@包版本
+yarn add 包 --dev
+
+# 更新包
+yarn upgrade 包@b包版本 # 默认更新最新版本
+
+# 卸载包
+yarn remove 包
+
+# 安装项目全部依赖
+yarn i
+```
+
+
 
 
 
@@ -1551,7 +1940,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                         
+    >                                        
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -1840,13 +2229,13 @@ const secretKey = 'linke 🌙';
   > jwt.sign(payload, secretOrPrivateKey, [options, callback])
   > ```
   >
-  > ###### 		**`payload`**	:	`JSON` 的对象
+  > ###### 				**`payload`**	:	`JSON` 的对象
   >
-  > ###### 		**`secretOrPrivateKey`**	:	加密密钥
+  > ###### 				**`secretOrPrivateKey`**	:	加密密钥
   >
-  > ###### 		**`options`**	:	配置
+  > ###### 				**`options`**	:	配置
   >
-  > ###### 		**`callback`**	:	回调函数
+  > ###### 				**`callback`**	:	回调函数
   >
   > ```js
   > jwt.sign(req.body, secretKey, { expiresIn: '30s' }) // expiresIn设置过期时间
@@ -1855,7 +2244,7 @@ const secretKey = 'linke 🌙';
 + ###### 解析 `JWT` 字符串
 
   + ```js
-    // 配置并挂载需要将 JWT 字符串还原为 JSON 对象的中间件
+    // 配置并挂载需要将 JWT 字符串(Bearer token)还原为 JSON 对象的中间件
     app.use(
       expressJWT({ secret: secretKey, algorithms: ['HS256'] }) //使用 HS256密钥解析 JWT 字符串
         .unless({ path: [/^\/sign/] }) // 用正则指定不需要访问权限的路径
@@ -1880,6 +2269,232 @@ const secretKey = 'linke 🌙';
 
 
 
+## 🧂bcryptjs
+
+==***一款处理加盐`(Salt)`加密的包***==
+
+> :grey_exclamation:==***所谓<span style=color:red;>加盐</span>，就是在加密的基础上再加点 <span style=color:red;>佐料</span>。这个 <span style=color:red;>佐料</span> 是系统随机生成的一个随机值，并且以随机的方式混在加密之后的密码中***==
+
+
+
+
+
+### 模版安装
+
+```js
+npm i bcryptjs
+```
+
+
+
+
+
+### 中间件
+
+```js
+// 导入 bcryptjs 模块
+const bcrypt = require('bcryptjs');
+```
+
+
+
+
+
+### 基本使用
+
++ > ###### 🔒加密
+  >
+  > ```js
+  > bcrypt.hashSync(data, salt)
+  > ```
+  >
+  > ###### 				**`data`**	:	要加密的数据
+  >
+  > ###### 				`salt`	:	用于哈希密码的盐；如果指定为数字，则将使用指定的轮数生成盐并将其使用
+  >
+  > ```js
+  > // 原密码
+  > const password = 'linke2396';
+  > 
+  > // 加密
+  > const hashPassword = bcrypt.hashSync(password, 10);
+  > hashPassword // $2a$10$TrXyXYYKfyP9EROfNGkJyeLZE/Hs73Gqu2VR5AXiE3Pp7hV2wp6iC
+  > ```
+
++ > ###### 🔑校验
+  >
+  > ```js
+  > bcrypt.compareSync(data, encrypted)
+  > ```
+  >
+  > ###### 		       **`data`**	:	要比较的数据
+  >
+  > ###### 		      **`encrypted`**	:	要比较的数据
+  >
+  > ```js
+  > // 原密码
+  > const password = 'linke2396';
+  > // 加盐过的密码
+  > const hashPassword = '$2a$10$TrXyXYYKfyP9EROfNGkJyeLZE/Hs73Gqu2VR5AXiE3Pp7hV2wp6iCz';
+  > 
+  > // 校验
+  > const isOk = bcrypt.compareSync(password, hashPassword);
+  > isOk // true
+  > ```
+
+
+
+
+
+
+
+## 🚫Joi
+
+==***JavaScript 的数据验证器***==
+
+
+
+
+
+### 模块安装
+
+🔗[https://joi.dev/api/](https://joi.dev/api/)
+
+```cmd
+npm i joi
+```
+
+
+
+
+
+### 基本使用
+
+```js
+/*
+  string() 值必须是字符串
+  alphanum() 值只能是包含 a-zA-Z0-9 的字符串
+  min(length) 最小长度
+  max(length) 最大长度
+  required() 值是必填项，不能为 undefined
+  pattern(正则表达式) 值必须符合正则表达式的规则
+  ....
+*/
+
+//  用户名的验证规则
+const username = joi
+	.string()
+	.min(1)
+	.max(10)
+	.regex(/^[\u4E00-\u9FA5A-Za-z0-9_]+$/)
+	.exist();
+
+// 密码的验证规则
+const password = joi
+	.string()
+	.regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/)
+	.exist();
+```
+
+
+
+
+
+
+
+## ⛔express-joi
+
+❗==***需要依赖 `Joi` 模块一起使用***==
+
+
+
+
+
+### 模块安装
+
+```cmd
+npm i @escook/express-joi
+```
+
+
+
+
+
+### 基本使用
+
+```js
+const express = require('express')
+const app = express()
+// 导入 Joi 来定义验证规则
+const Joi = require('joi')
+// 1. 导入 @escook/express-joi
+const expressJoi = require('@escook/express-joi')
+
+// 解析 x-www-form-urlencoded 格式的表单数据
+app.use(express.urlencoded({ extended: false }))
+
+// 2. 定义验证规则
+// 注意：如果客户端提交的某些参数项未在 schema 中定义，
+// 此时，这些多余的参数项默认会被忽略掉
+const userSchema = {
+    // 2.1 校验 req.body 中的数据
+    body: {
+        username: Joi.string().alphanum().min(3).max(12).required(),
+        password: Joi.string()
+        .pattern(/^[\S]{6,15}$/)
+        .required(),
+        repassword: Joi.ref('password')
+    },
+    // 2.2 校验 req.query 中的数据
+    query: {
+        name: Joi.string().alphanum().min(3).required(),
+        age: Joi.number().integer().min(1).max(100).required()
+    },
+    // 2.3 校验 req.params 中的数据
+    params: {
+        id: Joi.number().integer().min(0).required()
+    }
+}
+
+// 3. 在路由中通过 expressJoi(userSchema) 的方式
+//    调用中间件进行参数验证
+app.post('/adduser/:id', expressJoi(userSchema), function (req, res) {
+    const body = req.body
+    res.send(body)
+})
+
+// 4.1 错误级别中间件
+app.use(function (err, req, res, next) {
+    // 4.1 Joi 参数校验失败
+    if (err instanceof Joi.ValidationError) {
+        return res.send({
+            status: 1,
+            message: err.message
+        })
+    }
+  // 4.2 未知错误
+    res.send({
+        status: 1,
+        message: err.message
+    })
+})
+
+// 调用 app.listen 方法，指定端口号并启动web服务器
+app.listen(3001, function () {
+    console.log('Express server running at http://127.0.0.1:3001')
+})
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1887,3 +2502,4 @@ const secretKey = 'linke 🌙';
 ## ▫▫▫终
 
 <center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
+
