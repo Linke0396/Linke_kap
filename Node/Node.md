@@ -243,7 +243,13 @@ node -v # 简写
 #### 1️⃣导入模块
 
 ```js
-const fs = require('fs');
+// 异步 fs 模块
+const fs = require('node:fs'); // 方式1
+const fs = require('fs'); // 方式2
+
+// 同步 fs 模块，所有方法都会返回一个 Promise对象
+const fs = require('node:fs/promises'); // 方式1
+const fs = require('fs').promises; // 方式12
 ```
 
 
@@ -253,7 +259,10 @@ const fs = require('fs');
 #### 📄读取文件
 
 > ```js
+> // 异步方法
 > fs.readFile(path, encode, callback);
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.readFileSync(path, encode);// 返回值为读取内容
 > ```
 >
 > ​		**`path`**	:	文件路径，字符串，**必选**
@@ -282,7 +291,12 @@ fs.readFile('../file/1.txt', 'UTF8', function (err, data) {
 #### 📝写入文件
 
 > ```js
-> fs.writeFile(path, data, encode, callback);
+> // 异步方法
+> fs.writeFile(path, data, encode, callback); // 新内容会覆盖旧内容
+> fs.appendFile(path, data, callback); // 追加文件内容
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.writeFileSync(path, data, encode);
+> fs.appendFileSync(path, data);
 > ```
 >
 > ​		**`path`** 	:	文件路径，字符串，**必选**
@@ -297,14 +311,239 @@ fs.readFile('../file/1.txt', 'UTF8', function (err, data) {
 >
 > :grey_exclamation:***方法可以创建文件，不能创建目录***
 >
-> :grey_exclamation:***新内容会覆盖旧内容***
 
 ```js
+// 写
 fs.writeFile('../file/1.txt', '功成不必在我,功成必定有我', 'UTF8', function (err) {
     if (err) return console.warn('文件写入失败:' + err.message);
     console.log('文件写入成功');
 });
+
+// 追加
+fs.appendFile('../file/2.txt', new Date().toLocaleString() + '\n', err => {
+    if (err) return console.warn('追加文件内容失败:' + err.message);
+    console.log('追加文件内容成功');
+});
 ```
+
+
+
+
+
+#### 创建目录
+
+> ```js
+> // 异步方法
+> fs.mkdir(path[, options], callback);
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.mkdirSync(path[, options]);
+> ```
+>
+> ​		**`path`** 	:	目录路径，字符串，**必选**
+>
+> ​		**`options`**	:	配置对象，**可选**
+>
+> ​				`recursive`	:	是否递归创建多个目录，默认`false`
+>
+> ​		**`callback`**	:	创建完成后的回调函数，**可选**
+>
+> ​				`err` 	:	成功为`null`；失败为`Error对象`
+>
+> ###### :grey_exclamation:*创建不存在的目录，有则报错*
+
+```js
+fs.mkdir('../test', err => {
+    if (err) return console.warn('创建文件或目录失败:' + err.message);
+    console.log('创建文件或目录成功');
+});
+```
+
+
+
+
+
+#### 重命名文件或目录
+
+> ```js
+> // 异步方法
+> fs.rename(oldPath, newPath, callback);
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.renameSync(oldPath, newPath);
+> ```
+>
+> ​		**`oldPath`**	:	旧的文件或目录路径，字符串，**必选**
+>
+> ​		**`newPath`**	:	新的文件或目录路径，字符串，**必选**
+>
+> ​		**`callback`**	:	重命名完成后的回调函数，**可选**
+>
+> ​				`err` 	:	成功为`null`；失败为`Error对象`
+>
+> ###### :grey_exclamation:*新的文件或目录已存在，则会报错*
+
+```js
+fs.rename('../test', '../test1', err => {
+    if (err) return console.warn('重命名文件或目录失败:' + err.message);
+    console.log('重命名文件或目录成功');
+});
+```
+
+
+
+
+
+
+
+####  删除文件或目录
+
+> ```js
+> // 异步方法
+> fs.rmdir(path, callback);  // 删除空目录
+> fs.unlink(path, callback); // 删除文件
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.rmdirSync(path);
+> fs.unlinkSync(path);
+> ```
+>
+> ​		**`path`** 	:	需要删除的文件或目录路径，字符串，**必选**
+>
+> ​		**`callback`**	:	创建完成后的回调函数，**可选**
+>
+> ​				`err` 	:	成功为`null`；失败为`Error对象`
+>
+> ###### :grey_exclamation:***无法删除非空目录***
+
+```js
+// 删除目录
+fs.rmdir('../test1', err => {
+    if (err) return console.warn('删除目录失败:' + err.message);
+    console.log('删除目录成功');
+});
+
+// 删除文件
+fs.unlink('../file/1.txt', err => {
+    if (err) return console.warn('文件删除失败:' + err.message);
+    console.log('文件删除成功');
+});
+```
+
+
+
+
+
+#### 获取文件详细
+
+> ```js
+> // 异步方法
+> fs.stat(path, callback);
+> isFile() // 判断是否是文件
+> isDirectory() // 判断是否是目录
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.statSync(path);
+> ```
+>
+> ​		**`callback`**	:	获取文件或目录信息后的回调函数，**可选**
+>
+> ​				`err` 	:	成功为`null`；失败为`Error对象`
+>
+> ​				`data`	:	成功为`文件或目录的详细信息`；失败为`undefined`
+
+```js
+fs.stat('../file', (err, data) => {
+    if (err) return console.warn('读取文件类型失败:' + err.message);
+    console.log(data);	// 文件的详细信息 {...}
+    console.log(data.isFile());		// false
+    console.log(data.isDirectory());	// true
+});
+```
+
+
+
+
+
+
+
+#### 获取子目录列表
+
+> ```js
+> // 异步方法
+> fs.readdir(path, callback);
+> // 同步方法,出现错误需要 try ... catch ...
+> fs.readdirSync(path); // 返回子目录列表数组
+> ```
+>
+> ​		**`callback`**	:	获取子目录列表后的回调函数，**可选**
+>
+> ​				`err` 	:	成功为`null`；失败为`Error对象`
+>
+> ​				`data`	:	成功为`子目录列表数组`；失败为`undefined`
+
+```js
+fs.readdir('../file', (err, data) => {
+    if (err) return console.warn('获取子目录列表失败:' + err.message);
+    console.log(data); // [ ..., ... ]
+});
+```
+
+
+
+
+
+
+
+#### 判断文件或目录是否存在
+
+```js
+fs.existsSync('../file') // true
+```
+
+
+
+
+
+
+
+
+
+#### stream 流
+
+:grey_exclamation:==***流式文件操作，用来写入或读取大文件***==
+
+> ```js
+> // 输入流
+> fs.createReadStream(path, encode)
+> // 输出流
+> fs.createWriteStream(path, encode);
+> ```
+>
+> ​		**`path`** 	:	文件路径，字符串，**必选**
+>
+> ​		**`encode`**	:	操作文件的编码格式，**可选**
+
+```js
+// 读取文件
+const rs = fs.createReadStream('../file/1.txt', 'utf-8');
+
+let data = '';
+rs.on('data', chunk => data += chunk); // 监听文件读取
+rs.on('end', () => console.log(data)); // 文件读取结束
+rs.on('error', err => console.error(err.message)); // 文件读取失败
+
+// 写入文件
+const ws = fs.createWriteStream('../file/2.txt', 'utf-8');
+
+ws.write(new Date().toLocaleString() + '\n'); // 写一部分
+ws.write('linke'); // 写一部分
+ws.end(); // 结束写入
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -321,7 +560,8 @@ fs.writeFile('../file/1.txt', '功成不必在我,功成必定有我', 'UTF8', f
 #### 1️⃣导入模块
 
 ```js
-const path = require('path');
+const path = require('node:path');  // 方式1
+const path = require('path'); // 方式2
 ```
 
 
@@ -455,6 +695,67 @@ const http = require('http'); // 方式2
 
 
 
+#### get/post
+
+```js
+switch (urlObj.pathname) {
+    case '/get':
+        return httpGet(data => res.end(data));
+    case '/post':
+        return httpPost(data => res.end(data));
+    default:
+        return res.end('404');
+}
+
+/* // get
+  请求: 前端请求 ---> node 请求(get) --> 后端(get)
+  响应: 前端请求 <--- node 请求(get) <-- 后端(get)
+*/
+function httpGet(callback) {
+    let data = '';
+    http.get('http://localhost:8080/TestRequest/user/queryUsers', res => {
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+            // console.log(data);
+            callback(data);
+        })
+    });
+}
+
+/* // post
+  请求: 前端请求 ---> node 请求(post) --> 后端(post)
+  响应: 前端请求 <--- node 请求(post) <-- 后端(post)
+*/
+function httpPost(callback) {
+    let data = '';
+    const options = { // 'http://localhost:8080/TestRequest/user/postAxios'
+        hostname: 'localhost',
+        port: '8080',
+        path: '/TestRequest/user/postAxios',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        }
+    }
+    let req = http.request(options, res => {
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => callback(data));
+    });
+    req.write(JSON.stringify({ id: 1 }));
+    req.end();
+}
+```
+
+
+
+
+
+
+
+
+
+
+
 #### request
 
 ==***请求对象***==
@@ -498,6 +799,29 @@ res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); // 响应状
 
 
 
+#### 跨域请求
+
+```js
+// jsonp
+return res.end(`${urlObj.searchParams.get('callback') ?? 'callback'}(${JSON.stringify(data)})`);
+
+// cors
+res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8',
+    'Access-control-allow-origin': '*'
+});
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### url 模块
@@ -525,7 +849,7 @@ const url = require('url'); // 方式2
 
 
 
-#### 基本使用
+#### 🌻基本使用
 
 > ```js
 > // 旧版
@@ -706,7 +1030,7 @@ const querystring = require('querystring'); // 方式2
 
 
 
-#### 基本使用
+#### 🌻基本使用
 
 ```js
 let str = 'id=1&name=linke';
@@ -735,6 +1059,202 @@ escStr // http%3A%2F%2F127.0.0.1%2Fuser%3Fid%3D1%26name%3Dlinke
 
 // 解码
 querystring.unescape(escStr) // http://127.0.0.1/user?id=1&name=linke
+```
+
+
+
+
+
+
+
+
+
+### event 模块
+
+==***`event` 模块是 `Node.js` 官方提供的<span style=color:red;>事件机制模块</span>模块***==
+
+
+
+
+
+
+
+#### 1️⃣导入模块
+
+```js
+const EventEmitter = require('node:events'); // 方式1
+const EventEmitter = require('events'); // 方式2
+```
+
+
+
+
+
+
+
+#### 🌻基本使用
+
+```js
+const EventEmitter = require('node:events');
+
+const event = new EventEmitter();
+
+// 无参数自定义事件
+// 绑定事件
+event.on('public', () => {
+    console.log('触发自定义 public 事件...');
+})
+
+// 触发指定事件
+event.emit('public');
+
+// 有参数自定义事件
+event.on('class', (...arg) => {
+	console.log('触发自定义 class 事件 args:' + arg);
+});
+
+setTimeout(() => event.emit('class', 1, 2, 3), 2000);
+
+// 执行结果
+触发自定义 public 事件...
+触发自定义 class 事件 args:1,2,3
+```
+
+
+
+
+
+
+
+#### 其他方法
+
+```js
+once(): 添加单次监听器
+removeListener() / off() : 从事件中移除事件监听器
+removeAllListeners() : 移除事件的所有监听器
+```
+
+
+
+
+
+
+
+
+
+
+
+### zlip 模块
+
+==***`zlip` 模块是 `Node.js` 官方提供的<span style=color:red;>压缩文件</span>模块***==
+
+
+
+
+
+
+
+#### 1️⃣导入模块
+
+```js
+const zlib = require('node:zlib'); // 方式1
+const zlib = require('zlib'); // 方式2
+```
+
+
+
+
+
+
+
+#### 🌻基本使用
+
+```js
+const fs = require("node:fs");
+const zlib = require('node:zlib');
+
+// 压缩文件
+const rs = fs.createReadStream('../file/1.txt');
+const ws = fs.createWriteStream('../file/1.zip');
+// 创建 zip 压缩包 
+rs.pipe(zlib.createGzip()).pipe(ws);
+
+
+// 解压文件
+const rs = fs.createReadStream('../file/1.zip');
+const ws = fs.createWriteStream('../file/1.txt');
+// 解压 zip 包
+rs.pipe(zlib.createGunzip()).pipe(ws);
+```
+
+
+
+
+
+
+
+### crypto 模块
+
+==***`crypto` 模块是 `Node.js` 官方提供的<span style=color:red;>通用的加密和哈希算法</span>模块***==
+
+
+
+
+
+
+
+#### 1️⃣导入模块
+
+```js
+const crypto = require('node:crypto'); // 方式1
+const crypto = require('crypto'); // 方式2
+```
+
+
+
+
+
+
+
+#### 🌻基本使用
+
+```js
+const crypto = require('node:crypto');
+
+// md5
+// const hash = crypto.createHash('md5');
+// sha1
+// const hash = crypto.createHash('sha1');
+// hmac
+const hash = crypto.createHmac('sha256', 'linke 🌙');
+
+// 可任意多次执行 update()
+hash.update('linke love shuangshuang');
+
+// 设置转换格式
+// console.log(hash.digest('hex'));
+console.log(hash.digest('base64'));
+
+
+// AES
+let key = 'linke12345678910'; // 16*8 = 128
+let iv = 'shuangshuang0703';
+
+// 加密
+function encrypt(key, iv, data) {
+    let decipher = crypto.createCipheriv('aes-128-cbc', key, iv);
+    return decipher.update(data, 'binary', 'hex') + decipher.final('hex');
+}
+
+// 解码
+function decrypt(key, iv, crypted) {
+    crypted = Buffer.from(crypted, 'hex').toString('binary');
+    let decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
+    return decipher.update(crypted, 'binary', 'utf-8') + decipher.final('utf-8');
+}
+
+let cryted = encrypt(key, iv, 'linke') // ...
+decrypt(key, iv, cryted)  // linke
 ```
 
 
@@ -1858,14 +2378,14 @@ use. 1 2
     > 
     > // 应用级别的全局中间件
     > app.use((req, res, next) => {
-    > next();
+    >     next();
     > });
     > 
     > // 应用级别的局部中间件
     > app.get('/', (req, res, next) => {
-    > 	next();
+    >     next();
     > }, (req, res) => {
-    > 	res.end();
+    >     res.end();
     > })
     > ```
 
@@ -1876,6 +2396,7 @@ use. 1 2
     > ```js
     > const express = require('express');
     > const app = express();
+    > // 创建路由对象
     > const router = express.Router();
     > 
     > // 路由级别的中间件
@@ -1899,18 +2420,16 @@ use. 1 2
     >
     >// 挂载路由
     >app.get('/get', (req, res) => {
-    >    throw new Error('服务器内部发生错误!'); // 路由发生错误并抛出
+    >        throw new Error('服务器内部发生错误!'); // 路由发生错误并抛出
     >});
     >
     >// 错误级别的中间件
     >app.use('/', (err, req, res, next) => {
-    >    console.log(err.name, err.message); // 服务器打印错误信息
-    >    res.send(`${err.name}: ${err.message}`); // 向客户端响应错误信息
+    >        console.log(err.name, err.message); // 服务器打印错误信息
+    >        res.send(`${err.name}: ${err.message}`); // 向客户端响应错误信息
     >});
-    >
-    >app.listen(80);
     >```
-
+  
 + ###### *<span style=color:red;>Express 内置</span>的中间件*
 
   + >1. ==***`express.static` 快速托管静态资源的内置中间件***==
@@ -1940,7 +2459,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                                        
+    >                                                                                  
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -2007,6 +2526,196 @@ app.use(bodyParser); // 挂载全局中间件
 
 
 
+### Express 应用程序生成器
+
+==***应用生成器工具 `express-generator` 可以快速创建一个应用的骨架***==
+
+```cmd
+# 安装为 全局可用工具
+npm install -g express-generator
+# 创建应用骨架 [options]
+express	
+# 安装所有依赖包
+npm i
+# 启动服务器
+npm start
+```
+
+
+
+
+
+#### 命令行参数
+
+```cmd
+-h, --help          输出使用方法
+	--version       输出版本号
+-e, --ejs           添加对 ejs 模板引擎的支持
+	--hbs           添加对 handlebars 模板引擎的支持
+	--pug           添加对 pug 模板引擎的支持
+-H, --hogan         添加对 hogan.js 模板引擎的支持
+	--no-view       创建不带视图引擎的项目
+-v, --view <engine> 添加对视图引擎（view） <engine> 的支持 (ejs|hbs|hjs|jade|pug|twig|vash) （默认是 					 jade 模板引擎）
+-c, --css <engine>  添加样式表引擎 <engine> 的支持 (less|stylus|compass|sass) （默认是普通的 css 文					 件）
+	--git           添加 .gitignore
+-f, --force         强制在非空目录下创建
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🍞ejs
+
+==***`EJS` 是一套简单的模板语言，帮你利用普通的 `JavaScript` 代码生成 `HTML` 页面***==
+
+<center><img src="images/ejs.png" alt="EJS" style="zoom:50%;" title='EJS' /></center>
+
+
+
+
+
+
+
+### 模块安装
+
+[EJS 中文文档](https://ejs.bootcss.com/)
+
+```cmd
+npm i ejs
+```
+
+
+
+
+
+
+
+### 基本使用
+
+```js
+// 配置模版引擎
+app.set('views', './views'); // 配置模块文件的目录
+app.set('view engine', 'ejs'); // 配置模版引擎
+
+let data = {
+    title: 'TITLE',
+    flag: true,
+	array: [1, 2, 3, 4, 5, 6, 7],
+    html: '<b>strong</b>'
+}
+
+// 渲染模版引擎,第二个参数如果不需要可省略
+res.render('index', data); // 自动寻找到 ./views 文件夹下的 index.ejs
+```
+
+
+
+
+
+
+
+### 标签含义
+
+|   标签    |                             含义                             |
+| :-------: | :----------------------------------------------------------: |
+| **`<%`**  | **<span style=color:red;>脚本</span>标签，用于流程控制，无输出** |
+| **`<%_`** |                    **删除其前面的空格符**                    |
+| **`<%=`** |                **输出转义 `HTML` 标签到模板**                |
+| **`<%-`** |                  **输出非转义的数据到模板**                  |
+| **`<%#`** |               **注释标签，不执行、不输出内容**               |
+| **`<%%`** |                     **输出字符串 `<%`**                      |
+| **`%>`**  |                       **一般结束标签**                       |
+| **`-%>`** |                   **删除紧随其后的换行符**                   |
+| **`_%>`** |                **将结束标签后面的空格符删除**                |
+
+```ejs
+<h1>INDEX</h1>
+<!-- 输出标签 -->
+<%= title %>
+
+<!-- if -->
+<% if (flag) { %>
+<h3>hello vip</h3>
+<% } %>
+
+<!-- forEach -->
+<ul>
+    <% array.forEach(val=> { %>
+    <li>
+        <%= val %>
+    </li>
+    <% }); %>
+</ul>
+
+<!-- %=  -->
+<%=html%>
+<!-- %-  -->
+<%-html%>
+
+<%# 注释 %>
+```
+
+
+
+
+
+
+
+
+
+### 包含(include)
+
+==***相对于模板路径中的模板片段包含进来，可忽略 `.ejs`后缀***==
+
+> ```ejs
+> include(path[, data]);
+> ```
+>
+> ​		**`path`**	:	模版文件的路径，字符串，**必选**
+>
+> ​		**`data`**	:	转入模版文件的数据对象，**可选**
+
+```ejs
+<%- include('./header'); %>
+```
+
+
+
+
+
+
+
+### 渲染html
+
+```js
+// 引入 ejs 模块
+const ejs = require('ejs');
+
+// 配置模版引擎
+app.set('views', './views'); // 配置模块文件的目录
+app.set('view engine', 'html'); // 配置模版引擎
+app.engine('html', ejs.renderFile); // 支持直接渲染 html 文件
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 🐬MySQL
@@ -2040,6 +2749,7 @@ const mysql = require('mysql');
 // 建立与 MySQL 数据库的连接
 const pool = mysql.createPool({
     host: '127.0.0.1',  // 数据库的 IP 地址
+    port: '3306',		// 端口号,默认3306(可省略)
     user: 'root',       // 用户名
     password: '200396', // 密码
     database: 'study'   // 使用的数据库
@@ -2125,6 +2835,30 @@ pool.query('SELECT * FROM `users`', (err, results, fields) => {
         console.log(results.affectedRows);
     });
     ```
+
+
+
+
+
+
+
+## 🍃MongoDB
+
+***`MongoDN`是一个<span style=color:red;>非关系型数据库</span>***
+
+<center><img src="images/MongoDB.png" alt="MongoDB" style="zoom:80%;border:2px solid"  title='MongoDB'/></center>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2484,8 +3218,6 @@ app.listen(3001, function () {
     console.log('Express server running at http://127.0.0.1:3001')
 })
 ```
-
-
 
 
 
