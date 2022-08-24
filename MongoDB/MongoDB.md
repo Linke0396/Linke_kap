@@ -52,7 +52,7 @@
           dbPath: C:\Program Files\MongoDB\mongodb-6.0.1-winx64\data\db
         ```
 
-4. *在安装`bin`目录下以管理员身份打开 `PowerShell `，并运行如下命令*
+4. ###### *在安装`bin`目录下以管理员身份打开 `PowerShell `，并运行如下命令*
 
    + ```cmd
      mongod --config "mongod.cfg文件的地址" --install --serviceName "MongoDB" --journal
@@ -64,7 +64,7 @@
      net start MongoDB // 启动服务
      net stop MongoDB  // 停止服务
 
-6. ###### *检测是否安装成功，出现若似以下内容就说明安装成功*
+6. ###### *检测是否安装成功，出现如似以下内容就说明安装成功*
 
    + ```cmd
      mongod --version
@@ -72,7 +72,7 @@
 
    + <img src="images/mongo-ver.png" alt="version" style="zoom:50%;" title="mongod-version" />
 
-7. ###### *==**(可选)**==安装 `MongoDB Shell`，从`4.*.*`版本开始`MongoDB`不在提供内置客户端*
+7. ###### *==**(可选)**==安装 `MongoDB Shell`，从`4.*.*`版本开始`MongoDB`不再提供内置客户端*
 
    + ###### 下载地址:🔗[MongoDB Shell](https://www.mongodb.com/try/download/shell)
 
@@ -85,7 +85,15 @@
    2. ```bat
       @echo off
       ECHO Reset  Studio 3T use Date......
-      FOR /f "tokens=1,2,* " %%i IN ('reg query "HKEY_CURRENT_USERSoftwareJavaSoftPrefs3tmongochefenterprise" ^| find /V "installation" ^| find /V "HKEY"') DO ECHO yes | reg add "HKEY_CURRENT_USERSoftwareJavaSoftPrefs3tmongochefenterprise" /v %%i /t REG_SZ /d ""
+      REG DELETE "HKEY_CURRENT_USER\Software\JavaSoft\Prefs\3t\mongochef\enterprise" /f
+      RMDIR /s /q %USERPROFILE%\.3T\studio-3t\soduz3vqhnnja46uvu3szq--
+      RMDIR /s /q %USERPROFILE%\.3T\studio-3t\Lwm3TdTxgYJkXBgVk4s3
+      RMDIR /s /q %USERPROFILE%\AppData\Local\t3\dataman\mongodb\app\AppRunner
+      RMDIR /s /q C:\Users\Public\t3\dataman\mongodb\app\AppRunner
+      RMDIR /s /q %USERPROFILE%\AppData\Local\Temp\t3\dataman\mongodb\app\AppRunner
+      RMDIR /s /q %USERPROFILE%\AppData\Local\ftuwWNWoJl-STeZhVGHKkQ--
+      RMDIR /s /q %USERPROFILE%\AppData\Local\Temp\ftuwWNWoJl-STeZhVGHKkQ--
+      RMDIR /s /q %USERPROFILE%\.cache\ftuwWNWoJl-STeZhVGHKkQ--
       ECHO Reset OK,Click any key to quit......
       pause>nul
       exit

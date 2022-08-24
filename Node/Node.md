@@ -1521,6 +1521,8 @@ timeout
 > npm i 包名 # 简写方式
 > npm i 包名@num1.num2.num3 # 安装指定版本的包
 > npm i 包名 --save # 兼容版本
+> npm i 包名 --legacy-peer-deps # 忽视依赖冲突,依赖不会覆盖(推荐)
+> npm i 包名 --force # 无视依赖冲突,冲突时覆盖掉原先的版本
 > ```
 >
 > :grey_exclamation:==***同时安装多个包使用<span style=color:red;>空格</span>隔开***==
@@ -1814,6 +1816,12 @@ npm uninstall -g 包名	# 卸载全局安装的包
 
 
 
+
+
+
+
+# 🔆第三方模块
+
 ## 🔷Express
 
 ***`Express` 是基于 `Node.js` 平台，<span style=color:skyblue;>快速</span>、<span style=color:skyblue;>开放</span>、<span style=color:skyblue;>极简</span>的 <span style=color:red;>`Web` 开发框架</span>***
@@ -1838,11 +1846,13 @@ npm uninstall -g 包名	# 卸载全局安装的包
 
 
 
-### 安装
+### 模块安装
 
 ```cmd
 npm install express --save
 ```
+
+
 
 
 
@@ -2459,7 +2469,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                                                                                  
+    >                                                                                        
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -2560,6 +2570,335 @@ npm start
 	--git           添加 .gitignore
 -f, --force         强制在非空目录下创建
 ```
+
+
+
+
+
+
+
+## 🎆GraphQL
+
+==***`GraphQL` 是一个用于 `API` 的查询语言，是一个使用基于类型系统来执行查询的服务端运行时（类型系统由你的数据定义）***==
+
+<center><img src="images/graphql.png" alt="GraphQL" style="zoom:50%;" title="GraphQL" /></center>
+
+
+
+
+
+### 模块安装
+
+🔗[GraphQL](https://graphql.org/code/#javascript)
+
+```cmd
+npm i graphql
+# 结合 Express模块 使用
+npm i express-graphql
+```
+
+
+
+
+
+
+
+### GraphQL 与 RESTful 的区别
+
+|            RESTful             |          GraphQL           |
+| :----------------------------: | :------------------------: |
+| ***一个接口只能返回一个资源*** | ***一次可以获取多个资源*** |
+| ***用不同的`url`来区分资源***  |    ***用类型区分资源***    |
+
+
+
+
+
+
+
+### 基本使用
+
++ ==***GraphQL.js***==
+
+  + ```js
+    // 1.导入 graphql 模块
+    const { graphql, buildSchema } = require('graphql');
+    
+    // 2.使用 Graphql schema 语法构建一个 schema
+    const schema = buildSchema(`
+    	type Query {
+        	username: String
+        	count: Int
+        }
+    `);
+    
+    // 3.定义 schema 的 resolver
+    const root = {
+    	username() { // 方法返回值必须与 schema 中定义的 username 类型一致
+            return 'linke';
+      },
+        count() {
+            return 11;
+      }
+    }
+    
+    // 4.查询,方法返回一个 Promise 对象
+    graphql({
+        schema,
+        source: '{ username, count }', // 需要查询的数据
+        rootValue: root
+    }).then(res => {
+        console.log(res);
+        // { data: [Object: null prototype] { username: 'linke', count: 11 } }
+    });
+    ```
+
++ ==***Express 结合使用***==
+
+  + ```js
+    // 导入 express 模块
+    const express = require('express');
+    // 导入 express-graphql 模块
+    const { graphqlHTTP } = require('express-graphql');
+    // 导入 graphql 模块
+    const { buildSchema } = require('graphql');
+    
+    // 创建服务
+    const app = express();
+    
+    // 使用 Graphql schema 语法构建一个 schema,定义查询的语句和类型
+    const schema = buildSchema(`
+    	type Query {
+      		username: String
+    	    count: Int
+        }
+    `);
+    
+    // 定义 schema 的 resolver,查询对应的处理函数
+    const root = {
+        username() {
+            return 'linke';
+        },
+        count() {
+            return 11;
+        }
+    }
+    
+    // 挂载 Graphql 中间件
+    app.use('/graphql', graphqlHTTP({
+        schema,
+        rootValue: root,
+        graphiql: true // 开启浏览器 GraphQL IDE 调试工具
+    }));
+    
+    // 启动 Web 服务
+    app.listen(80, () => {
+        console.log('express server running at localhost/graphql');
+    });
+    ```
+
+  + ***访问 `localhost/graphql`接口***
+
+    + <img src="images/GraphQL%20IDE.png" alt="GraphQL IDE" style="zoom:90%;" title="GraphQL IDE" />
+
+  + ***使用 `fetch` 访问***
+
+    + ```javascript
+      fetch('http://localhost/graphql', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify({ query: '{ username, count }' })
+      }).then(async res => {
+          let result = await res.json();
+          console.log(result); // { data: {username: 'linke', count: 11} }
+      })
+      ```
+
+
+
+
+
+
+
+### 类型和字段
+
+==***每个 `GraphQL` 服务都定义了一组类型，这些类型完全描述了您可以在该服务上查询的可能数据集。然后，当查询传入时，将针对该架构对其进行验证和执行***==
+
+
+
+
+
+
+
+#### 查询和突变类型
+
+:grey_exclamation:==***`GraphQL` 中两种特殊类型***==
+
+> ```js
+> schema {
+>     query: Query
+>     mutation: Mutation
+> }
+> ```
+>
+>  + ###### *`Query` 严格来说是一种对象类型*
+>
+>  + ###### *`Query` 是所有查询的入口点*
+>
+>  + ###### *`Query` 类型必须提供,且唯一*
+>
+>  + ###### *`Mutation` 可以在类型上定义字段，这些字段可用作您可以在查询中调用的根突变字段*
+
+
+
+
+
+
+
+#### 标量类型
+
++ *`Int`：有符号的 `32` 位整数*
++ *`Float`：有符号的双精度浮点值*
++ *`String`：`UTF‐8` 字符序列*
++ *`Boolean`：布尔类型`true / false`*
++ *`ID`：`ID`标量类型表示唯一标识符*
+
+```js
+const schema = buildSchema(`
+	# Query 严格来说是一种对象类型
+  	# Query 是所有查询的入口点
+  	# Query 类型必须提供,且唯一
+  	type Query {
+    	id: ID
+	    username: String
+    	count: Int
+	    money: Float
+	    isFlag: Boolean
+    }
+`);
+
+const root = {
+    id() {
+        return 1;
+    },
+    username() {
+        return 'linke';
+    },
+    count() {
+        return 11;
+    },
+    money() {
+        return '123.456'; // 可隐式转换
+    },
+    isFlag() {
+        return true;
+    }
+}
+
+// 挂载 Graphql 中间件
+app.use('/graphql', graphqlHTTP({
+    schema,
+    rootValue: root,
+    graphiql: true
+}));
+
+// IDE 查询命令 { id username count money isFlag }
+{
+    "data": {
+    	"id": "1",
+	    "username": "linke",
+	    "count": 11,
+    	"money": 123.456,
+        "isFlag": true
+    }
+}
+```
+
+
+
+
+
+
+
+#### 对象类型
+
++ *对象必须在使用之前就定义*
++ *可嵌套对象*
+
+```js
+const schema = buildSchema(`
+	# 对象类型
+	type User {
+	    name: String
+    	password: String
+	}
+
+	# 嵌套对象
+  	type Grade {
+  		id: ID
+    	user: User
+  	}
+
+	type Query {
+    	id: ID
+	    user: User
+    	grade: Grade
+    }
+`);
+
+const root = {
+    id() {
+        return 1;
+    },
+    user() {
+      return {
+          name: 'dudu',
+          password: '20030906'
+      }
+    },
+    grade() {
+        return {
+            id: '001',
+            user: {
+                name: 'keke',
+                password: '20050703'
+            }
+        }
+    }
+}
+
+// IDE 查询命令 { id user { name password } grade { id user { name password } } }
+{
+    "data": {
+        "id": "1",
+        "user": {
+            "name": "dudu",
+            "password": "20030906"
+        },
+        "grade": {
+            "id": "001",
+             "user": {
+                 "name": "keke",
+                 "password": "20050703"
+             }
+        }
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+​	
+
+
 
 
 
@@ -2842,17 +3181,113 @@ pool.query('SELECT * FROM `users`', (err, results, fields) => {
 
 
 
-## 🍃MongoDB
+## 🍃Mongoose
 
-***`MongoDN`是一个<span style=color:red;>非关系型数据库</span>***
+### 模块安装
 
-<center><img src="images/MongoDB.png" alt="MongoDB" style="zoom:80%;border:2px solid"  title='MongoDB'/></center>
+🔗[Mongoose](https://mongoosejs.com/docs/)
+
+```cmd
+npm i mongoose
+```
+
+
+
+
+
+### 创建连接
+
+```js
+// 引入 mongoose 模块
+const mongoose  = require('mongoose');
+
+// 连接 MongoDB 数据库
+main().catch(err => console.log(err));
+async function main() {
+    await mongoose.connect('mongodb://localhost:27017/study');
+    // connect('mongodb://ip地址:端口号/使用的数据库');
+}
+
+// 接口定义字段
+const Schema = mongoose.Schema;
+// 限制 users 集合的字段以及字段类型
+const UserType = {
+  username: String,
+  password: String,
+  age: Number
+}
+
+// 定义模块(对应数据库中(模型名+s)的集合)
+const userModel = mongoose.model('user', new Schema(UserType));
+```
 
 
 
 
 
 
+
+### 基本使用
+
++ ###### *增加数据*
+
+  + ```js
+    let data = { username: '1', password: '123', age: '12' };
+    
+    // create(数据)
+    UserModel.create(data).then(data => {
+        console.log(data); // { username, password, age, _id, __v }
+    }).catch(err => console.log(err));
+    ```
+
++ ###### *更新数据*
+
+  + ```js
+    // updateMany(条件,数据) // 批量更新,参数空默认全部
+    // updateOne(条件,数据)  // 单个更新,参数空默认首个
+    
+    let data = { username: '2', password: '234', age: '23' };
+    
+    UserModel.updateOne({ _id: req.params.id }, data).then(data => {
+        console.log(data); // { acknowledged, modifiedCount, upsertedId, upsertedCount, matchedCount }
+    }).catch(err => console.log(err));
+    ```
+
++ ###### *删除数据*
+
+  + ```js
+    // deleteMany(条件) // 批量删除,参数空默认全部
+    // deleteOne(条件)  // 单个删除,参数空默认首个
+    
+    UserModel.deleteOne({ _id: req.params.id }).then(data => {
+        console.log(data); // { acknowledged, deletedCount }
+    }).catch(err => console.log(err));
+    ```
+
++ ###### *查询数据*
+
+  + ```js
+    // find(条件,字段)	  // 批量查询,参数空默认全部
+    // findOne(条件,字段) // 单个查询,参数空默认首个
+    
+    UserModel.find({}, ['username', 'age']).then(data => {
+        console.log(data); // [{...}, {...}]
+    }).catch(err => console.log(err));
+    ```
+
+
+
+
+
+
+
+### 查询方法
+
++ ###### *`sort(number)`	:	排序*
+
++ ###### *`skip(number)`	:	跳过*
+
++ ###### *`limit(number)`	:	获取*
 
 
 
@@ -2983,7 +3418,7 @@ const secretKey = 'linke 🌙';
       expressJWT({ secret: secretKey, algorithms: ['HS256'] }) //使用 HS256密钥解析 JWT 字符串
         .unless({ path: [/^\/sign/] }) // 用正则指定不需要访问权限的路径
     );
-    // 获取解析的数据,解析成功后，会将数据自动挂载到 【req.user / req.auth】 上
+    // 获取解析的数据,解析成功后，会将数据自动挂载到 req.auth 上
     req.auth // { /*...*/ }
     ```
 

@@ -860,6 +860,27 @@ Authorization: Bearer <token>
 
 
 
+## RESTful 架构
+
+***简单来说就是<span style=color:red;>`url`地址中只包含名词代表资源，使用`http`动词表示动作进行操作资源</span>***
+
+```js
+POST /api  		// => 表示新增数据
+UPDATE /api		// => 表示修改数据
+DELETE /api		// => 表示删除数据
+GET /api		// => 表示获取数据
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
