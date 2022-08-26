@@ -578,3 +578,76 @@ const json = await res.json();
 
 
 
+
+
+### ⭐封装拦截器
+
+🔗[fetchs](./js/fetchs.js)
+
+
+
+
+
+#### 导入
+
+```js
+import fetchs from './fetchs.js';
+```
+
+
+
+
+
+
+
+#### 基本使用
+
+```js
+// 请求发送之前的拦截器
+fetchs.interceptors.request.use(function (config) {
+    console.log('在请求发送之前执行的回调函数...', config);
+    return config;
+});
+
+// 请求完成之后的拦截器
+fetchs.interceptors.response.use(function (response) {
+    console.log('在请求完成之后执行的回调函数...', response);
+    return response;
+});
+
+// 发起请求
+fetchs('http://localhost:8080/TestRequest/user/queryUsers').then(async res => {
+    let data = await res.json();
+    console.log(data); // { /* ... */ }
+});
+
+// 执行结果
+在请求发送之前执行的回调函数... {method: 'GET', …}
+在请求完成之后执行的回调函数... Response {type, url, redirected, …}
+{ … }
+```
+
+
+
+
+
+
+
+#### 删除拦截器
+
+```js
+/*
+	fetchs.interceptors.request.eject(reqIntercept);  // 删除请求发送之前的拦截器
+    fetchs.interceptors.response.eject(resIntercept); // 删除请求完成之后的拦截器
+*/
+
+let reqIntercept = fetchs.interceptors.request.use(function () {/*...*/});
+fetchs.interceptors.request.eject(reqIntercept); // 删除拦截器
+```
+
+
+
+
+
+
+

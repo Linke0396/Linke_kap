@@ -2469,7 +2469,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                                                                                        
+    >                                                                                                       
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -2662,15 +2662,38 @@ npm i express-graphql
     const { graphqlHTTP } = require('express-graphql');
     // 导入 graphql 模块
     const { buildSchema } = require('graphql');
+    // 导入 mongoose 模块
+    const mongoose = require('mongoose');
     
     // 创建服务
     const app = express();
     
+    // 创建数据库连接
+    main().catch(err => console.log(err));
+    async function main() {
+        await mongoose.connect('mongodb://localhost:27017/study');
+    }
+    
+    // 定义模块
+    const UserModel = mongoose.model('user',
+    	new mongoose.Schema({
+        	id: String,
+    	    username: String,
+        	password: String
+    	})
+    )
+    
     // 使用 Graphql schema 语法构建一个 schema,定义查询的语句和类型
     const schema = buildSchema(`
+    	type Users {
+        	id: String
+    	    username: String
+        	password: String
+        }
     	type Query {
       		username: String
     	    count: Int
+    	    getUsers: [Users]
         }
     `);
     
@@ -2681,6 +2704,11 @@ npm i express-graphql
         },
         count() {
             return 11;
+        },
+        getUsers() { // 查询数据库
+    		return UserModel.aggregate([
+                { $project: { id: "$_id", _id: 0, username: 1, password: 1 } }
+            ]);
         }
     }
     
@@ -2696,18 +2724,19 @@ npm i express-graphql
         console.log('express server running at localhost/graphql');
     });
     ```
-
+    
   + ***访问 `localhost/graphql`接口***
-
+  
     + <img src="images/GraphQL%20IDE.png" alt="GraphQL IDE" style="zoom:90%;" title="GraphQL IDE" />
-
+  
   + ***使用 `fetch` 访问***
-
+  
     + ```javascript
       fetch('http://localhost/graphql', {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json;charset=utf-8'
+      		'Content-Type': 'application/json',
+              'Accept': 'application/json'
           },
           body: JSON.stringify({ query: '{ username, count }' })
       }).then(async res => {
@@ -2738,8 +2767,8 @@ npm i express-graphql
 
 > ```js
 > schema {
->     query: Query
->     mutation: Mutation
+>        query: Query
+>     	mutation: Mutation
 > }
 > ```
 >
@@ -2750,6 +2779,21 @@ npm i express-graphql
 >  + ###### *`Query` 类型必须提供,且唯一*
 >
 >  + ###### *`Mutation` 可以在类型上定义字段，这些字段可用作您可以在查询中调用的根突变字段*
+
+```graphql
+# {} 默认执行的是 query
+# query {} 匿名查询
+# query 昵称 {} 可以给这次查询起名
+query getUser {}
+
+# mutation {} 匿名修改
+# mutation 昵称 {} 可以给这次修改起名
+mutation addUser {}
+```
+
+
+
+
 
 
 
@@ -2824,8 +2868,175 @@ app.use('/graphql', graphqlHTTP({
 
 #### 对象类型
 
-+ *对象必须在使用之前就定义*
-+ *可嵌套对象*
+> ```js
+> # 自定义对象类型
+> type ObjName {}
+> # 使用
+> type Query {
+>     obj: ObjName
+> }
+> ```
+>
+> <span style=color:red;>:grey_exclamation:***对象必须在使用之前就定义***</span>
+
++ *数组类型，可定义对象数组*
+
+  + ```js
+    type Query {
+        type User {
+    	    name: String
+        	password: String
+      	}	
+        # 定义数组
+        array: [String]
+    	# 对象数组
+        users: [User]
+    }
+        
+    const root = {
+        array() {
+            return [1, 2, 3];
+        }
+        users() {
+            return [
+                {
+    	        	name: 'xixi',
+        	    	password: '20220825'
+                },
+                {
+            		name: 'xiaoxiao',
+    		        password: '20220825'
+                }
+            ]
+        }
+    }
+    
+    // IDE 查询命令 { array   users { name password } }
+    {
+        "data": {
+        	"array": [
+          		"1",
+          		"2",
+          		"3"
+            ]
+            "users": [
+                {
+                    "name": "xixi",
+                    "password": "20220825"
+                },
+                {
+                    "name": "xiaoxiao",
+                    "password": "20220825"
+                }
+            ]	
+     	}
+    }
+    ```
+
++ *自定义对象类型，可嵌套*
+
+  + ```js
+    const schema = buildSchema(`
+    	# 对象类型
+    	type User {
+    	    name: String
+        	password: String
+    	}
+    
+    	# 嵌套对象
+      	type Grade {
+      		id: ID
+        	user: User
+      	}
+    
+    	type Query {
+        	id: ID
+    	    user: User
+        	grade: Grade
+        }
+    `);
+    
+    const root = {
+        id() {
+            return 1;
+        },
+        user() {
+          return {
+              name: 'dudu',
+              password: '20030906'
+          }
+        },
+        grade() {
+            return {
+                id: '001',
+                user: {
+                    name: 'keke',
+                    password: '20050703'
+                }
+            }
+        }
+    }
+    
+    // IDE 查询命令 { id user { name password } grade { id user { name password } } }
+    {
+        "data": {
+            "id": "1",
+            "user": {
+                "name": "dudu",
+                "password": "20030906"
+            },
+            "grade": {
+                "id": "001",
+                 "user": {
+                     "name": "keke",
+                     "password": "20050703"
+                 }
+            }
+        }
+    }
+    ```
+
+
+
+
+
+
+
+
+
+
+#### 非空类型
+
+> **在类型后紧跟`!`表示该字段*<span style=color:red;>不可为空</span>***
+>
+> ```js
+> String!  	# 表示该字段不可为 null
+> [String]!	# 表示数组不可为 null
+> [String!]!	# 表示数组不可为 null,并且数组内元素也不能为 null
+> ```
+
+
+
+
+
+
+
+
+
+#### 参数和输入类型
+
+>```js
+># 定义参数对象
+>input InpName {}
+># 使用
+>type Mutation {
+>    add(obj: InpName!): Int
+>}
+>```
+>
+>+ *参数可使用**`!`**作用符*
+>+ *参数可指定默认值*
+>+ *可自定义参数，参数对象必须使用`input`定义*
 
 ```js
 const schema = buildSchema(`
@@ -2833,56 +3044,66 @@ const schema = buildSchema(`
 	type User {
 	    name: String
     	password: String
-	}
-
-	# 嵌套对象
-  	type Grade {
-  		id: ID
-    	user: User
-  	}
+    }	
 
 	type Query {
-    	id: ID
-	    user: User
-    	grade: Grade
+	    # 参数,并且 id 不能为 null
+	    queryById(id: ID!): [String]
+	    # 设置默认值
+    	queryByName(id: ID,name: String = "dudu"): User
+	}
+	
+	# 参数对象 必须使用 input 定义
+    input userName {
+    	name: String
+  	}	
+	
+  	type Mutation {
+    	addUser(user: userName!): User
     }
 `);
 
 const root = {
-    id() {
-        return 1;
+    queryById({ id }) {
+        console.log(id); // '1'
+        return [id, 'name', 'age'];
     },
-    user() {
-      return {
-          name: 'dudu',
-          password: '20030906'
-      }
-    },
-    grade() {
+    queryByName(args) {
+        console.log(args); // { id: '1', name: 'dudu' }
         return {
-            id: '001',
-            user: {
-                name: 'keke',
-                password: '20050703'
-            }
+            name: args.name,
+            password: '000001'
+        }
+    },
+    addUser(args) {
+        console.log(args); // { user: [Object: null prototype] { name: 'test' } }
+        return {
+            name: 'test',
+            password: '000001'
         }
     }
 }
 
-// IDE 查询命令 { id user { name password } grade { id user { name password } } }
+// IDE 查询命令 query getUser { queryById(id: 1) queryByName(id: 1) { name password } }
 {
     "data": {
-        "id": "1",
-        "user": {
+        "queryById": [
+            "1",
+            "name",
+            "age"
+        ],
+        "queryByName": {
             "name": "dudu",
-            "password": "20030906"
-        },
-        "grade": {
-            "id": "001",
-             "user": {
-                 "name": "keke",
-                 "password": "20050703"
-             }
+            "password": "000001"
+        }
+    }
+}
+
+// IDE 查询命令 utation addUser { addUser(user: {name: "test"}) { name }}
+{
+    "data": {
+        "addUser": {
+            "name": "test"
         }
     }
 }
@@ -2894,11 +3115,67 @@ const root = {
 
 
 
+### 变量
+
+> ```js
+> field: $variableName
+> ```
+>
+> ==***字段的参数是动态的，通过 `variables`设置字段参数值***==
+
+```js
+{
+    query:
+    `query getUserById($id: ID!) {
+        queryByName(id: $id) { # $开头表示变量
+          name
+          password
+        }
+    }`,
+    variables: { // 使用 variables 定义变量值
+        id: 1
+    }
+}
+```
 
 
-​	
 
 
+
+
+
+### 指令
+
+==***指令可以附加到字段或片段包含，并且可以以服务器所需的任何方式影响查询的执行***==
+
++ *`@include(if: Boolean)`仅当参数为 `true` 时，才在结果中包含此字段*
++ *`@skip(if: Boolean)`如果参数为 `true`，就跳过此字段*
+
+```js
+{
+    query:
+    `query hello($withFriends: Boolean!) {
+    	hello {
+        	name
+	        friends @include(if: $withFriends) {
+    	        name
+        	}
+    	}
+	}`,
+    variables: {
+        withFriends: false
+    }
+}
+
+// IDE 查询结果
+{
+  "data": {
+    "hello": {
+      "name": "linke"
+    }
+  }
+}
+```
 
 
 
@@ -3289,6 +3566,8 @@ const userModel = mongoose.model('user', new Schema(UserType));
 
 + ###### *`limit(number)`	:	获取*
 
++ ***`aggregate([{ $project: { id: "$_id"])`	:	起别名***
+
 
 
 
@@ -3303,10 +3582,11 @@ const userModel = mongoose.model('user', new Schema(UserType));
 
 ### 模块安装
 
-🔗[express-session - npm (npmjs.com)](https://www.npmjs.com/package/express-session)
+🔗[express-session](https://www.npmjs.com/package/express-session)
 
 ```cmd
-npm i express-session
+npm i express-session # session
+npm i connect-mongo	# MongoDB会话存储
 ```
 
 
@@ -3314,14 +3594,29 @@ npm i express-session
 ### 中间件
 
 ```js
-// 导入 session 第三个模块
+// 导入 session 第三方模块
 const session = require('express-session');
+// 导入 connect-mongo 第三方模块
+const MongoStore = require('connect-mongo');
 
 // 配置并挂载全局中间件
 app.use(session({
-      secret: 'keyboard cat',	// 设置签名密钥 内容可以任意填写
-      resave: false,			// 是否每次都重新保存会话
-      saveUninitialized: true	// 是否自动保存未初始化的会话
+    name: 'linke',			// 设置key名称,任意可选
+    secret: 'keyboard cat',	// 设置签名密钥,内容可以任意填写
+    resave: true,			// 重新设置session后是否保存会话
+    saveUninitialized: true,// 是否自动保存未初始化的会话
+    cookie: {
+        maxAge: 1000 * 60 * 60,		// 设置cookie过期时间（单位‘毫秒’）
+        secure: false		// 是否只有 https 协议才能访问 cookie(默认false)
+    },
+    rolling: true,	// true(超时前刷新,cookie重新计时,默认值); false(超时前按第一次刷新开始计时)
+    store: MongoStore.create({
+        mongoUrl: 'mongodb://localhost/test-session', // 用于存储session的数据库的连接字符串
+        ttl: 1000 * 60 * 60, // 会话的最大生存期（单位‘毫秒’）,如果尚未设置默认值(14天)
+        crypto: { // 加密相关选项
+            secret: 'linke' // 使用敏感会话数据时加密,内容任意
+        }
+    })
 }));
 ```
 
@@ -3357,7 +3652,11 @@ app.use(session({
 
 
 
+
+
 ## 🟠JWT
+
+<img src="images/token.png" alt="token" style="zoom:55%;border: 3px solid" title="token" />
 
 ### 模块安装
 
@@ -3398,22 +3697,25 @@ const secretKey = 'linke 🌙';
   > jwt.sign(payload, secretOrPrivateKey, [options, callback])
   > ```
   >
-  > ###### 				**`payload`**	:	`JSON` 的对象
+  > ###### 						**`payload`**	:	`JSON` 的对象
   >
-  > ###### 				**`secretOrPrivateKey`**	:	加密密钥
+  > ###### 						**`secretOrPrivateKey`**	:	加密密钥
   >
-  > ###### 				**`options`**	:	配置
+  > ###### 						**`options`**	:	配置
   >
-  > ###### 				**`callback`**	:	回调函数
+  > ###### 						**`callback`**	:	回调函数
   >
   > ```js
-  > jwt.sign(req.body, secretKey, { expiresIn: '30s' }) // expiresIn设置过期时间
+  > jwt.sign(josnObj, secretKey, { expiresIn: '30s' }) // expiresIn设置过期时间
   > ```
 
-+ ###### 解析 `JWT` 字符串
++ ###### *解析 `JWT` 字符串*
 
   + ```js
-    // 配置并挂载需要将 JWT 字符串(Bearer token)还原为 JSON 对象的中间件
+    // 方式1 : verify(jwtString, secretOrPrivateKey)
+    jwt.verify(token, secretKey); // { /*...*/ }
+    
+    // 方式2 : 配置并挂载需要将 JWT 字符串(Bearer token)还原为 JSON 对象的中间件
     app.use(
       expressJWT({ secret: secretKey, algorithms: ['HS256'] }) //使用 HS256密钥解析 JWT 字符串
         .unless({ path: [/^\/sign/] }) // 用正则指定不需要访问权限的路径
@@ -3422,7 +3724,7 @@ const secretKey = 'linke 🌙';
     req.auth // { /*...*/ }
     ```
 
-+ ###### 捕获解析 `JWT` 失败后产生的错误
++ ###### *捕获解析 `JWT` 失败后产生的错误*
 
   + ```js
     app.use((err, req, res, next) => {
@@ -3653,6 +3955,75 @@ app.listen(3001, function () {
     console.log('Express server running at http://127.0.0.1:3001')
 })
 ```
+
+
+
+
+
+
+
+
+
+## 💎UUID
+
+### 模块安装
+
+```cmd
+npm i uuid
+```
+
+
+
+
+
+
+
+### 基本使用
+
+```js
+// 导入 uuid 模块
+const { v4: uuidv4 } = require('uuid');
+
+// 生成随机唯一 ID
+uuidv4() // dc6f1bde-b8ea-4252-93c6-2a04c5bcf721
+```
+
+
+
+
+
+
+
+## 📂multer
+
+🔗[multer](https://www.npmjs.com/package/multer):==***主要用于处理`multipart/form-data`类型表单的上传文件***==
+
+
+
+
+
+### 模块安装
+
+```cmd
+npm i multer
+```
+
+
+
+
+
+### 基本使用
+
+```js
+// 引入 multer 模块
+const multer  = require('multer');
+// 配置 multer 对象
+const upload = multer({ 
+    dest: 'uploads/' // 指定存储文件的目录路径
+});
+```
+
+
 
 
 

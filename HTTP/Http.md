@@ -2,7 +2,23 @@
 
 # 🪁Axios
 
+🔗[Axios](https://www.axios-http.cn/docs/intro)
+
 *==**`Axiso` 是专注于<span style=color:red;>网络数据请求</span>的库，<span style=color:red;>使用简单</span>，<span style=color:red;>轻量级</span>，只专注于网络数据请求**==*
+
+
+
+
+
+
+
+## npm 安装
+
+```cmd
+npm i axios
+```
+
+
 
 
 
@@ -121,6 +137,40 @@ axios({
     console.warn(err);
 });
 ```
+
+
+
+
+
+
+
+## 拦截器
+
+==***处理请求或响应之前截获***==
+
+```js
+// 请求发送之前的拦截器
+axios.interceptors.request.use(function (config) {
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
+
+// 请求完成之后的拦截器
+axios.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    return Promise.reject(error);
+}
+                                
+// 删除拦截器
+const myInterceptor = axios.interceptors.request.use(function () {/*...*/});
+axios.interceptors.request.eject(myInterceptor);
+```
+
+
+
+
 
 
 
@@ -809,6 +859,10 @@ app.get('/api/jsonp', (req, res) => {
 > :grey_exclamation:==***当前端请求后端接口<span style=color:red;>不存在跨域问题的时候，推荐使用 `Session `身份认证机制</span>***==
 
 <img src="images/session.png" alt="session" style="zoom:100%;border: 2px solid;" title="Session工作原理" />
+
+
+
+
 
 
 
