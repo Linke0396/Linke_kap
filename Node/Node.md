@@ -2469,7 +2469,7 @@ use. 1 2
     >
     >  + ```js
     >    const bodyParser = require("body-parser");
-    >                                                                                                       
+    >                                                                                                             
     >    // 解析 json 格式数据
     >    app.use(bodyParser.json());
     >    // 解析 application/x-www-form-urlencoded 格式数据
@@ -2570,6 +2570,238 @@ npm start
 	--git           添加 .gitignore
 -f, --force         强制在非空目录下创建
 ```
+
+
+
+
+
+
+
+
+
+## 🔶Koa
+
++ 🔗[koa 官网](https://www.npmjs.com/package/koa)
+
++ 🔗[Koa 中文文档](https://koa.bootcss.com/)
+
+<u>==***`Koa` 是下一代的 `Node.js` 的 `Web` 框架***==</u>
+
+
+
+
+
+
+
+### 🌺注意
+
++ ###### *`Koa` 不提供内置的中间件*
+
++ ###### *`Koa` 不提供路由，而是把路由模块分离了`(koa/router)`*
+
++ ###### *添加了 `Context` 对象，作为请求的上下文对象*
+
++ ###### *采用 `async/await `异步流程控制*
+
++ ###### *`Koa `中间件采用洋葱模型*
+
+  + <img src="images/koa.png" alt="洋葱模型" style="zoom:40%;" title="洋葱模型" />
+
+
+
+
+
+
+
+
+
+### 模块安装
+
+```cmd
+npm i koa
+```
+
+
+
+
+
+### 创建基本 Web 服务器
+
+```js
+// 导入 koa 模块
+const Koa = require('koa');
+
+// 创建 web 服务
+const app = new Koa();
+
+/* 
+挂载路由
+	中间件通常带有两个参数 (ctx, next), ctx 是一个请求的上下文（context）,
+	next 是调用执行下游中间件的函数. 在代码执行完成后通过 then 方法返回一个 Promise
+*/
+app.use((ctx, next) => {
+    console.log(ctx.path, ctx.request.path);
+
+    // ctx.response.body = "<b>Hello Koa ...</b>";
+    ctx.body = "<b>Hello Koa ...</b>"; // 简写方式
+})
+
+// 启动 Web 服务器
+app.listen(80, () => {
+    console.log('koa server running at http://127.0.0.1');
+});
+```
+
+
+
+
+
+
+
+### 同步
+
+```js
+const Koa = require('koa');
+
+const app = new Koa();
+
+app.use(async (ctx, next) => {
+  if (ctx.url === '/favicon.ico') return;
+  console.log('one ...');
+  let date = await next();
+  console.log('four ...');
+  ctx.body = { status: 0, date };
+});
+
+app.use(async (ctx, next) => {
+  console.log('two ...');
+  await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+  console.log('three ...');
+  return Date.now();
+});
+
+app.listen(80, () => {
+    console.log('koa server running at http://127.0.0.1');
+});
+
+// 访问 http://127.0.0.1/ 执行结果
+one ...
+two ...
+three ...
+four ...
+{ "status": 0, "date": 1661588864118 }
+```
+
+
+
+
+
+### 中间件
+
+==***`Koa` 的中间件之间按照编码顺序在栈内依次执行，允许您执行操作并向下传递请求`（downstream）`，之后过滤并逆序返回响应`（upstream）`***==
+
+
+
+
+
+#### 模块安装
+
+```cmd
+npm i @koa/router
+```
+
+
+
+
+
+
+
+#### 基本使用
+
+```js
+const Koa = require('koa');
+const Router = require('@koa/router');
+
+onst app = new Koa();
+const router = new Router();
+
+router.get('/', (ctx, next) => {
+  // ctx.router available
+});
+
+// 挂载路由对象 allowedMethods()自动判断不合法的请求方式,并返回 405
+app.use(router.routes()).use(router.allowedMethods());
+
+app.listen(80, () => {
+    console.log('koa server running at http://127.0.0.1');
+});
+```
+
+
+
+
+
+#### HTTP 方法
+
+> ###### *可链式调用*
+>
+> ```js
+> router.get().post().put().del().all()
+> ```
+
+|    方法    |       说明       |
+| :--------: | :--------------: |
+| **`get`**  |     **获取**     |
+| **`post`** |     **增加**     |
+| **`put`**  |     **更新**     |
+| **`del`**  |     **删除**     |
+| **`all`**  | **匹配所有方法** |
+
+
+
+
+
+#### 嵌套路由
+
+```js
+const userRouter = new Router();
+const router = Router();
+
+// 注册路由组件
+userRouter.get('/', (ctx, next) => {...});
+router.use('/user', userRouter.routes(), userRouter.allowedMethods());
+
+// 注册应用级组件
+app.use(router.routes()).use(router.allowedMethods());
+```
+
+
+
+
+
+
+
+
+
+#### 路由前缀
+
+```js
+// 方式1
+const router = new Router({
+  prefix: '/users'
+});
+
+// 方式2
+router.prefix('/users');
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -4020,6 +4252,44 @@ const multer  = require('multer');
 // 配置 multer 对象
 const upload = multer({ 
     dest: 'uploads/' // 指定存储文件的目录路径
+});
+
+// 更多配置
+multer({
+    storage:multer.diskStorage({
+        destination: function (req, file, cb) {
+            // 接收到文件后输出的保存路径（若不存在则需要创建）
+            cb(null, './api-server/images');
+        },
+        filename: function (req, file, cb) {
+            // 将保存文件名设置为 时间戳 + 文件原始名
+            cb(null, Date.now() + "-" + file.originalname);
+        }
+    }),
+    limits: {
+        //限制文件大小10kb
+        fileSize: 3 * 1024 * 1024,
+        //限制文件数量
+        files: 1
+    },
+    fileFilter: function (req, file, cb) {
+        // 限制文件上传类型，仅可上传png/jpeg格式图片
+        if (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg') {
+            cb(null, true);
+        } else cb(new Error('I don\'t have a clue!'));
+    }
+})
+
+/* 
+单个上传: single(fileName)
+	fileName : 必须与form中 input:file 的name值一致
+批量上传: upload.array(fileName, max) 
+ 	max : 最大限制文件数量,不写默认无限制,并且form中 input:file 需要设置 multiple 属性
+*/
+app.post('/upload', upload.single('fileName'), (req, res) => {
+	// 获取存储完成的文件详细信息; (单个是对象/多个是数组)
+	req.file; 
+    // { fieldname, originalname, encoding, mimetype, destination, filename, path, size }
 });
 ```
 
