@@ -439,7 +439,7 @@ app.get('/api/jsonp', (req, res) => {
 
 
 
-#### 中间件
+#### Express 解决跨域
 
 + ##### *自定义中间件函数*
 
@@ -471,6 +471,49 @@ app.get('/api/jsonp', (req, res) => {
     // 挂载全局中间件
     app.use(cors());
     ```
+
+
+
+
+
+
+
+#### Koa 解决跨域
+
++ ##### *自定义组件*
+
+  + ```js
+    // 挂载组件
+    app.use(async (ctx, next) => {
+        // 简单请求解决
+        ctx.set('Access-Control-Allow-Origin', '*')
+        // 非简单请求的解决
+        if (ctx.method == 'OPTIONS') {
+            ctx.set('Access-Control-Allow-Methods', '*');
+            ctx.set('Access-Control-Allow-Headers', 'Content-Type');
+            ctx.status = 200;
+        } else {
+            await next();
+        }
+    });
+    ```
+
++ ##### *第三方中间件*
+
+  + ```cmd
+    # 安装
+    npm i koa2-cors
+    ```
+
+  + ```js
+    // 引入 koa2-cors 模块
+    const cors = require('koa2-cors');
+    
+    // 配置解决跨域的组件
+    app.use(cors());
+    ```
+
+
 
 
 
