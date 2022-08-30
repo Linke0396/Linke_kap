@@ -1816,6 +1816,26 @@ npm uninstall -g 包名	# 卸载全局安装的包
 
 
 
+## 📍IP 地址
+
+```js
+// 获取客户端的真实ip地址
+let hostname = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
+    req.socket.remoteAddress || req.connection.socket.remoteAddress;
+
+hostname // ::ffff:192.168.1.1
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2595,9 +2615,13 @@ app.engine('html', ejs.renderFile); // 支持直接渲染 html 文件
 
 🔗[mysql](https://www.npmjs.com/package/mysql)
 
+🔗[mysql2](https://www.npmjs.com/package/mysql2)
+
 ```cmd
-npm i mysql
+npm i mysql2
 ```
+
+
 
 
 
@@ -2607,7 +2631,8 @@ npm i mysql
 
 ```js
 // 导入 mysql 第三方模块
-const mysql = require('mysql');
+const mysql = require('mysql2'); // 异步
+const mysql = require('mysql2/promise'); // 导入 mysql 同步模块
 
 // 建立与 MySQL 数据库的连接
 const pool = mysql.createPool({
@@ -2615,13 +2640,14 @@ const pool = mysql.createPool({
     port: '3306',		// 端口号,默认3306(可省略)
     user: 'root',       // 用户名
     password: '200396', // 密码
-    database: 'study'   // 使用的数据库
-});
+    database: 'study',  // 使用的数据库
+    connectionLimit: 10	// 创建连接池个数
+}).promise();
 ```
 
 
 
-
+​	
 
 
 
@@ -3308,6 +3334,100 @@ app.post('/upload', upload.single('fileName'), (req, res) => {
     // { fieldname, originalname, encoding, mimetype, destination, filename, path, size }
 });
 ```
+
+
+
+
+
+
+
+
+
+## 🪐ws
+
+==***`ws` 是一个简单易用、速度极快且经过全面测试的 `WebSocket` 客户端和服务器实现***==
+
+
+
+
+
+### 模块安装
+
+```cmd
+npm i ws
+```
+
+
+
+
+
+
+
+### 基本使用
+
+```js
+// 服务端
+// WebSocket 响应
+const wss = new WebSocketServer({ port: 8089 });
+wss.on('connection', function connection(ws) {
+    // 接收客户端发送的信息
+    ws.on('message', function message(data) {
+        console.log('received: %s', data);
+    });
+
+    // 向客户端发送的信息,send(String)
+    ws.send('something');
+});
+
+
+// 客户端
+let socket = new WebSocket('ws://localhost:8089');
+// 连接因错误而关闭时触发
+socket.onerror = err => {
+    console.error(err);
+}
+
+// 接收数据时触发
+socket.onmessage = e => {
+    // 接收服务端发送信息
+    console.log(e.data);
+}
+
+// 连接打开时触发
+socket.onopen = () => {
+    console.info('连接成功,状态为:', socket.readyState);
+    // 向服务端发送信息
+    socket.send('Hello Server!');
+}
+```
+
+
+
+
+
+
+
+### 🎡Server broadcast
+
+```js
+const { WebSocket, WebSocketServer } = require('ws');
+
+const wss = new WebSocketServer({ port: 8080 });
+
+wss.on('connection', function connection(ws, req, client) {
+    ws.on('message', function message(data, isBinary) {
+        // wss.clients.size
+        wss.clients.forEach(function each(client) {
+            // if (client !== ws && client.readyState === WebSocket.OPEN) { // 不包括自身
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(data, { binary: isBinary });
+            }
+        });
+    });
+});
+```
+
+
 
 
 

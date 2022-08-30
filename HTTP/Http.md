@@ -978,6 +978,179 @@ GET /api		// => 表示获取数据
 
 
 
+# 🌀WebSocket
+
+<center><img src="images/WebSocket.png" alt="WebSocket" style="zoom:90%;" title="WebSocket" /></center>
+
+> ==***`WebSocket` 是 `HTML5` 下一种新的协议<span style=color:red;>（`websocket`协议本质上是一个基于`tcp`的协议）</span>，不属于`http`无状态协议，协议名为`ws`***==***==
+>
+> ==***一个<span style=color:red;>持久化</span>的协议，它实现了浏览器与服务器<span style=color:red;>全双工通信</span>，能更好的节省服务器资源和带宽并达到实时通讯的目的***==
+
+
+
+
+
+
+
+## 🍀原理
+
+<img src="images/WebSocket%E5%8E%9F%E7%90%86.png" alt="websocket原理" style="zoom:110%;" title="websocket原理" />
+
+==***`websocket`约定了一个通信的规范，通过一个握手的机制，客户端和服务器之间能建立一个类似`tcp`的连接，从而方便它们之间的通信***==
+
+
+
+
+
+
+
+## 🤝建立握手
+
+>:grey_exclamation:==***`WebSocket`连接必须由浏览器发起，因为请求协议是一个标准的`HTTP`请求***==
+>
+>:grey_exclamation:*==**`WebSocket`在建立握手时，数据是通过`HTTP`传输的。但是建立之后，在真正传输时候是不需要`HTTP`协议的**==*
+
+
+
+
+
+
+
+### ▶请求
+
+❗==***`HTTP`协议的握手请求 `Request` 的请求头***==
+
+```request
+GET /chat HTTP/1.1
+Host: localhost
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: client-random-string
+Sec-WebSocket-Version: 13
+```
+
++ ###### *`GET` 请求的地址不是类似`/path/`，而是一个以`ws://`开头的地址*
+
++ ###### *请求头 `Upgrade: websocket` 和 `Connection: Upgrade` 表示该连接将要被转换为 `WebSocket` 连接*
+
++ ###### *`Sec-WebSocket-Key` 是用于标识这个连接，并非用于加密数据*
+
++ ###### *`Sec-WebSocket-Version` 指定了 `WebSocket` 的协议版本*
+
+
+
+
+
+
+
+### ◀响应
+
+❗==***服务器返回`Response`的响应头中包含以下信息，表示已经接受到请求， 并成功建立`Websocket`连接***==
+
+```response
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: server-random-string
+```
+
++ ###### *`101` 响应状态码表示本次连接的 `HTTP` 协议即将被更改为 `Upgrade: websocket`指定的`WebSocket`协议*
+
+
+
+
+
+
+
+
+
+## 创建
+
+```js
+// 1.创建对象
+let socket = new WebSocket('ws://localhost:8089'); // ws://服务器地址
+
+// 2.监听事件
+// 连接因错误而关闭时触发
+socket.onerror = err => {
+    console.error(err);
+}
+
+// 连接打开时触发
+socket.onopen = () => {
+    // WebSocket.readyState : 连接的当前状态
+    console.info('连接成功,状态为:', socket.readyState); 
+    // 向服务端发送信息
+    socket.send('Hello Server!');
+} 
+
+// 接收数据时触发
+socket.onmessage = e => {
+    // 接收服务端发送信息
+    console.log(e.data);
+}
+
+// 连接关闭时触发
+socket.onclose = () => {
+    console.warn('连接关闭,状态为:', socket.readyState);
+}
+```
+
+
+
+
+
+
+
+
+
+## 🔵事件
+
+|     事件      |            作用            |
+| :-----------: | :------------------------: |
+|  **`error`**  | **连接因错误而关闭时触发** |
+|  **`open`**   |     **连接打开时触发**     |
+| **`message`** |     **接收数据时触发**     |
+|  **`close`**  |     **连接关闭时触发**     |
+
+
+
+
+
+
+
+## 方法
+
+|          方法           |            作用            |
+| :---------------------: | :------------------------: |
+| **`WebSocket.close()`** |        **关闭连接**        |
+| **`WebSocket.send()`**  | **将要传输的数据排入队列** |
+
+
+
+
+
+
+
+## 🟠状态
+
+|  Value  |      State       |          Description           |
+| :-----: | :--------------: | :----------------------------: |
+| **`0`** | ***CONNECTING*** |   **已创建，但连接尚未打开**   |
+| **`1`** |    ***OPEN***    | **连接已打开并准备好进行通信** |
+| **`2`** |  ***CLOSING***   |     **连接正在关闭过程中**     |
+| **`3`** |   ***CLOSED***   |    **连接已关闭或无法打开**    |
+
+
+
+
+
+
+
+
+
+
+
 
 
 
