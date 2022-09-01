@@ -26,9 +26,9 @@
 
 > ***Ecma 国际制定了许多标准，而`ECMA-262` 只是其中的一个***
 
-- `ES5` 是 ECMAScript 第5版，2009年发布
-- `ES6` 是 ECMAScript 第6版，2015年发布，也叫 ES2015
-- 从 ES6 开始，每年发布一个版本，版本号比年份最后一位大 1
+- `ES5` 是 **ECMAScript** 第5版，2009年发布
+- `ES6` 是 **ECMAScript** 第6版，2015年发布，也叫 **ES2015**
+- 从 `ES6` 开始，每年发布一个版本，版本号比年份最后一位大 **1**
 
 
 
@@ -3516,6 +3516,8 @@ import { /* ... */ } from '模块文件的位置';
 ##### :grey_exclamation:注意
 
 + <span style=color:red;>***多次重复执行同一句`import`语句，那么只会执行一次，而不会执行多次***</span>
+
++ <span style=color:red;>***如果模块使用 `from` 接收的为 `undefined`， 则可省略`from`***</span>
 
 + <span style=color:red;>***不能使用表达式和变量***</span>
 

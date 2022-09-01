@@ -986,6 +986,12 @@ GET /api		// => 表示获取数据
 >
 > ==***一个<span style=color:red;>持久化</span>的协议，它实现了浏览器与服务器<span style=color:red;>全双工通信</span>，能更好的节省服务器资源和带宽并达到实时通讯的目的***==
 
+<img src="images/%E9%80%9A%E4%BF%A1.png" alt="通信" style="zoom:40%;" title="通信" />
+
+
+
+
+
 
 
 

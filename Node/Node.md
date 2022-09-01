@@ -511,7 +511,7 @@ fs.existsSync('../file') // true
 
 > ```js
 > // 输入流
-> fs.createReadStream(path, encode)
+> fs.createReadStream(path, encode);
 > // 输出流
 > fs.createWriteStream(path, encode);
 > ```
@@ -1520,7 +1520,7 @@ timeout
 > npm install 包名 # 自动安装最新版本的包
 > npm i 包名 # 简写方式
 > npm i 包名@num1.num2.num3 # 安装指定版本的包
-> npm i 包名 --save # 兼容版本
+> npm i 包名 --save # 兼容版本 或者 -S
 > npm i 包名 --legacy-peer-deps # 忽视依赖冲突,依赖不会覆盖(推荐)
 > npm i 包名 --force # 无视依赖冲突,冲突时覆盖掉原先的版本
 > ```
@@ -3353,6 +3353,8 @@ app.post('/upload', upload.single('fileName'), (req, res) => {
 
 ### 模块安装
 
+🔗[ws](https://www.npmjs.com/package/ws)
+
 ```cmd
 npm i ws
 ```
@@ -3410,10 +3412,13 @@ socket.onopen = () => {
 ### 🎡Server broadcast
 
 ```js
+// 引入模块
 const { WebSocket, WebSocketServer } = require('ws');
 
+// 创建服务
 const wss = new WebSocketServer({ port: 8080 });
 
+// 监听
 wss.on('connection', function connection(ws, req, client) {
     ws.on('message', function message(data, isBinary) {
         // wss.clients.size
@@ -3425,6 +3430,286 @@ wss.on('connection', function connection(ws, req, client) {
         });
     });
 });
+```
+
+
+
+
+
+
+
+### 发送所有连接的客户端
+
+```js
+if (client !== ws && client.readyState === WebSocket.OPEN) { ... }
+```
+
+<center><img src="images/socket-all.png" alt="socket-all" style="zoom:40%;" title="All" /></center>
+
+
+
+
+
+
+
+### 发送除发件人所有连接的客户端
+
+```js
+if (client.readyState === WebSocket.OPEN) { ... }
+```
+
+<center><img src="images/socket-rests.png" alt="socket-rests" style="zoom:40%;" title="rests" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🛸socket.io
+
+==***`Socket.IO` 是一个<span style=color:red;>库</span>，它支持客户端和服务器之间的<span style=color:red;>低延迟</span>、<span style=color:red;>双向</span>和<span style=color:red;>基于事件</span>的通信***==
+
+<center><img src="images/socketio.png" alt="Socket.io" style="zoom:50%;border: 3px solid" title="Socket.io" /></center>
+
+
+
+
+
+
+
+
+
+### 模块安装
+
++ 🔗[socket.io](https://www.npmjs.com/package/socket.io)
++ 🔗[Socket.IO](https://socket.io/)
+
+```cmd
+npm i socket.io
+```
+
+
+
+
+
+
+
+
+
+### 📡服务器
+
+#### 与 Express 结合
+
+```js
+// 创建服务
+const app = require('express')();
+
+// 初始化
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+// 监听
+io.on('connection', socket => {
+	// ...
+});
+
+// 启动
+server.listen(3000);
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 与 Koa 结合
+
+```js
+// 创建服务
+const app = new (require('koa'))();
+
+// 初始化
+const server = require('http').createServer(app.callback());
+const io = require('socket.io')(server);
+
+// 监听
+io.on('connection', () => {
+    // ...
+});
+
+// 启动
+server.listen(3000);
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📟客户端
+
+🔗[socketio/socket.io - GitHub ](https://github.com/socketio/socket.io#readme)
+
+1. ***进入 client-dist 目录*** 
+
+2. ***点击 socket.io.min.js 并复制***
+
+3. ***在页面引入 socket.io.min.js***
+
+   + ```html
+     <!-- 引入 socket.io 客户端 -->
+     <script src="./socket.io.min.js"></script>
+     ```
+
+4. ***连接服务器***
+
+   + ```javascript
+     const socket = io("ws://hostname:port"); // 参数不写默认 localhost
+     ```
+
+5. ***监听事件***
+
+
+
+
+
+
+
+
+
+
+
+### 🔵事件
+
+#### 发出事件
+
++ ###### *发送所有连接的客户端*
+
+  + ```js
+    io.emit(eventName, data);
+    ```
+
++ ###### *发送除了发件人之外所有连接的客户端*
+
+  + ```js
+    socket.broadcast.emit(eventName, data);
+    ```
+
+```js
+// 服务器
+io.on("connection", (socket) => {
+    socket.emit("hello", "world");
+});
+
+// 客户
+socket.on("hello", (arg) => {
+    console.log(arg); // world
+});
+```
+
+
+
+
+
+
+
+
+
+#### 超时
+
+```js
+// socket.timeout(millisecond)
+socket.timeout(5000).emit("event", (err, response) => {
+    if (err) {
+        // ...
+    } else {
+        console.log(response);
+    }
+});
+```
+
+
+
+
+
+
+
+#### 监听事件
+
+```js
+// on(eventName, listener)
+socket.on("hello", (...args) => {
+    // ...
+});
+```
+
+
+
+
+
+
+
+##### 一次性侦听器函数
+
+```js
+// socket.once(eventName, listener)
+socket.once("hello", (...args) => {
+    // ...
+});
+```
+
+
+
+
+
+
+
+##### 删除指定的侦听器
+
+```js
+// socket.off(eventName, listener)
+const listener = (...args) => {
+  console.log(args);
+}
+
+// on 绑定
+socket.on("hello", listener);
+
+// off 解绑
+socket.off("hello", listener);
+```
+
+
+
+
+
+
+
+##### 删除所有侦听器
+
+```js
+// socket.removeAllListeners([eventName])
+socket.removeAllListeners("hello"); // 删除所有指定事件名称的侦听器
+socket.removeAllListeners(); // 删除所有的侦听器
 ```
 
 

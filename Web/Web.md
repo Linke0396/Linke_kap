@@ -500,7 +500,7 @@ $$
 
 
 
-> ❕***浏览器识别Less代码，需要引入对应的CSS文件***
+> ❕***浏览器无法识别`Less`代码，需要引入对应的`CSS`文件***
 
 ![lessFile](images/lessfile.png)
 
