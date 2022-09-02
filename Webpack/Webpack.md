@@ -104,7 +104,7 @@ yarn add webpack webpack-cli --dev
 
 
 
-### 模式(mode)
+### ⭐模式(mode)
 
 ```js
 module.exports = {
@@ -385,6 +385,39 @@ module.exports = config;
 
 
 
+### 🔖别名(alias)
+
+> ==*为模块或某些模块创建别名，**<u><span style=color:red;>导入时就不需要相对路径，而可以使用别名</span></u>***==
+
+```js
+// 在 webpack.config.js 文件中配置
+const path = require('path');
+
+module.exports = {
+    //...
+    resolve: {
+        alias: { // 为模块创建别名
+            '@': path.resolve(__dirname, 'src/'),
+        }
+    }
+}
+
+// (js中) 使用别名导入模块
+import module from '@/module-path';
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 📦打包发布
@@ -629,7 +662,7 @@ module.exports = config;
 
 
 
-## Source Map
+## 🎈Source Map
 
 ==***`Source Map` 就是一个信息文件，里面<span style=color:red;>存储着压缩混淆后的代码，所对应的<u>转换前的位置</u></span>***==
 
@@ -658,3 +691,40 @@ module.exports = webpackConfig;
 
 
 
+#### ❌错误映射
+
+- ***`nosources-source-map`  ：错误代码准确信息，但是没有任何源代码信息***
+- ***`hidden-source-map`	：只能会提示构建后代码错误信息，没有任何源代码信息***
+- ***`source-map`  ：错误代码准确信息 和 源代码的错误位置***
+- ***`eval-source-map`  ：每个文件都生成对应的 `source-map`，错误代码准确信息 和 源代码的错误位***
+
+
+
+
+
+
+
+
+
+#### :sunrise_over_mountains:环境配置
+
++ ***<span style=color:red;>开发环境</span>	:	`eval-source-map`***
++ ***<span style=color:red;>生产环境</span>	:	`nosources-source-map / hidden-source-map`***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ▫▫▫终
+
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
