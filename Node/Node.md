@@ -1578,7 +1578,8 @@ npm i -D 包名	# 简写
 ### ➖卸载包
 
 >```cmd
->npm uninstall 需要卸载的包名
+>npm uninstall 需要卸载的包名 # 全写
+>npm uni 需要卸载的包名		# 简写
 >```
 >
 >:grey_exclamation:==***`npm uninstall` 命令执行成功后，会把卸载的包，自动从 `package.json` 的 `dependencies` 中移除掉***==

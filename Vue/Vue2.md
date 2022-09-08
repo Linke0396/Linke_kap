@@ -6,7 +6,7 @@
 
 *==🔗[Vue.js - v2](https://v2.cn.vuejs.org/) **:** **渐进式 `JavaScript` 框架**==*
 
-<center><img src="images/Vue.png" alt="Vue" style="zoom:50%;" title="Vue" /></center>
+<center><img src="images/Vue.png" alt="Vue" style="zoom:110%;" title="Vue" /></center>
 
 
 
@@ -626,7 +626,7 @@ data: {
 
 
 
-### 特殊 attribute
+### ➰特殊 attribute
 
 + **`key`**  ：用来作标识`(唯一)`的， 赋值的是变量需要加 **`:`** ，反之则不需要
 
@@ -634,8 +634,34 @@ data: {
     >
     > ==***值类型：`string/number`***==
 
-+ **`ref`** ：被用来给元素或子组件注册引用信息，引用信息将会注册在父组件的 `$refs` 对象上
++ **`ref`** ：用来给元素或子组件注册引用信息，引用信息将会注册在父组件的 `$refs` 对象上
 
+  + >:grey_exclamation:==***每个组件都包含一个 `$refs` 对象，默认为空对象***==
+    >
+    >==***值类型：`string`***==
+    >
+    >+ ==***如果在普通的 `DOM` 元素上使用，引用指向的就是 `DOM` 元素***==
+    >
+    >+ ==***如果用在子组件上，引用就指向组件实例***==
+    >
+    >```vue
+    ><div ref="txt"></div>
+    ><Son ref="son"></Son>
+    ><button type="button" @click="getRef">Get Ref</button>
+    >```
+    >
+    >```js
+    >export default {
+    >    methods: {
+    >        getRef() {
+    >            console.log(this.$refs); // {box: div, son: VueComponent}
+    >        },
+    >    },
+    >	components: {
+    >	    Son,
+    >    },
+    >};
+    >```
 
 
 
@@ -830,18 +856,18 @@ data: {
 >
 > ```javascript
 > data: {
->     username: 'linke'
+>        username: 'linke'
 > },
 > watch: { // watch 节点号定义监听器
->     // 监听 username 属性(属性名及方法名)的变化,第一个值为"改变之后的值",第二个值为"改变之前的值"
->     username(newVal, oldVal) { // 方式1(方法形式)
->         console.log(`username数据发生变化!! 旧值:${oldVal}, 新值:${newVal}`);
->     }
->     /*
->     username: { // 方式2(对象形式)
->    		handler(newVal, oldVal){ ... } 
->     }
->     */
+>        // 监听 username 属性(属性名及方法名)的变化,第一个值为"改变之后的值",第二个值为"改变之前的值"
+>        username(newVal, oldVal) { // 方式1(方法形式)
+>            console.log(`username数据发生变化!! 旧值:${oldVal}, 新值:${newVal}`);
+>        }
+>        /*
+>        username: { // 方式2(对象形式)
+>        	handler(newVal, oldVal){ ... } 
+>        }
+>    	*/
 > }
 > ```
 
@@ -941,6 +967,18 @@ methods: {
 
 
 
+### $refs
+
+> :grey_exclamation:==***`Vue` 实例对象的一个对象属性，持有注册过`ref`属性的所有 `DOM` 元素和组件实例***==
+
+
+
+
+
+
+
+
+
 
 
 
@@ -981,13 +1019,107 @@ methods: {
 
 
 
+## ⭐生命周期
+
+<center><img src="images/lifecycle.png" alt="Vue实例生命周期" style="zoom:150%;border: 1px solid silver" title="Vue实例生命周期" /></center>
+
+
+
+
+
+
+
+
+
+
+
+### 过程
+
+>:grey_exclamation:==*生命周期 `(Life Cycle)`是指一个组件从 <span style=color:red;>创建 </span>到  <span style=color:red;>销毁</span> 的整个阶段，强调的是一个<span style=color:red;>时间段</span>*==
+>$$
+>开始创建 —> 初始化数据 —> 编辑模板 —> 挂载DOM($el) —> UI渲染 —> 数据更新 —> 卸载
+>$$
+>
+
+
+
+
+
+
+
+
+
+
+
+### ✨四大阶段
+
+1. ==***初始化阶段***==
+   + **`beforeCreate`** ：实例刚创建完成，此时还没有 `data` 和 `methods`属性
+   + **`created`** ：`vue`实例`data`和`method`属性已经初始化完成，此时还没有编译模板
+
+2. ==***实例挂载阶段***==
+   + **`beforeMount`** ：挂载前，模板编译完成，此时 `el` 还没有挂载，`data`目前可见
+   + **`mounted`** ：挂载完成后，模板编译完成
+
+3. ==***数据更新阶段***==
+   + **`beforeUpdate`** ： 数据更新时执行，`data`数据此时已经是最新的数据，`UI`界面还是旧的
+   + **`updated`** ：数据更新完成后，界面和`data`里的数据此时都是最新的
+
+4. ==***销毁阶段***==
+   + **`beforeDestroy`** ： 实例准备销毁，此时`data`和`methods`方法都能用
+   + **`destroyed`** ： 实例已销毁完成
+
+
+
+
+
+
+
+
+
+### 生命周期钩子
+
+> *每个 `Vue` 实例在都会经过四个阶段的过程，同时在这个过程中也会自动运行一些叫做<span style=color:red;>**生命周期钩子**</span>的函数*
+>
+> ==***<span style=color:red;>:grey_exclamation:不要在生命周期回调上使用箭头函数</span>***==
+
+```js
+new Vue({
+    data: {
+        number: 19
+    },
+    created: function () {
+        // `this` 指向 vm 实例
+        console.log('number is: ' + this.number)
+    }
+})
+
+// => "number is: 19"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 实例方法
 
-### $mount()
+### 生命周期方法
+
++ ***`$mount()`***
 
 > ```js
-> vm.$mount( elementOrSelector );
+> vm.$mount(elementOrSelector);
 > ```
+>
+> ​		**`elementOrSelector`**	:  `CSS`选择器 / `DOM` 元素
 >
 > ==***如果 `Vue` 实例在实例化时没有收到 `el` 选项，则它处于<span style=color:red;>未挂载</span>状态，没有关联的 `DOM` 元素。可以使用 `vm.$mount()` 手动地挂载一个未挂载的实例***==
 
@@ -1002,21 +1134,95 @@ new Vue().$mount('#app');
 new Vue({ el: '#app' });
 ```
 
-
-
-
-
-
-
-
-
-### $forceUpdate()
++ ***`$forceUpdate()`***
 
 >```js
 >vm.$forceUpdate();
 >```
 >
 >==***强制 `Vue` 实例重新渲染，仅影响实例本身和插入插槽内容的子组件***==
+
++ ***`vm.$destroy()`***
+
+> ```js
+> vm.$destroy();
+> ```
+>
+> ==***完全销毁一个实例；清理它与其它实例的连接，解绑它的全部指令及事件监听器***==
+>
+> :grey_exclamation:==***最好使用 `v-if` 指令以数据驱动的方式控制子组件的生命周期***==
+
++ ***`vm.$nextTick()`***
+
+> ```js
+> vm.$nextTick([callback]);
+> ```
+>
+> ==***将回调延迟到下次 `DOM` 更新循环之后执行，在修改数据之后立即使用这个方法，获取更新后的 `DOM`***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 事件方法
+
++ ***`vm.$on()`***
+
+> ```js
+> vm.$on(event, callback);
+> ```
+>
+> ​		**`event`**	：事件名称字符串 / 数据名称数据
+>
+> ​		**`callback`**	：数据处理函数
+>
+> ==***监听当前实例上的自定义事件，事件可以由 `vm.$emit` 触发***==
+
+```js
+vm.$on('test', function (msg) {
+    console.log(msg)
+});
+
+vm.$emit('test', 'linke')
+```
+
++ ***`vm.$once()`***
+
+> ```js
+> vm.$once(event, callback);
+> ```
+>
+> ==***监听一个自定义事件，但是只触发一次。一旦触发之后，监听器就会被移除***==
+
++ ***`vm.$off()`***
+
+> ```js
+> vm.$off([event, callback]);
+> ```
+>
+> ==***移除自定义事件监听器***==
+>
+> 1. ==*如果没有提供参数，则移除所有的事件监听器*==
+> 2. ==*如果只提供了事件，则移除该事件所有的监听器*==
+> 3. ==*如果同时提供了事件与回调，则只移除这个回调的监听器*==
+
++ ***`vm.$emit()`*** 
+
+> ```js
+> vm.$emit(eventName, [...args])
+> ```
+>
+> ​		**`eventName`**	:	事件名称字符串
+>
+> ​		**`...args`**	：附加参数，会传给监听器回调
 
 
 
@@ -1171,6 +1377,10 @@ vue -V
 ==***根据封装的思想，把页面上可重用的 `UI` 结构封装为组件，从而方便项目的开发和维护***==
 
 > :grey_exclamation:==***`vue` 是一个支持组件化开发的前端框架，`vue` 中规定组件的后缀名是 `.vue`***==
+>
+> :grey_exclamation:==***组件可进行任意次数的复用***==
+>
+> :grey_exclamation:==***每个组件必须只有一个根元素***==
 
 
 
@@ -1180,7 +1390,9 @@ vue -V
 
 
 
-### 组成
+
+
+### 🧱组成
 
 > :grey_exclamation:==***每个组件中必须包含 `template` 模板结构，而 `script` 行为和 `style` 样式是可选的组成部分***==
 
@@ -1209,6 +1421,7 @@ vue -V
 // 默认模块语法为 html
 <template>
 <!-- 当前组件的 DOM 结构,必须定义到 template 标题内 -->
+<!-- 组件的模版结构中只能有唯一一个根节点(标签) -->
 </template>
 
 // 更改模块语法为 pug
@@ -1284,19 +1497,627 @@ export default Vue.extend({ });
 
 
 
+### 根组件
+
+```js
+// 导入 Vue 包
+import Vue from 'vue'
+// 导入 App.vue 根组件
+import App from './App.vue'
+
+// 创建 Vue 实例对象
+new Vue({
+    // render 函数中渲染的组件,叫做 "根组件"
+    render: h => h(App),
+}).$mount('#app')
+// $mount('#app') 与 el: '#app' 作用一致
+```
 
 
-### 组件中的 data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### :warning:组件中的 data
 
 >:grey_exclamation:==***`vue` 规定组件中的 `data` 不能是对象，必须是一个函数***==
 >
 >```js
 >export default {
->    data() {
->        return { // return 的值就是数据源
->            username: "linke",
->        };
->    },
+>        data() {
+>             return { // return 的值就是数据源
+>                 username: "linke",
+>             };
+>        },
 >};
 >```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 组件之间的关系
+
++ ==*<u>组件在被封装好之后</u>，<span style=color:red;>彼此之间是相互独立的</span>，不存在父子关系*==
++ ==*<u>在使用组件的时候</u>，<span style=color:red;>根据彼此的嵌套关系</span>，形成了<span style=color:skyblue;>父子关系</span>、<span style=color:skyblue;>兄弟关系</span>*==
+
+<center><img src="images/%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB.png" alt="组件之间的关系" style="zoom:70%;" title="组件之间的关系" /></center>
+
+<center><img src="images/%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB(2).png" alt="组件之间的关系(2)" style="zoom:45%;border: 3px solid silver" title="组件之间的关系(2)" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 组件的使用步骤
+
+1. *使用 `import` 语法导入组件*
+
+   + ```js
+     import Header from "@/components/Header.vue"; // @ 表示 ./src 目录
+     ```
+
+2. *在 `components` 节点中注册组件*
+
+   + ```js
+     export default {
+         components: {
+             Header,
+         },
+     };
+     ```
+
+3. *以<span style=color:red;>标签形式使用</span>注册的组件*
+
+   + ```vue
+     <Header></Header>
+     ```
+
+
+
+
+
+
+
+
+
+
+
+### 🧮组件的组织
+
+==***通常一个应用会以一棵嵌套的组件树的形式来组织***==
+
+<center><img src="images/components.png" alt="components" style="zoom:110%;border: 2px solid silver;" title="components" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🎹组件的注册
+
++ ==***局部注册***==
+
+  + ```js
+    // 导入组件
+    import ComponentA from '@/components/ComponentA.vue'
+    import ComponentC from '@/components/ComponentC.vue'
+    
+    export default {
+        components: { // components 节点中的组件都是局部组件
+            ComponentA,
+    		'ComponentB': ComponentC
+            // ...
+        },
+    }
+    ```
+
++ ==***全局注册***==
+
++ >```js
+  >Vue.component(componentName, component);
+  >```
+  >
+  >​        **`componentName`**  ：全局组件的**注册名称**
+  >
+  >​        **`component`**  ：需要全局注册的**组件**
+
+  + ```js
+    // 导入组件
+    import ComponentA from '@/components/ComponentA.vue'
+    
+    // 注册之后可以用在任何新创建的 Vue 根实例的模板中
+    Vue.component('ComponentA', ComponentA);
+    ```
+
+
+
+
+
+
+
+
+
+#### 组件名
+
+1. ***W3C 规范** 规定自定义组件名<span style=color:red;> (字母全小写且必须包含一个连字符)</span>*
+2. *或者使用 <span style=color:red;>(首字母大写命名) </span>定义一个组件名*
+
+
+
+
+
+
+
+
+
+
+
+### Prop
+
+==***`Prop` 是你可以在组件上注册的一些自定义属性***==
+
+> *`HTML` 中的<span style=color:red;>属性名是大小写不敏感</span>的，所以浏览器会把所有大写字符解释为小写字符。这意味着当你使用 `DOM` 中的模板时，<span style=color:red;>`camelCase` (驼峰命名法)</span> 的 `prop` 名需要使用其等价的 <span style=color:red;>`kebab-case` (短横线分隔命名) </span>命名*
+>
+> ```js
+> props: ["propA", "propB", "propC"] // 一个字符串数组
+> ```
+
++ ❗ *`vue` 规定组件中封装的自定义属性是<span style=color:red;>只读</span>的，如果修改会出现以下错误：*
+
+<img src="images/error.png" alt="error" style="zoom:90%;" title="error" />
+
+
+
+
+
+
+
+
+
+
+
+#### 单向数据流
+
+> *所有的 `prop` 都使得其父子 `prop` 之间形成了一个**<span style=color:red;>单向下行绑定</span>**，父级 `prop` 的更新会向下流动到子组件中，但是反过来则不行，**<span style=color:red;>解决方式：</span>***
+>
+> + ==:grey_exclamation:***传递一个初始值，让子组件将其作为一个本地的 `prop` 数据来使用***==
+
+```vue
+<!-- 父组件(Linke) -->
+<template>
+	<button :class="cla" @click="count++">
+        <span>Button {{ count }}</span>
+    </button>
+</template>
+
+<script>
+export default {
+    props: ["cla", "init"], // props 是只读的,不能直接修改 props 的值,否则报错
+    data() {
+        return { // 将 props 值转存到 data 中,即可修改
+            init: this.init
+        };
+	},
+};
+</script>
+```
+
+```vue
+<!-- 
+传递初始值的方式:
+	(1) :key=value // 以原始数据类型传递
+	(2) key=value // 以字符串形式传递
+-->
+
+<!-- 子组件1 (方式1) -->
+<Linke :cla="'claOne'" :init="1"></Linke>
+
+<!-- 子组件2 (方式2) -->
+<Linke cla="claTwo" init="2"></Linke>
+```
+
+```js
+<!-- 子组件1 vue实例 -->
+props: {
+  	init: 1
+    cla: "claOne"
+},
+data: {
+	count: 1
+}
+
+<!-- 子组件2 vue实例 -->
+props: {
+  	init: "2"
+    cla: "claTwo"
+},
+data: {
+	count: "2"
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Prop 验证
+
+> ==:grey_exclamation:***定制 `prop` 的验证方式，为 `props` 中的值提供一个带有验证需求的对象***==
+>
+> ```js
+> props: {
+>        propA: { /* 配置选项 */ },
+>        propB: { /* 配置选项 */ },
+>        propC: { /* 配置选项 */ },
+> }
+> ```
+
++ ###### *类型检查*
+
+  + ```	js
+     props: {
+        // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+        propA: Number,
+        // 多个可能的类型
+        propB: [String, Number],
+        // 对象形式的类型检查
+        propC: {
+            type: String,
+        }
+    }
+    ```
+
++ ###### *默认值*
+
+  + ```js
+    props: {
+    	// 带有默认值的prop
+        propA: {
+            default: 19
+    	},
+    }
+    ```
+
++ ###### *必填项*
+
+  + ```js
+    props: {
+        // 必填的prop
+    	propA: {
+            required: true
+    	},
+    }
+    ```
+
++ ###### *自定义验证函数*
+
+  + ```js
+    props: {
+        // 自定义验证函数
+        propA: {
+            validator: function (value) {
+                // 这个值必须匹配下列字符串中的一个
+                return ['red', 'yellow', 'green'].includes(value)
+            }
+        }
+    }
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 组件之间的样式冲突
+
+==***默认情况下，写在 `.vue` 组件中的样式会全局生效，因此很容易造成多个组件之间的样式冲突问题***==
+
+
+
+
+
+
+
+
+
+#### 原因
+
+1. ###### ==*单页面应用程序中，所有组件的 `DOM` 结构，都是基于唯一的 `index.html` 页面进行呈现的*==
+
+2. ==*每个组件中的样式，都会影响整个 `index.html` 页面中的 `DOM` 元素*==
+
+
+
+
+
+
+
+
+
+#### 解决方式
+
+1. ==*为每个组件分配唯一的自定义属性，通过属性选择器来控制样式的作用域*==
+
+   + ```vue
+     <template>
+     	<div data-v-001>Component</div>
+     </template>
+     <style>
+         /*
+         每个组件的自定义属性是“唯一”的,以便通过属性选择器来控制样式的作用域
+         */
+         div[data-v-001] {
+             color: darkblue;
+         }
+     </style>
+     ```
+
+2. ==*为 `style` 节点提供了 `scoped` 属性，会自动为组件分配随机唯一自定义属性，原理同上一致*==
+
+   + ```vue
+     <style scoped></style>
+     ```
+
+
+
+
+
+
+
+
+
+#### 样式穿透
+
+> ==***当前组件的 `style` 节点添加了 `scoped` 属性，则当前组件的样式对其子组件是不生效的***==
+>
+> :grey_exclamation:==***如果想让某些样式对子组件生效，可以使用 `/deep/` 深度选择器***==
+
+```vue
+<style scoped>
+/*
+    不使用 /deep/ 时,生成的选择器为 
+    	<CSS选择器>[data-v-xxx] { }
+    使用 /deep/ 时,生成的选择器为
+    	[data-v-xxx] <CSS选择器> { }
+*/
+
+/deep/ <CSS选择器> {
+	// CSS ...
+}
+</style>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔄组件之间的数据共享
+
+#### :arrow_down:父向子共享
+
+> ==***父向子共享数据  ：需要使用<span style=color:red;>自定义属性</span>***==
+
++ ==*父组件*==
+  
+  ```html
+  <!-- 通过 Prop 向子组件传值 -->
+  <Son :msg="message" :user="userinfo"></Son>
+  ```
+  
+  ```js
+  export default {
+      data() {
+          return {
+              message: "Hello Vue ...",
+              userinfo: { username: "linke", age: 19 },
+          };
+      },
+  };
+  ```
+  
++ ==*子组件*==
+  
+  ```html
+  <div>{{ msg }}</div>
+  <div>{{ user }}</div>
+  ```
+  
+  ```js
+  export default {
+      props: ["msg", "user"],
+  };
+  ```
+
+
+
+
+
+
+
+
+
+
+
+#### :arrow_up:子向父共享
+
+> ==***子向父共享数据 ：需要使用<span style=color:red;>自定义事件</span>***==
+
++ ==*子组件*==
+  
+  ```html
+  <input type="text" v-model="text" />
+  ```
+  
+  ```js
+  export default {
+  	data() {
+      	return {
+          	text: "",
+  	    };
+  	},
+  	watch: {
+      	text(newVal) {
+              // 修改数据时,通过 $emit() 触发自定义事件
+              this.$emit("textInput", newVal);
+          },
+      },
+  }; 
+  ```
+  
++ ==*父组件*==
+
+  ```html
+  <!-- 绑定自定义事件 -->
+  <Son @textInput="getText"></Son>
+  ```
+
+  ```js
+  export default {
+      data() {
+          return {
+              // 定义一个属性来接收子组件传递的数据
+              textFromSon: "",
+          };
+      },
+      methods: {
+          // 自定义事件的处理函数
+          getText(val) {
+              this.textFromSon = val;
+          },
+      },
+  };
+  ```
+
+
+
+
+
+
+
+
+
+
+
+#### :twisted_rightwards_arrows:兄弟组件共享
+
+> ==***兄弟组件共享数据  ：使用 `EventBus` 方案***==
+
++ ==*创建 `eventBus.js` 模块*==
+
+  + ```js
+    /* eventBus.js 文件 */
+    // 导入 Vue 模块
+    import Vue from 'vue';
+    
+    // 向外共享 Vue 实例对象
+    export default new Vue();
+    ```
+
++ ==*在数据<span style=color:red;>发送方</span>，<span style=color:red;>触发自定义事件</span>*==
+
+  + ```js
+    import bus from "./eventBus.js";
+    
+    export default {
+        data() {
+            return {
+                // 定义发送兄弟组件数据
+                text: "",
+            };
+        },
+        watch: {
+            text(newVal) {
+                // bus.$emit('事件名称', 要发送的数据)
+                bus.$emit("textChange", newVal);
+            },
+        },
+    };
+    ```
+
++ ==*在数据<span style=color:red;>接收方</span>，<span style=color:red;>注册一个自定义事件</span>*==
+
+  + ```js
+    import bus from "./eventBus.js";
+    
+    export default {
+        data() {
+            return {
+                // 定义变量接收兄弟组件传递的数据
+                textFrom: "",
+            };
+        },
+        created() {
+            // 定义自定义数据 bus.$on('事件名称', 事件处理函数)
+            bus.$on("textChange", (val) => {
+                this.textFrom = val;
+            });
+        },
+    };
+    ```
+
+
+
+
+
+
 
