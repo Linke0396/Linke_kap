@@ -2121,3 +2121,163 @@ data: {
 
 
 
+
+
+
+
+
+
+
+
+### 动态组件
+
+==***动态组件指的是<span style=color:red;>动态切换组件的显示与隐藏</span>***==
+
+> :grey_exclamation:***`vue` 提供了一个内置的`<component>`组件，根据 `is` 的值，<span style=color:red;>来实现动态组件的渲染</span>***
+>
+> ```vue
+> <!-- 组件会在 currentComponent 改变时改变 -->
+> <component v-bind:is="currentComponent"></component>
+> ```
+>
+> + **`is`**	:	已注册组件的名字或一个组件对象
+
+```vue
+<component v-bind:is="currentComponent"></component>
+```
+
+```js
+export default {
+    data() {
+        return {
+            currentComponent: "Left",
+        };
+    },
+    components: {
+        Left,
+    },
+};
+```
+
+
+
+
+
+
+
+
+
+#### keep-alive
+
+==***包裹动态组件时，会缓存不活动的组件实例，而不是销毁组件***==
+
+> :grey_exclamation:***`<keep-alive>` 是一个抽象组件：它自身不会渲染一个 `DOM` 元素，也不会出现在组件的父组件链中***
+>
+> ```vue
+> <!-- 失活的组件将会被缓存 -->
+> <keep-alive>
+>     <!-- 动态组件的渲染 -->
+>     <component :is="view"></component>
+> </keep-alive>
+> ```
+
+
+
+
+
+
+
+
+
+##### Props
+
+>+ **`include`**  ：只有名称匹配的组件会被缓存，`String/RegEx/Array`
+>+ **`exclude`**  ：任何名称匹配的组件都不会被缓存，`String/RegEx/Array`
+>+ **`max`**  ：最多可以缓存多少组件实例，`Number`
+>
+>❗==***`include`与 `exclude`不能同时使用***==
+>
+>:grey_exclamation:==<u>*匹配首先检查组件自身的 `name` 选项，如果 `name` 选项不可用，则匹配它的局部注册名称 (父组件 `components` 选项的键值)，匿名组件不能被匹配*</u>==
+>
+>```vue
+><!-- 逗号分隔字符串 -->
+><keep-alive include="a,b"><!-- component --></keep-alive>
+>
+><!-- 正则表达式 (使用 v-bind) -->
+><keep-alive :include="/a|b/"><!-- component --></keep-alive>
+>
+><!-- 数组 (使用 v-bind) -->
+><keep-alive :include="['a', 'b']"><!-- component --></keep-alive>
+>```
+
+```vue
+<keep-alive include="MyName"><!-- component --></keep-alive>
+```
+
+```js
+export default {
+    /* 指定组件的 name 名称,可忽略(默认组件的注册名称) */
+    name: "MyName",
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 生命周期钩子
+
+>:grey_exclamation:***当组件在 `<keep-alive>` 内被切换，它的 `activated` 和 `deactivated` 这两个生命周期钩子函数将会被对应执行***
+>
+>:grey_exclamation:***`activated` 和 `deactivated` 将会在 `<keep-alive>` 树内的所有嵌套组件中触发***
+>
+>+ **`activated`**	：组件被激活时触发`(组件第一次被创建时也会触发)`
+>+ **`deactivated`**	：组件被缓存时触发
+
+```vue
+<keep-alive>
+	<comp-a v-if="flag"></comp-a>
+    <comp-b v-else></comp-b>
+</keep-alive>
+```
+
+```js
+// comp-a 组件
+export default {
+    activated() { // 组件激活时(组件第一次被创建时也会触发)
+        console.log("组件被激活 activated");
+    },
+    deactivated() { // 组件缓存时
+        console.log("组件被缓存 deactivated");
+    },
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 插槽
+
+> ==***插槽 `(Slot)`是组件的<span style=color:red;>内容的占位符</span>：<u>封装组件时，把不确定的部分定义为插槽</u>***==
+
+<center><img src="images/%E6%8F%92%E6%A7%BD.png" alt="插槽" style="zoom:90%;border: 2.5px solid silver;" title="插槽" /></center>
+
