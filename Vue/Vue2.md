@@ -1236,6 +1236,45 @@ vm.$emit('test', 'linke')
 
 
 
+## 全局配置
+
+### productionTip
+
+```js
+Vue.config.productionTip = false;
+```
+
++ **类型**：`boolean`
++ **默认值**：`true`
++ **作用**：是否阻止 `vue` 在启动时生成生产提示
+
+
+
+
+
+
+
+
+
+### set()
+
+```js
+Vue.set(propertyValue);
+```
+
++ `propertyValue` ：设置的值
++ **作用** ：向`Vue`对象中添加一个 `property`
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 🔧Vue CLI
@@ -1252,9 +1291,9 @@ vm.$emit('test', 'linke')
 
 
 
-### 单页面应用程序
+### SPA
 
-> :grey_exclamation:==***<span style=color:red;>单页面应用程序</span>`（Single Page Application）`简称 `SPA`，顾名思义，指的是<span style=color:red;>一个 `Web` 网站中只有唯一的一个 `HTML` 页面</span>，所有的功能与交互都在这唯一的一个页面内完成***==
+> :grey_exclamation:==***`SPA` <span style=color:red;>单页面应用程序</span> `(Single Page Application)`，指的是<span style=color:red;>一个 `Web` 网站中只有唯一的一个 `HTML` 页面</span>，所有的功能与交互都在这唯一的一个页面内完成***==
 
 
 
@@ -1297,34 +1336,35 @@ vue -V
 
 2. 2️⃣***选择创建方式***
 
-   + <img src="images/vue-cli(1).png" alt="步骤1" style="zoom:90%;" title="步骤1" />
+   + <left><img src="images/vue-cli(1).png" alt="步骤1" style="zoom:90%;" title="步骤1" /></left>
 
 3. 3️⃣***创建自定义配置选项***
 
-   + <img src="images/vue-cli(2).png" alt="步骤2" style="zoom:90%;" title="步骤2" />
+   + <left><img src="images/vue-cli(2).png" alt="步骤2" style="zoom:90%;" title="步骤2" /></left>
 
 4. 4️⃣***选择安装 `Vue` 版本***
 
-   + <img src="images/vue-cli(3).png" alt="步骤3" style="zoom:90%;" title="步骤3" />
+   + <left><img src="images/vue-cli(3).png" alt="步骤3" style="zoom:90%;" title="步骤3" /></left>
 
 5. 5️⃣***创建 `CSS` 预处理器***
 
-   + <img src="images/vue-cli(4).png" alt="步骤4" style="zoom:90%;" title="步骤4" />
+   + <left><img src="images/vue-cli(4).png" alt="步骤4" style="zoom:90%;" title="步骤4" /></left>
 
 6. 6️⃣***创建插件的配置文件存储方式***
 
-   + <img src="images/vue-cli(5).png" alt="步骤5" style="zoom:90%;" title="步骤5" />
+   + <left><img src="images/vue-cli(5).png" alt="步骤5" style="zoom:90%;" title="步骤5" /></left>
 
 7. 7️⃣***是否将本次选项作为映射***
 
-   + <img src="images/vue-cli(6).png" alt="步骤6" style="zoom:90%;" title="步骤6" />
+   + <left><img src="images/vue-cli(6).png" alt="步骤6" style="zoom:90%;" title="步骤6" /></left>
 
 8. 8️⃣***选择项目的包管理工具***
 
-   + <img src="images/vue-cli(7).png" alt="步骤7" style="zoom:90%;" title="步骤7" />
+   + <left><img src="images/vue-cli(7).png" alt="步骤7" style="zoom:90%;" title="步骤7" /></left>
 
 9. 9️⃣***创建项目成功***
-   + <img src="images/vue-cli(8).png" alt="步骤8" style="zoom:90%;" title="步骤8" />
+   
+   + <left><img src="images/vue-cli(8).png" alt="步骤8" style="zoom:90%;" title="步骤8" /></left>
 
 
 
@@ -1336,13 +1376,11 @@ vue -V
 
 
 
-#### 项目结构
-
-<img src="images/%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.png" alt="项目结构" style="zoom:55%;" title="项目结构" />
 
 
+#### 删除自定义配置
 
-
+> :grey_exclamation:==***打开 `C:\Users\{用户目录}\.vuerc`文件，删除`presets`节点下的自定义配置即可***==
 
 
 
@@ -1350,7 +1388,29 @@ vue -V
 
 
 
-#### 运行流程
+
+
+
+
+
+
+
+
+### 项目结构
+
+<center><img src="images/%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.png" alt="项目结构" style="zoom:55%;" title="项目结构" /></center>
+
+
+
+
+
+
+
+
+
+
+
+### 运行流程
 
 > ==***在工程化的项目中，<u>`vue` 通过 `main.js` 把 `App.vue` 渲染到 `index.html` 的指定区域中</u>***==
 
@@ -2129,7 +2189,7 @@ data: {
 
 
 
-### 动态组件
+### 🧷动态组件
 
 ==***动态组件指的是<span style=color:red;>动态切换组件的显示与隐藏</span>***==
 
@@ -2275,9 +2335,1192 @@ export default {
 
 
 
-### 插槽
+### ⚓插槽
 
-> ==***插槽 `(Slot)`是组件的<span style=color:red;>内容的占位符</span>：<u>封装组件时，把不确定的部分定义为插槽</u>***==
+> ==***插槽 `(Slot)`是组件的<span style=color:red;>内容的占位符</span>，<u>封装组件时，可把不确定的部分定义为插槽</u>***==
 
 <center><img src="images/%E6%8F%92%E6%A7%BD.png" alt="插槽" style="zoom:90%;border: 2.5px solid silver;" title="插槽" /></center>
+
+
+
+
+
+
+
+
+
+
+
+#### 基本使用
+
+> ==***`<slot>`元素定义插槽***==
+>
+> :grey_exclamation:==***如果组件的 `template` 中没有包含一个 `<slot>` 元素，则该组件起始标签和结束标签之间的任何内容都会被抛弃***==
+
+```vue
+<!-- 子组件(comp-a) -->
+<div class="son-container">
+    <!-- 定义插槽 -->
+    <slot></slot>
+</div>
+
+<!-- 父组件 -->
+<div class="father-container">
+    <comp-a>
+	    <!-- 插槽内可以包含任何模板代码 -->
+		<strong>content</strong>
+	</comp-a>
+</div>
+
+<!-- 渲染结果 -->
+<div class="father-container">
+    <div class="son-container">
+        <strong>content</strong>
+    </div>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 后备内容
+
+> ==***为一个插槽设置具体的<span style=color:red;>后备</span> (也就是<span style=color:red;>默认</span>的) 内容是很有用的，它只会在没有提供内容的时候就会被渲染***==
+
+```vue
+<!-- comp-a 组件 -->
+<div class="son-container">
+    <slot>Default Content</slot>
+</div>
+
+<!-- 使用 -->
+<div class="father-container">
+    <comp-a></comp-a>
+</div>
+
+<!-- 渲染结果 -->
+<div class="father-container">
+    <div class="son-container">Default Content</div>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 具名插槽
+
+> ==***多个插槽节点，则需要为每个插槽指定具体的 `name` 名称，这种带有具体名称的插槽叫做 <span style=color:red>具名插槽</span>***==
+>
+> :grey_exclamation:==***没有指定 `name` 名称的插槽， 会有隐含的名称叫做 `default`***==
+>
+> >***`v-slot`**  ：指令，向指定具名插槽提供内容*
+> >
+> >```vue
+> >v-slot:插槽名	// 全写
+> >#插槽名		// 简写
+> >```
+> >
+> >+ `v-slot` 只能使用在 `<template>` 标签上
+> >+ `<template>` 是一个虚拟标签，不会渲染为 `DOM` 元素
+> >+ 任何没有被包裹在带有 `v-slot` 的 `<template>` 中的内容都会被视为默认插槽的内容
+
+```vue
+<!-- comp-a 组件 -->
+<div class="son-container">
+    <header>
+        <slot name="header"></slot>
+    </header>
+    <main>
+        <slot></slot>
+    </main>
+    <footer>
+        <slot name="footer"></slot>
+    </footer>
+</div>
+
+<!-- 使用 -->
+<div class="father-container">
+    <comp-a>
+        <template v-slot:header>
+			<strong>header content</strong>
+        </template>
+        <template>
+			<strong>main content</strong>
+        </template>
+    	<template #footer>
+			<strong>footer content</strong>
+    	</template>
+    </comp-a>
+</div>
+
+<!-- 渲染结果 -->
+<div class="father-container">
+    <div class="son-container">
+        <header>
+            <strong>header content</strong>
+        </header>
+        <main>
+            <strong>main content</strong>
+        </main>
+        <footer>
+            <strong>footer content</strong>
+        </footer>
+    </div>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 编译作用域
+
+> ❗==***父级模板里的所有内容都是在父级作用域中编译的；子模板里的所有内容都是在子作用域中编译的***==
+
++ *子组件*
+
+```vue
+<!-- comp-a 组件 -->
+<div class="son-container">
+    <header>
+    	<slot name="header"></slot>
+    </header>
+    <footer>
+    	<slot name="footer">{{ text }}</slot>
+    </footer>
+</div>
+```
+
+```js
+data() {
+    return {
+        text: "Son",
+    };
+},
+```
+
++ *父组件*
+
+```vue
+<div class="father-container">
+    <comp-a>
+		<template #header>{{ text }}</template>
+    	<template #footer></template>
+    </comp-a>
+</div>
+```
+
+```js
+data() {
+    return {
+        text: "Father",
+    };
+},
+```
+
++ *编译结果*
+
+```html
+<div class="father-container">
+    <div class="son-container">
+        <header>Father</header>
+        <footer>Son</footer>
+    </div>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 作用域插槽
+
+> :grey_exclamation:==***可以给插槽绑定 `props` 数据，这种带有 `props` 数据的叫做<span style=color:red;>作用域插槽</span>***==
+
+```vue
+<!-- comp-a 组件 -->
+<div>
+    <slot msg="Hello Vue." :txt="{ txt: 'TEXT' }"></slot>
+</div>
+
+<!-- 使用 -->
+<comp-a>
+    <!--  v-slot 来定义插槽 prop 的名字 -->
+    <template v-slot:default="slotProps">
+		<strong>{{ slotProps }}</strong>
+    </template>
+</comp-a>
+
+<!-- 渲染结果 -->
+<div>
+    <strong>{ "msg": "Hello Vue.", "txt": { "txt": "TEXT" } }</strong>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 独占默认插槽
+
+> ===***当被提供的内容只有默认插槽时，组件的标签才可以被当作插槽的模板来使用，直接可以把 `v-slot` 直接用在组件上***==
+
+```vue
+<!-- comp-a 组件 -->
+<div>
+    <slot :user="{ username: 'linke' }"><slot>
+</div>
+        
+<!-- 使用 -->
+<!-- <comp-a v-slot:default="slotProps"> -->
+<!-- 缩写(缩写语法不能和具名插槽混用), #="slotProps" 语法是错误的 -->
+<comp-a v-slot="slotProps">
+    {{ slotProps.username }}
+</comp-a>
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 解构插槽
+
+> :grey_exclamation:==***`v-slot` 的值实际上可以是任何能够作为函数定义中的参数的 `JavaScript` 表达式***==
+
+```vue
+<!-- comp-a 组件 -->
+<div>
+    <slot msg="Hello Vue." :txt="{ txt: 'TEXT' }"></slot>
+</div>
+
+<!-- 使用 ES6语法 解构插槽 -->
+<comp-a v-slot:default="{ msg }">
+	{{ msg }}
+</comp-a>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔵自定义指令
+
+==***除了核心功能默认内置的指令，`Vue` 也允许注册自定义指令***==
+
+
+
+
+
+
+
+
+
+### 分类
+
++ ###### *<span style=color:red;>局部</span>自定义指令*
+
++ ###### *<span style=color:red;>全局</span>自定义指令*
+
+
+
+
+
+
+
+
+
+### 局部自定义指令
+
+>==***在 `directives` 节点之中定义局部自定义指令***==
+
+```js
+export default {
+    directives: { // 局部自定义指令的节点
+        focus: { // 定义名为 focus 的指令,指向配置对象
+            inserted: function (el) { // 当被绑定的元素插入到 DOM 中时
+                el.focus(); // 聚焦元素
+            },
+        },
+	},
+};
+```
+
+```vue
+<!-- 使用(需要加上 v- 前缀) -->
+<input type="text" v-focus />
+```
+
+
+
+
+
+
+
+
+
+
+
+### 全局自定义指令
+
+>```js
+>Vue.directive(id, [definition]);
+>```
+>
+>​		**`id`**	：全局自定义指令的名称
+>
+>​		**`definition`**	：全局自定义指令的配置对象
+>
+>==***注册或获取全局指令***==
+
+```js
+// 注册一个全局自定义指令 v-focus
+Vue.directive('focus', {
+    // 当被绑定的元素插入到 DOM 中时
+    inserted: function (el) {
+        // 聚焦元素
+        el.focus()
+    },
+});
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 钩子函数
+
+==***一个指令定义对象可以提供如下几个钩子函数 <span style=color:red;>(均为可选)</span>***==
+
++ `bind`：只调用一次，指令第一次绑定到元素时调用
++ `inserted`：被绑定元素插入父节点时调用
++ `update`：所在组件的更新时调用
++ `componentUpdated`：指令所在组件的及其子组件全部更新后调用
++ `unbind`：只调用一次，指令与元素解绑时调用
+
+
+
+
+
+
+
+
+
+### 钩子函数参数
+
+==***指令钩子函数会被传入以下参数***==
+
++ `el`：当前指令所绑定的元素
++ `binding`：一个对象，包含以下属性
+  + `name`：指令名，不包括 `v-` 前缀
+  + `value`：指令的绑定值
+  + `expression`：字符串形式的指令表达式
+  + `arg`：传给指令的参数
+  + `modifiers`：一个包含修饰符的对象
+  + `oldValue`：指令绑定的前一个值
+
+```js
+data() {
+    return {
+        bgc: "skyblue",
+    };
+},
+directives: { // 局部自定义指令的节点
+    bgc: { // 定义名为 bgc 的指令,指向配置对象
+        bind(el, binding) { // el 当前指令所绑定的元素
+            el.style.backgroundColor = binding.value; // binding.value 指令的绑定值
+        },
+        update(el, binding) { // 所在组件的更新时调用
+            el.style.backgroundColor = binding.value;
+        },
+    },
+}
+```
+
+```vue
+<div v-bgc="bgc">
+    <button @click="() => (bgc = `#${Math.random().toString(16).substr(2, 6)}`)" >
+        update bgc
+    </button>
+</div>
+```
+
+
+
+
+
+
+
+
+
+
+
+### 函数简写
+
+:grey_exclamation:==***在 `bind` 和 `update` 时触发相同行为，而不关心其它的钩子时，可使用函数简写***==
+
+```js
+directives: {
+    bgc(el, binding) { // 简写
+        el.style.backgroundColor = binding.value;
+    },
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🟪ESLint
+
+***[ESLint](http://eslint.cn/)是一个<span style=color:red;>代码检查工具</span>，用来检查你的代码是否符合指定的规范***
+
+<center><img src="images/ESLint.png" alt="ESLint" style="zoom:70%;" title="ESLint" /></center>
+
+
+
+
+
+
+
+
+
+
+
+### Vue CLI 安装额外步骤
+
+1. **1️⃣*选择 `ESLint` 安装***
+
+   + <left><img src="images/ESLint(1).png" alt="步骤1" style="zoom:90%;" title="步骤1" /></left>
+
+2. **2️⃣*选择规范格式***
+
+   + <left><img src="images/ESLint(2).png" alt="步骤2" style="zoom:90%;" title="步骤2" /></left>
+
+3. **3️⃣*选择附加功能***
+
+   + <center><img src="images/ESLint(3).png" alt="步骤3" style="zoom:90%;" title="步骤3" /></center>
+
+
+
+
+
+
+
+
+
+
+
+### 配置文件
+
+==***[ESLint Rules](http://eslint.cn/docs/rules/)：所有的规则默认都是禁用的***==
+
+```js
+module.exports = {
+    root: true, // 当前项目使用这个配置文件, 不会往父级目录找.eslintrc.js文件
+    env: { // 指定eslint启动环境(vuecli底层是node支持), browser: true也可以在浏览器设置
+        node: true
+    },
+    extends: [ // 扩展配置
+        'plugin:vue/essential', // vue里必须的规则
+        '@vue/standard' // 使eslint继承@vue/cli脚手架里的 standard标准
+    ],
+    parserOptions: { // 对新语法使用eslint
+        parser: '@babel/eslint-parser', // 使用@babel/eslint-parser 来解析新语法ES6
+        requireConfigFile: false // 压制项目找不到 ESLint配置文件 的报错
+    },
+    rules: { // 自定义规则:  0.不启用这个规则  1.出现问题会有警告  2.出现问题会报错
+        // 上线环境用打印就报警告, 开发环境关闭此规则
+        'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        // debugger 可以终止代码执行
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+        // 在 function的左括号之前使用一致的空格(关闭规则)
+        'space-before-function-paren': ['warn', 'never'] 
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🚩路由
+
+==***路由 `(router)`就是：<span style=color:red;>`Hash` 地址</span>与<span style=color:red;>组件</span>之间的<span style=color:red;>对应关系</span>***==
+
+
+
+
+
+
+
+
+
+
+
+### 工作方式
+
+<center><img src="images/%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F.png" alt="前端路由的工作方式" style="zoom:110%;border: 1.5px solid silver;" title="前端路由的工作方式" /></center>
+
+1. *`URL` 地址栏中的 `Hash` 值发生了变化*
+2. *路由监听了到 `Hash` 地址的变化*
+3. *把当前 `Hash` 地址对应的组件渲染都浏览器中*
+
+
+
+
+
+
+
+
+
+
+
+### 安装
+
+*[Vue Router](https://router.vuejs.org/)：`Vue` 官方路由，只能结合 `vue` 项目进行使用，用于简便管理 `SPA` 项目中组件的切换*
+
+```cmd
+npm i vue-router@3.6.5
+```
+
+
+
+
+
+
+
+
+
+
+
+### Vue CLI 安装额外步骤
+
+1. 1️⃣***选择 `Router` 安装***
+
+   + <left><img src="images/vue-router.png" alt="步骤1" style="zoom:95%;" title="步驟1" /></left>
+
+2. 2️⃣***选择配置***
+
+   + <left><img src="images/vue-router(2).png" alt="步骤2" style="zoom:95%;" title="步骤2" /></left>
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 基本使用
+
+1. ***创建路由模块 `src/router/index.js`***
+
+   + ```js
+     import Vue from 'Vue'
+     // 1.导入 vue-router 模块
+     import VueRouter from 'vue-router'
+     
+     // 1(2).导入组件
+     import Header from '@/components/Header.vue'
+     import Main from '@/components/Main.vue'
+     import Footer from '@/components/Footer.vue'
+     
+     // 2.安装路由
+     Vue.use(VueRouter)
+     
+     // 3.创建路由对象,并配置路由匹配规则
+     const router = new VueRouter({
+         routes: [ // 定义 "hash地址" 与 "组件" 之间的对应关系
+             // path 表示匹配的 hash 地址, component 表示对应的路由组件
+             { path: '/header', component: Header },
+             { path: '/main', component: Main },
+             { path: '/footer', component: Footer }
+         ]
+     })
+     
+     // 导出对象
+     export default router
+     ```
+
+2. ***导入并挂载路由模块 `src/main.js`***
+
+   + ```js
+     import Vue from 'vue'
+     import App from './App.vue'
+     // 1.导入路由模块
+     import router from '@/router'
+     
+     new Vue({
+         render: h => h(App),
+         // 2.挂载路由模块
+         router
+     }).$mount('#app')
+     ```
+
+3. ***声明路由链接和占位符***
+
+   + ```vue
+     <!-- <a> 也有效,但推荐使用 <router-link> 替换 <a> -->
+     <!-- <a href="#/header">header</a> -->
+     <!-- 1.定义路由链接 -->
+     <router-link to="/header">header</router-link>
+     <router-link to="/main">main</router-link>
+     <router-link to="/footer">footer</router-link>
+     
+     <!-- 2.定义路由占位符 -->
+     <router-view></router-view>
+     ```
+
+
+
+
+
+
+
+
+
+
+
+### 路由重定向
+
+```js
+const routes = [{ path: '/', redirect: '/home' }];
+```
+
+
+
+
+
+
+
+
+
+#### 相对重定向
+
+```js
+const routes = [
+    {
+        // 将 /users/123/posts 重定向到 /users/123/profile
+        path: '/users/:id/posts',
+        redirect: to => {
+            return 'profile'
+        },
+    },
+]
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 别名
+
+>==***可以给 `path` 定义别名，当访问的 `hash`地址为别名，就会访问 `path`***==
+>
+>:grey_exclamation:==***使用数组提供多个别名***==
+
+```js
+const routes = [{ path: '/', component: Home, alias: '/home' }];
+```
+
+
+
+
+
+
+
+
+
+
+
+### 动态路由
+
+#### 路径参数
+
+>==***把 `Hash` 地址中可变的部分定义为路径参数，路径参数用冒号 `:` 表示***==
+>
+>+ *`params` ：从 `path` 中提取的已解码路径参数*
+
+```js
+const routes = [
+    // 动态字段以冒号开始
+    // 将 props 设置为 true, 则使用 props 传参
+    { path: '/users/:id', component: User, props: true },
+]
+```
+
+```html
+<!-- User -->
+<div>
+    <div>{{ $route.params }}</div>
+    <!-- { "id": "1" } -->
+    <div>{{ this.$route }}</div>
+    <!-- 路由的信息对象 { name, params, path, hash, query, ... } -->
+    <div>{{ id }}</div>
+    <!-- 1 -->
+</div>
+```
+
+```js
+export default {
+    // 接收参数
+    props: ['id']
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 查询参数
+
+> + *`query` ：从 `URL` 的 `search` 部分提取的已解码查询参数*
+
+```vue
+<router-link to="/footer?id=1&username=linke">footer</router-link>
+```
+
+```html
+{{ $route.query }}
+<!-- { "id": "1", "username": "linke" } -->
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 路径名
+
+> + *`path` ：获取编码 `URL` 的 `pathname` 部分*
+
+```vue
+<router-link to="/footer?id=1&username=linke">footer</router-link>
+```
+
+```html
+{{ $route.path }}
+<!-- "/footer" -->
+```
+
+
+
+
+
+
+
+
+
+
+
+#### 获取全部信息
+
+> + *`fullPath` ：路由完整地址*
+
+```vue
+<router-link to="/footer?id=1&username=linke">footer</router-link>
+```
+
+```html
+{{ $route.fullPath }}
+<!-- "/footer?id=1&username=linke" -->
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 嵌套路由
+
+> ==***在一个路由的页面下，继续使用路由加载新的组件；可以将嵌套路由理解为父子路由***==
+
+<center><img src="images/%E5%B5%8C%E5%A5%97%E8%B7%AF%E7%94%B1.png" alt="嵌套路由" style="zoom:60%;" title="嵌套路由" /></center>
+
+```js
+const routes = [
+    {
+        path: '/user/:id',
+        component: User,
+        children: [
+            {
+                // 当 /user/:id/profile 匹配成功,将 UserProfile 渲染到 User 的 <router-view> 内部
+                path: 'profile',
+                component: UserProfile,
+            },
+            {
+                // 当 /user/:id/posts 匹配成功,将 UserPosts 渲染到 User 的 <router-view> 内部
+                path: 'posts',
+                component: UserPosts,
+            },
+        ],
+    },
+]
+```
+
+
+
+
+
+
+
+
+
+#### 默认子路由
+
+>==***如果 `children` 数组中，某个路由规则的 `path` 值为空字符串，则这条路由规则称之为<span style=color:red;>默认子路由</span>***==
+
+ ```js
+ const routes = [
+     {
+         path: '/user/:id',
+         component: User,
+         children: [
+             // 当 /user/:id 匹配成功, 将 UserHome 渲染到 User 的 <router-view> 内部
+             { path: '', component: UserHome },
+         ],
+     },
+ ]
+ ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 📡编程导航
+
+### 导航
+
++ ***声明式导航：***==*使用 `<router-link>` 创建 `<a>` 标签来定义导航链接*==
++ ***编程式导航：***==*调用 `Router API` 中的方法来实现*==
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 导航到不同的位置
+
+> :grey_exclamation:==***可以使用 `router.push` 这个方法会向 `history` 栈添加一个新的记录，当点击浏览器后退按钮时，会回到之前的 `URL`***==
+
+|            声明式             |         编程式         |
+| :---------------------------: | :--------------------: |
+| **`<router-link :to="...">`** | **`router.push(...)`** |
+
+```js
+// 字符串路径
+router.push('/users/username')
+
+// 带有路径的对象
+router.push({ path: '/users/username' })
+
+// 带查询参数，结果是 /register?plan=private
+router.push({ path: '/register', query: { plan: 'private' } })
+
+// 带 hash，结果是 /user#home
+router.push({ path: '/user', hash: '#home' })
+
+// params 不能与 path 一起使用
+router.push({ path: '/user', params: 'home' }) // -> /user
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 替换当前位置
+
+> :grey_exclamation:==***`router.replace`方法作用类似于 `router.push`，不同的是不会向 `history` 添加新记录，而是取代了当前的记录***==
+
+|                声明式                 |          编程式           |
+| :-----------------------------------: | :-----------------------: |
+| **`<router-link :to="..." replace>`** | **`router.replace(...)`** |
+
+```js
+router.push({ path: '/home', replace: true })
+// 相当于
+router.replace({ path: '/home' })
+```
+
+
+
+
+
+
+
+
+
+
+
+### 横跨历史
+
+> :grey_exclamation:==***`reouter.go `该方法采用一个整数作为参数，表示在历史堆栈中前进或后退多少步***==
+>
+> + **`router.forward()`** ：向前移动一条记录
+> + **`router.back()`** ：返回一条记录
+
+```js
+// 向前移动一条记录，与 router.forward() 相同
+router.go(1)
+
+// 返回一条记录，与 router.back() 相同
+router.go(-1)
+
+// 前进 3 条记录
+router.go(3)
+
+// 如果没有那么多记录，则无效
+router.go(-100)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## :stop_sign:导航守卫
+
+> ==***导航守卫主要用来通过跳转或取消的方式守卫导航***==
+
+
+
+
+
+
+
+
+
+### 全局前置守卫
+
+>```js
+>router.beforeEach(callback) 注册一个全局前置守卫
+>```
+>
+>​		**`callback`**	：当路由发生跳转，在此之前触发该回调函数
+>
+>​				`to`	：即将要进入的目标路由的信息对象
+>
+>​				`from`	：当前导航正要离开的路由的信息对象
+>
+>​				`next`	：函数，调用 `next()` 表示放行
+>
+>​		**`return`**	：回调函数返回值如
+>
+>​				`false`	:	取消当前的导航
+>
+>​				`routerPath` ：路由地址，`String/Object`
+
+```js
+const router = new VueRouter({ ... })
+
+router.beforeEach((to, from, next) => {
+    console.log(to, from) // { name, params, path, hash, query, ... }
+
+    // 放行路由
+    next()
+
+    // 返回 false 以取消导航
+    /* return false */
+
+    // 返回 一个路由字符串
+    /* return to.path === '/header' ? next() : '/header' */
+
+    // 返回 一个路由对象
+    /* return to.path === '/main' ? next() : { path: '/main' } */
+})
+```
+
+
+
+
+
+
+
+
+
+
+
+#### next()
+
+>```js
+>next([args]);
+>```
+>
+>​		`args`	：路由地址，`String/Object`，**可选**
+
+```js
+router.beforeEach((to, from, next) => {
+    // 放行路由
+    next()
+
+    // 参数 false 取消导航
+    // next(false)
+
+    // 参数 一个路由字符串
+    // return to.path === '/header' ? next() : next('/header')
+
+    // 参数 一个路由对象
+    // return to.path === '/main' ? next() : next({ path: '/main' })
+})
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 路由独享的守卫
+
+> ==***可以直接在路由配置上定义 `beforeEnter` 守卫，值类型：`fn/Array`***==
+
+```js
+const routes = [
+    {
+        path: '/users/:id',
+        component: User,
+        beforeEnter: (to, from) => {
+            return false
+        },
+    },
+]
+```
 

@@ -184,6 +184,22 @@ axios.interceptors.request.eject(myInterceptor);
 
 
 
+## 默认配置
+
++ `axios.defaults.baseURL`	：配置默认请求根路径
++ `axios.defaults.headers.common['Authorization']` ：配置默认请求头
++ `axios.defaults.headers.post['Content-Type']` ：配置`POST`请求的默认请求头
+
+
+
+
+
+
+
+
+
+
+
 
 
 # 🪐同源策略
