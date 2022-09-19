@@ -1,7 +1,5 @@
 [TOC]
 
-
-
 # ES
 
 ------
@@ -2354,6 +2352,8 @@ result.then(value=>{}, reason=>{})
 > ❗❗*`Promise.prototype.catch()`方法是`.then(null, rejection)`或`.then(undefined,`*
 >
 > *` rejection)`的别名，用于指定发生错误时的回调函数*
+>
+> :grey_exclamation:==***不希望前面的错误导致后续的 `.then` 无法正常执行，则可以将 `.catch` 的调用提前***==
 
 ```javascript
 const promise = new Promise((resolve, reject) => {
@@ -3423,7 +3423,7 @@ Object.assign(config1, config2) // {id: 2, name: 'du', sex: 11, age: 'male'}
 
 ##### :grey_exclamation:注意
 
-+ ###### <span style=color:red;>*`export`命令可以出现在模块的任何位置，只处于模块顶层*</span>
++ ###### <span style=color:red;>*`export`命令只能出现在模块顶层的任何位置*</span>
 
   + ```js
     function foo() {
@@ -3445,7 +3445,7 @@ Object.assign(config1, config2) // {id: 2, name: 'du', sex: 11, age: 'male'}
     };
     ```
 
-+ <span style=color:red;>***`default`命令只能使用一次***</span>
++ <span style=color:red;>***每个模块只能使用一次`default`命令***</span>
 
 + ###### <span style=color:red;>***默认输出和正常输出的区别***</span>
 
@@ -3480,7 +3480,7 @@ Object.assign(config1, config2) // {id: 2, name: 'du', sex: 11, age: 'male'}
 > ❗❗*大括号里面指定要从其他模块导入的变量名，必须与被导入模块对外接口的名称相同*
 
 ```js
-import { /* ... */ } from '模块文件的位置';
+import 导入方式 from '模块文件的位置';
 ```
 
 
@@ -3504,7 +3504,10 @@ import { /* ... */ } from '模块文件的位置';
 3. ###### 简便导入*(只针对`default`导出)*
 
    + ```js
-     import '模块名称' from '模块文件的位置';
+     import 模块名称 from '模块文件的位置';
+     
+     // 可结合解构导入一并使用
+     import 模块名称, { /* ... */ } from '模块文件的位置';
      ```
 
 
@@ -3537,7 +3540,7 @@ import { /* ... */ } from '模块文件的位置';
     }
     ```
 
-+ <span style=color:red;>***默认情况`import`导入的模块名就是本来的名字，但是可以使用`as`关键字重命名***</span>
++ <span style=color:red;>***默认情况 `import`导入的模块名就是本来的名字，但是可以使用 `as`关键字重命名***</span>
 
   + ```javascript
     import { 模块名 as 模块别名 } from '模块文件的位置';
@@ -3740,9 +3743,13 @@ fun();
 
 
 
+
+
 #### :grey_exclamation:注意
 
 + *==`await`命令只能用在`async`函数之中，如果用在普通函数，就会报错==*
+
++ ==*`async` 方法中，第一个 `await` 之前的代码会同步执行，`await` 之后的代码才会异步执行*==
 
 + ==*`await` 后面返回不是一个 `Promise` 对象，则下面代码不会等待执行，将会异步执行*==
 

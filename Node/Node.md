@@ -1347,9 +1347,9 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 ## 🌙ES模块化
 
-> :grey_exclamation:==***在 `package.json` 文件中设置 `type` 属性值***==
+> :grey_exclamation:==***在  `package.json` 文件中设置  `type` 属性值***==
 >
-> ❗==***如果项目设置`type`为`module`值，则无法使用 `CommonJS` 规范***==
+> ❗==***如果项目设置 `type`为 `module`值，则无法使用 `CommonJS` 规范***==
 >
 > ```json
 > "type": "module"
@@ -1611,6 +1611,7 @@ npm update 包名@指定包的版本 # 默认更新最新版本
 > npm ls
 > npm info 包名 # 查询包详细信息
 > npm outdated # 检查包是否过时
+> npm view 包名 versions # 检查包的所有版本
 > ```
 
 
@@ -3244,6 +3245,7 @@ app.listen(3001, function () {
 
 ```cmd
 npm i uuid
+npm i nanoid # min的uuid
 ```
 
 
@@ -3261,6 +3263,17 @@ const { v4: uuidv4 } = require('uuid');
 // 生成随机唯一 ID
 uuidv4() // dc6f1bde-b8ea-4252-93c6-2a04c5bcf721
 ```
+
+~~~js
+import { nanoid } from 'nanoid';
+nanoid() // 5dGhkd_Bn8Vt5zGoSVO2S
+~~~
+
+
+
+
+
+
 
 
 

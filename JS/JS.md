@@ -4,6 +4,8 @@
 
 ****
 
+==***`JavaScript` 是一门<span style=color:red;>单线程执行</span>的编程语言***==
+
 ***客户端脚本语言：不需要编译，直接就可以被浏览器解析执行***
 
 <center><img src="images/JavaScrpit.png" alt="JavaScript" style="zoom:30%;" title="JavaScript" /></center>
@@ -202,7 +204,60 @@ $$
 
 
 
+
+
+## EventLoop
+
+==***`JavaScript` 主线程从<span style=color:red;>任务队列</span>中读取异步任务的回调函数，放到执行栈中依次执行，<u>这个过程是循环不断的，所以整个的这种运行机制又称为 <span style=color:red;>`EventLoop`（事件循环）</span></u>***==
+
+<center><img src="images/javascript%E7%9A%84%E6%89%A7%E8%A1%8C%E7%BA%BF%E7%A8%8B.png" alt="JavaScript的执行线程" style="zoom:90%;border: 2px solid silver;" title="JavaScript的执行线程" /></center>
+
+
+
+
+
+
+
+
+
+### 同步任务
+
+==***同步任务`(synchronous)`***==
+
++ *又叫做<span style=color:red;>非耗时任务</span>，指的是在主线程上排队执行的那些任务*
++ *只有前一个任务执行完毕，才能执行后一个任务*
+
+
+
+
+
+
+
+
+
+### 异步任务
+
+==***异步任务`(asynchronous)`***==
+
++ *又叫做<span style=color:red;>耗时任务</span>，异步任务由 `JavaScript` 委托给宿主环境进行执行*
+
++ *当异步任务执行完成后，会通知 `JavaScript` 主线程执行异步任务的回调函数*
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 🍉宏队列与微队列
+
+<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97.png" alt="宏队列与微队列" style="zoom:90%;border: 2px solid silver;" title="宏队列与微队列" /></center>
 
 >     ❗==***`js`是单线程运行的，从头到尾顺序执行，如果是<span style=color:red;><u>同步代码立即执行</u></span>；如果是<u><span style=color:red;>异步事件，按类型分别放入宏队列和微队列排队执行</span>*</u>**==
 
@@ -237,6 +292,28 @@ st...p1
 
 
 
+
+
+
+
+### 宏队列与微队列的执行顺序
+
+<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="宏队列与微队列的执行顺序" style="zoom:90%;border: 2px solid silver" title="宏队列与微队列的执行顺序" /></center>
+
+> :grey_exclamation:==***每一个宏任务执行完之后，都会检查是否存在待执行的微任务； 如果有，则执行完所有微任务之后，再继续执行下一个宏任务***==
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### js 异步的执行机制
 
 1. ###### 1️⃣*`JS`引擎首先必须 ==**先执行所有的初始化同步任务代码**==*
@@ -244,6 +321,13 @@ st...p1
 2. ###### 2️⃣*第二步 ==**将所有的微任务一个一个取出来执行**==*
 
 3. ###### 3️⃣*最后再 ==**取出宏任务执行**==*
+
+<img src="images/EventLoop.png" alt="EventLoop" style="zoom:90%;border: 2px solid silver;" title="EventLoop" />
+
+
+
+
+
 
 
 

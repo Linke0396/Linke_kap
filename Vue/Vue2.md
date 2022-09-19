@@ -361,7 +361,13 @@ const vm = new Vue({
 + **`.trim`**	：自动修剪输入值中的首尾空格
 
 ```html
+<!-- 
+双向绑定指令:
+	v-model			简写
+	v-model:value	全写
+-->
 <input v-model="message" placeholder="edit me">
+<input v-model:value="message" placeholder="edit me">
 <p>Message is: {{ message }}</p>
 ```
 
@@ -396,9 +402,15 @@ data: {
 ```html
 <h2 v-if="flag">Login</h2><!-- v-if 与 v-else/v-else-if 之间不能出现任何元素 -->
 <h2 v-else>Register</h2><!-- v-else/v-else-if 指令必须配合 v-if 指令一起使用 -->
+
 <input type="text" v-show="flag" key="Login" placeholder="Login ...">
 <input type="text" v-show="!flag" key="Register" placeholder="Register ...">
 <button type="button" @click="flag=!flag">Toggle</button>
+
+<!-- v-if 与 <template> 标签一起使用时不会渲染 <template> 标签 -->
+<template v-if="flag">
+    <div>Div</div>
+</template>
 ```
 
 ```javascript
@@ -412,6 +424,7 @@ data: {
 <h2>Login</h2>
 <input type="text" placeholder="Login ...">
 <input type="text" placeholder="Register ..." style="display: none;">
+<div>Div</div>
 ```
 
 
@@ -436,8 +449,8 @@ data: {
 > v-for="(value, key, index) in items" // 方式3
 > ```
 
-+ **`items`**	：源数据**数组/对象**
-+ **`(item,index)`**	：数组时表示`(元素,索引)`；对象时表示`(键值,键名)`
++ **`items`**	：源数据**数组/对象/字符串**
++ **`(item,index)`**	：数组时表示`(元素,索引)`；对象时表示`(键值,键名)`；字符串时表示`(单字符,索引)`
 + **`(value, key, index)`**	：对象时表示`(键值,键名,索引)`
 
 ```html
@@ -582,6 +595,105 @@ data: {
 
 
 
+#### v-pre指令
+
+>+ **`v-pre`**
+>
+>==***跳过这个元素和它的子元素的编译过程，跳过大量没有指令的节点会加快编译***==
+
+```html
+<h2 v-pre>{{ username }}</h2>
+<h2>{{ username }}</h2>
+```
+
+```js
+data: {
+    username: 'Linke'
+}
+```
+
+~~~html
+<!-- 执行结果 -->
+<h2>{{ username }}</h2>
+<h2>Linke</h2>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### v-cloak指令
+
+> + **`v-cloak`**
+>
+> ==***本质是一个特殊的指令，不需要表达式，`Vue`实例创建完毕并渲染页面后，会自动删除 `v-cloak`***==
+
+```css
+[v-clock] {
+    display: none;
+}
+```
+
+```html
+<div id="app" v-clock>
+    {{ username }}
+</div>
+```
+
+```js
+// 模拟延迟效果
+setTimeout(() => {
+    new Vue({
+        el: '#app',
+        data: {
+            username: 'linke'
+        }
+    })
+}, 1000)
+```
+
+
+
+
+
+
+
+
+
+
+
+#### v-once指令
+
+> + **`v-once`**
+>
+> ==***一个特殊的指令，不需要表达式，只渲染元素和组件<span style=color:red;>一次</span>，随后的重新渲染，元素/组件及其所有的子节点将被视为静态内容并跳过***==
+
+```html
+<h2 v-once>init_number: {{ number }}</h2>
+<h2>number: {{ number }}</h2>
+<button @click="number++">number++</button>
+```
+
+```js
+data: {
+    number: 0
+}
+```
+
+
+
+
+
+
+
 
 
 
@@ -671,6 +783,28 @@ data: {
 
 
 
+#### 🌸key的作用
+
+:grey_exclamation:==***虚拟`DOM`中 `key` 的作用***==
+
+> ==***`key` 是虚拟 `DOM` 对象的标识，当数据发生改变时，`Vue`会根据新数生成新的虚拟 `DOM`，然后进行新虚拟 `DOM` 与旧虚拟 `DOM` 的差异比较，比较规则：***==
+>
+> 1. ==*寻找与旧虚拟`DOM`相同的新虚拟`DOM`的`key`*==
+>    + *如果虚拟`DOM`中内容没改变，直接使用之前的真实`DOM`*
+>    + *反之虚拟`DOM`中内容改变，则生成新的真实`DOM`替换页面中之前的真实`DOM`*
+> 2. ==*旧虚拟`DOM`中未寻找与新虚拟`DOM`相同的`key`*==
+>    + *创建真实`DOM`渲染到页面*
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -684,14 +818,15 @@ data: {
 
 + ==***事件修饰符***==
 
-  |   事件修饰符   |         作用         |
-  | :------------: | :------------------: |
-  |  **`.stop`**   |   **阻止事件冒泡**   |
-  | **`.prevent`** | **阻止事件默认行为** |
-  | **`.capture`** |   **事件捕获模式**   |
-  |  **`.self`**   |   **元素自身触发**   |
-  |  **`.once`**   |  **设置一次性事件**  |
-  | **`.passive`** | **事件默认行为触发** |
+  |   事件修饰符   |             作用             |
+  | :------------: | :--------------------------: |
+  |  **`.stop`**   |       **阻止事件冒泡**       |
+  | **`.prevent`** |     **阻止事件默认行为**     |
+  | **`.capture`** |       **事件捕获模式**       |
+  |  **`.self`**   |       **元素自身触发**       |
+  |  **`.once`**   |      **设置一次性事件**      |
+  | **`.passive`** |   **事件默认行为立即触发**   |
+  | **`.native`**  | **监听组件根元素的原生事件** |
 
 + *==**键修饰符**==*
 
@@ -928,7 +1063,7 @@ watch: {
 > ==***动态计算出来的属性值可以被<span style=color:red;>模板结构</span>或 `methods` 方法使用***==
 >
 > + :grey_exclamation:==***必须在 `computed` 节点中定义计算属性***==
-> + :grey_exclamation:==***虽然计算属性在声明的时候被定义为方法，但是计算属性<span style=color:red;>本质是一个属性</span>***==
+> + :grey_exclamation:==***虽然计算属性在简写声明的时候被定义为方法，但是<span style=color:red;>本质是一个属性</span>***==
 > + :grey_exclamation:==***计算属性<span style=color:red;>会缓存计算的结果</span>，只有计算属性<span style=color:red;>依赖的数据变化</span>时，才会重新进行运算***==
 
 ```html
@@ -943,7 +1078,17 @@ data: {
     z: 3
 },
 computed: { // 必须在 computed 节点中定义计算属性
+    // 简写 get()
     xyz() { return `${this.x}px,${this.y}px,${this.z}px` }
+    // 全写
+    xyz: {
+        get() {
+            return // ....
+        },
+        set(value) {
+            // ....
+        }
+    }
 },
 methods: {
     position() {
@@ -1180,7 +1325,7 @@ new Vue({ el: '#app' });
 > vm.$on(event, callback);
 > ```
 >
-> ​		**`event`**	：事件名称字符串 / 数据名称数据
+> ​		**`event`**	：事件名称字符串 / 事件名称数组
 >
 > ​		**`callback`**	：数据处理函数
 >
@@ -1234,14 +1379,70 @@ vm.$emit('test', 'linke')
 
 
 
+### 数据方法
+
++ ***`vm.$watch()`***
+
+> ```js
+> vm.$watch(expOrFn, callback, [options])
+> ```
+>
+> ​		**`expOrFn`**	：表达式，`键路径字符串/函数`
+>
+> ​		**`callback`**	：回调函数，接收两个**可选**参数`(新值和旧值)`
+>
+> ​		**`options`**	：选项对象
+>
+> ==***观察 `Vue` 实例上的一个表达式或者一个函数计算结果的变化，表达式只接受简单的键路径。对于更复杂的表达式，用一个函数取代***==
+>
+> :grey_exclamation:==***返回一个取消观察函数，用来停止触发回调***==
+
+```js
+// 键路径
+vm.$watch('user.username', function (newVal, oldVal) {
+    // ...
+})
+
+// 函数
+vm.$watch(
+    function () {
+        // 表达式 `this.a + this.b` 每次得出一个不同的结果时
+        // 处理函数都会被调用
+        // 这就像监听一个未被定义的计算属性
+        return this.a + this.b
+    },
+    function (newVal, oldVal) {
+        // ....
+    }
+)
+```
+
++ ***`vm.$set()`***
+
+> ~~~js
+> vm.$set(target, propertyName/index, value)
+> ~~~
+>
+> ==***这是全局 `Vue.set` 的别名***==
 
 
-## 全局配置
+
+
+
+
+
+
+
+
+
+
+
+## 全局 API
 
 ### productionTip
 
 ```js
-Vue.config.productionTip = false;
+Vue.config.productionTip; // true
 ```
 
 + **类型**：`boolean`
@@ -1259,11 +1460,64 @@ Vue.config.productionTip = false;
 ### set()
 
 ```js
-Vue.set(propertyValue);
+Vue.set(target, propertyName/index, value);
 ```
 
-+ `propertyValue` ：设置的值
++ `target` ：需要添加属性的vue对象
++ `propertyName/index` ：添加的属性名，或数组下标
++ `value` ：添加的属性值
 + **作用** ：向`Vue`对象中添加一个 `property`
++ **注意** ：*对象不能是 `Vue` 实例，或者 `Vue` 实例的根数据对象*
+
+
+
+
+
+
+
+
+
+
+
+### extend()
+
+```js
+Vue.extend(options);
+```
+
++ `options`	：组件配置对象
++ **作用**	：使用基础 `Vue` 构造器，创建一个子类
++ **注意**	：*`data` 选项是必须是函数，且没有 `el` 选项*
+
+```js
+// 当用于注册组件时,可简写 export default Vue.extend(options) 为 export default {options}
+```
+
+
+
+
+
+
+
+
+
+
+
+### use()
+
+~~~js
+Vue.use(plugin, options);
+~~~
+
++ `plugin`	：安装的 `Vue` 插件
++ `options`	：安装插件的配置选项，根据所安装的插件是否可选参数
++ **作用**	：安装 `Vue` 插件
++ **注意**
+  1. *插件为`Object`，必须提供 `install` 方法；插件为`Function`，它会被作为 `install` 方法*
+  2. *当 `install` 方法被同一个插件多次调用，插件将只会被安装一次*
+  3. *该方法需要在调用 `new Vue()` 之前被调用*
+
+
 
 
 
@@ -1410,6 +1664,44 @@ vue -V
 
 
 
+#### **index.html**
+
+```html
+<head>
+    <!-- ... -->
+    <!-- BASE_URL 表示 public 目录路径 -->
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <!-- htmlWebpackPlugin.options.title 表示 package.json文件里的name节点值 -->
+    <title><%= htmlWebpackPlugin.options.title %></title>
+</head>
+
+<body>
+    <!-- 当浏览器不支持js时 noscript标签就会被渲染 -->
+    <noscript>
+        <strong>....</strong>
+    </noscript>
+    <!-- 容器 -->
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+</body>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 运行流程
 
 > ==***在工程化的项目中，<u>`vue` 通过 `main.js` 把 `App.vue` 渲染到 `index.html` 的指定区域中</u>***==
@@ -1417,6 +1709,128 @@ vue -V
 1. ***`App.vue` 用来编写待渲染的<span style=color:red;>模板结构</span>***
 2. ***`index.html` 中需要预留一个 <span style=color:red;>`el` 区域</span>***
 3. ***`main.js` 把 `App.vue` 渲染<span style=color:red;>(替换)</span>到了 `index.html` 所预留的区域中***
+
+
+
+
+
+
+
+
+
+
+
+### 📄查询默认配置
+
+==***`Vue` 脚手架隐藏了所有 `webpack` 相关的配置，使用以下命令即可查询配置***==
+
+~~~cmd
+vue inspect > output.js
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📑配置文件
+
+==*[vue.config.js](https://cli.vuejs.org/zh/config/#vue-config-js) 是一个可选的配置文件，根目录中存在`package.json` 这个文件，那么它会被 `@vue/cli-service` 自动加载*==
+
+~~~js
+// vue.config.js
+
+module.exports = {
+    // 选项...
+}
+~~~
+
+
+
+
+
+
+
+
+
+#### pages
+
+==***项目入口配置***==
+
+~~~js
+pages: {
+    index: {
+        // page 的入口
+        entry: 'src/main.js',
+        // 模板来源
+        template: 'public/index.html',
+        // 在 dist/index.html 的输出
+        filename: 'index.html',
+        /* 当使用 title 选项时:
+        template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title> */
+        title: 'Index Page'
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+#### lintOnSave
+
+==***语法检查配置***==
+
+~~~js
+lintOnSave: false // 关闭语法规范检查
+~~~
+
+
+
+
+
+
+
+
+
+
+
+#### devServer.proxyb
+
+==***配置代理服务器***==
+
+~~~js
+devServer: {
+    /* 方式(1)
+    	缺点: 如果请求的资源本地存在，则请求本地
+    */
+    // proxy: 'http://localhost:5000' // 配置请求服务器地址
+    // 方式(2)
+    proxy: {
+        '/api': { // 请求前缀
+            target: 'http://localhost:5000', // 配置请求服务器地址
+            ws: true, // 支持 websocket,默认值true
+            changeOrigin: true, // 将基于名称的虚拟托管站点,默认值true
+            pathRewrite: {'^/api': ''} // 重写目标的网址路径
+        }
+    }
+}
+~~~
+
+
 
 
 
@@ -1591,7 +2005,7 @@ new Vue({
 
 ### :warning:组件中的 data
 
->:grey_exclamation:==***`vue` 规定组件中的 `data` 不能是对象，必须是一个函数***==
+>:grey_exclamation:==***`vue` 规定组件中的 `data` 不能是对象，必须是一个函数，每个实例可以维护一份被返回对象的独立的拷贝***==
 >
 >```js
 >export default {
@@ -1812,7 +2226,8 @@ export default {
 ```
 
 ```js
-<!-- 子组件1 vue实例 -->
+/* devtools 查询结果 */
+// 子组件1 vue实例
 props: {
   	init: 1
     cla: "claOne"
@@ -1821,7 +2236,7 @@ data: {
 	count: 1
 }
 
-<!-- 子组件2 vue实例 -->
+// 子组件2 vue实例
 props: {
   	init: "2"
     cla: "claTwo"
@@ -1858,7 +2273,7 @@ data: {
 + ###### *类型检查*
 
   + ```	js
-     props: {
+     props: { // 全写
         // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
         propA: Number,
         // 多个可能的类型
@@ -1867,6 +2282,10 @@ data: {
         propC: {
             type: String,
         }
+    }
+    
+    props: { // 简写
+        propA: Number
     }
     ```
 
@@ -1892,6 +2311,18 @@ data: {
     }
     ```
 
++ ###### *对象默认值*
+
+  + ```js
+    propA: {
+        type: Object,
+        // 对象或数组默认值必须从一个函数获取
+        default: function () {
+            return { message: 'hello vue.' }
+        }
+    }
+    ```
+  
 + ###### *自定义验证函数*
 
   + ```js
@@ -1905,6 +2336,7 @@ data: {
         }
     }
     ```
+  
 
 
 
@@ -2025,14 +2457,12 @@ data: {
   ```
   
   ```js
-  export default {
-      data() {
-          return {
-              message: "Hello Vue ...",
-              userinfo: { username: "linke", age: 19 },
-          };
-      },
-  };
+  data() {
+      return {
+          message: "Hello Vue ...",
+          userinfo: { username: "linke", age: 19 },
+      };
+  }
   ```
   
 + ==*子组件*==
@@ -2047,6 +2477,8 @@ data: {
       props: ["msg", "user"],
   };
   ```
+  
+  
 
 
 
@@ -2062,51 +2494,97 @@ data: {
 
 > ==***子向父共享数据 ：需要使用<span style=color:red;>自定义事件</span>***==
 
-+ ==*子组件*==
-  
-  ```html
-  <input type="text" v-model="text" />
-  ```
-  
-  ```js
-  export default {
-  	data() {
-      	return {
-          	text: "",
-  	    };
-  	},
-  	watch: {
-      	text(newVal) {
-              // 修改数据时,通过 $emit() 触发自定义事件
-              this.$emit("textInput", newVal);
-          },
-      },
-  }; 
-  ```
-  
-+ ==*父组件*==
+1. 🍊***方式一***
 
-  ```html
-  <!-- 绑定自定义事件 -->
-  <Son @textInput="getText"></Son>
-  ```
+     + ==*子组件*==
 
-  ```js
-  export default {
-      data() {
-          return {
-              // 定义一个属性来接收子组件传递的数据
-              textFromSon: "",
-          };
-      },
-      methods: {
-          // 自定义事件的处理函数
-          getText(val) {
-              this.textFromSon = val;
-          },
-      },
-  };
-  ```
+   ~~~html
+   <input type="text" v-model="text" />
+   ~~~
+
+   ~~~js
+   data() {
+       return {
+           text: "",
+       };
+   },
+   watch: {
+       text(newVal) {
+           // 修改数据时,通过 $emit() 触发自定义事件
+           this.$emit("textInput", newVal);
+       },
+   }
+   ~~~
+
+     + ==*父组件*==
+
+   ~~~html
+   <!-- 绑定自定义事件 -->
+   <Son @textInput="getText"></Son>
+   ~~~
+
+   ~~~js
+   data() {
+       return {
+           // 定义一个属性来接收子组件传递的数据
+           textFromSon: "",
+       };
+   },
+   methods: {
+       // 自定义事件的处理函数
+       getText(val) {
+           this.textFromSon = val;
+       },
+   }
+   ~~~
+
+
+2. 🍋***方式二***
+
+   +  ==*子组件*==
+
+   ~~~html
+   <input type="text" v-model="text" @change="changeText"/>
+   ~~~
+
+   ~~~js
+   props: ["getText"],
+   data() {
+       return {
+           text: "",
+       };
+   },
+   methods: {
+       changeText() {
+           this.getText(this.text);
+       },
+   }
+   ~~~
+
+   + ==*父组件*==
+
+   ~~~html
+   <!-- 传递自定义事件 -->
+   <Son :getText="getText"></Son>
+   ~~~
+
+   ~~~js
+   data() {
+       return {
+           textFromSon: "",
+       };
+   },
+   methods: {
+       // 自定义事件的处理函数
+       getText(val) {
+           this.textFromSon = val;
+       },
+   }
+   ~~~
+
+
+
+
 
 
 
@@ -2122,58 +2600,394 @@ data: {
 
 > ==***兄弟组件共享数据  ：使用 `EventBus` 方案***==
 
-+ ==*创建 `eventBus.js` 模块*==
+1. 🥂***方式一***
 
-  + ```js
-    /* eventBus.js 文件 */
-    // 导入 Vue 模块
-    import Vue from 'vue';
-    
-    // 向外共享 Vue 实例对象
-    export default new Vue();
-    ```
+   + ==*创建 `eventBus.js` 模块*==
 
-+ ==*在数据<span style=color:red;>发送方</span>，<span style=color:red;>触发自定义事件</span>*==
+     + ```js
+       /* eventBus.js 文件 */
+       // 导入 Vue 模块
+       import Vue from 'vue';
+       
+       // 向外共享 Vue 实例对象
+       export default new Vue();
+       ```
+   
+   
+      + ###### ==*在数据<span style=color:red;>发送方</span>，<span style=color:red;>触发自定义事件</span>*==
+   
+        + ```js
+          import bus from "./eventBus.js";
+          
+          data() {
+              return {
+                  // 定义发送兄弟组件数据
+                  text: "",
+              };
+          },
+          watch: {
+              text(newVal) {
+                  // bus.$emit('事件名称', 要发送的数据)
+                  bus.$emit("textChange", newVal);
+              },
+          }
+          ```
+   
+   
+      + ###### ==*在数据<span style=color:red;>接收方</span>，<span style=color:red;>注册一个自定义事件</span>*==
+   
+        + ```js
+          import bus from "./eventBus.js";
+          
+          data() {
+              return {
+                  // 定义变量接收兄弟组件传递的数据
+                  textFrom: "",
+              };
+          },
+          created() {
+              // 定义自定义数据 bus.$on('事件名称', 事件处理函数)
+              bus.$on("textChange", (val) => {
+                  this.textFrom = val;
+              });
+          }
+          ```
+   
+2. 🍻***方式二***
 
-  + ```js
-    import bus from "./eventBus.js";
-    
-    export default {
-        data() {
-            return {
-                // 定义发送兄弟组件数据
-                text: "",
-            };
-        },
-        watch: {
-            text(newVal) {
-                // bus.$emit('事件名称', 要发送的数据)
-                bus.$emit("textChange", newVal);
-            },
-        },
-    };
-    ```
+   + ==*安装全局事件总线*==
 
-+ ==*在数据<span style=color:red;>接收方</span>，<span style=color:red;>注册一个自定义事件</span>*==
+     + ~~~js
+       /* main.js */
+       
+       new Vue({
+           render: h => h(App),
+           beforeCreate() {
+               // 安装全局事件总线
+               Vue.prototype.$bus = this;
+           }
+       }).$mount('#app')
+       ~~~
 
-  + ```js
-    import bus from "./eventBus.js";
-    
-    export default {
-        data() {
-            return {
-                // 定义变量接收兄弟组件传递的数据
-                textFrom: "",
-            };
-        },
-        created() {
-            // 定义自定义数据 bus.$on('事件名称', 事件处理函数)
-            bus.$on("textChange", (val) => {
-                this.textFrom = val;
-            });
-        },
-    };
-    ```
+   + ==*在数据<span style=color:red;>发送方</span>，<span style=color:red;>触发自定义事件</span>*==
+
+     + ~~~js
+       data() {
+           return {
+               text: "",
+           };
+       },
+       watch: {
+           text(newVal) {
+               this.$bus.$emit("textChange", newVal);
+           },
+       }
+       ~~~
+
+   + ==*在数据<span style=color:red;>接收方</span>，<span style=color:red;>注册一个自定义事件</span>*==
+
+     + ~~~js
+       data() {
+           return {
+               textFrom: "",
+           };
+       },
+       created() {
+           this.$bus.$on("textChange", (val) => {
+               this.textFrom = val;
+           });
+       },
+       beforeDestroy() {
+           this.$bus.$off('textChange'); // 组件销毁解绑自定义事件
+       }
+       ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### PubSub JS
+
+> ***`pubsubjs`是一个用脚本编写的<span style=color:red;>发布/订阅</span>库***
+
+
+
+
+
+
+
+##### 安裝
+
+~~~cmd
+npm i pubsub-js
+~~~
+
+
+
+
+
+
+
+
+
+##### 基本使用
+
+~~~js
+/* -- 订阅 --
+	subscribe(事件名, 事件处理函数);
+	msg : 被触发的事件名称
+	data : 事件触发时传递的参数
+*/
+let token = PubSub.subscribe('MY TOPIC', (msg, data) => {
+    console.log( msg, data);
+});
+
+
+/* -- 发布 --
+	publish(触发的事件名称, 额外传递的参数);
+*/
+PubSub.publish('MY TOPIC', 'hello world!');
+
+
+/* -- 取消特定订阅 --
+	unsubscribe(token);
+*/
+PubSub.unsubscribe(token);
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 混入
+
+==***混入 `(mixin)` 提供了一种非常灵活的方式，来分发 `Vue` 组件中的可复用功能***==
+
++ ###### *局部混入*
+
++ ###### *全局混入*
+
+
+
+
+
+
+
+
+
+#### 局部混入
+
+~~~js
+// 定义一个混入对象
+const mixin = {
+    created() {
+        this.hello()
+    },
+    methods: {
+        hello() {
+            console.log('hello from mixin!')
+        }
+    }
+}
+
+// 定义使用混入对象的组件
+const ComponentA = Vue.extend({
+  mixins: [mixin] // 可混入多个
+})
+const ComponentB = Vue.extend({
+  mixins: [mixin]
+})
+
+const componentA = new ComponentA() // => "hello from mixin!"
+const componentB = new ComponentB() // => "hello from mixin!"
+~~~
+
+
+
+
+
+
+
+
+
+#### 全局混入
+
+~~~js
+// 为自定义的选项 'myOption' 注入一个处理器
+Vue.mixin({
+    created() {
+        let myOption = this.$options.myOption
+        if (myOption) {
+            console.log(myOption)
+        }
+    }
+})
+
+new Vue({
+    myOption: 'hello mixin!'
+})
+
+// => "hello mixin!"
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 选项合并
+
+> ==***当组件和混入对象含有同名选项时，这些选项将以恰当的方式进行<span style=color:red;>合并</span>，当合并发生冲突时以组件数据优先***==
+
+~~~js
+const mixin = {
+    data() {
+        return {
+            message: 'hello',
+            foo: 'abc'
+        }
+    }
+}
+
+new Vue({
+    mixins: [mixin],
+    data() {
+        return {
+            message: 'hello mixin',
+            bar: 'def'
+        }
+    },
+    created() {
+        console.log(this.$data)
+        // => { message: "hello mixin", foo: "abc", bar: "def" }
+    }
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+#### 钩子合并
+
+> ==***同名钩子函数将合并为一个数组，混入对象的钩子将在组件自身钩子之前调用***==
+
+~~~js
+const mixin = {
+    created() {
+        console.log('混入对象的钩子被调用')
+    }
+}
+
+new Vue({
+    mixins: [mixin],
+    created() {
+        console.log('组件钩子被调用')
+    }
+})
+
+// => "混入对象的钩子被调用"
+// => "组件钩子被调用"
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 插件
+
+==***插件通常用来为 `Vue` 添加全局功能***==
+
+
+
+
+
+
+
+#### 开发插件
+
+> ==***Vue 插件应该暴露一个 `install` 方法，方法的第一个参数是 `Vue` 构造器，第二个参数是一个可选的选项对象***==
+
+```js
+// plugin.js
+export default {
+    install(Vue, options) {
+        console.log('install方法执行');
+        console.dir(Vue); // Vue(options)
+        console.log(options); // {options: 'value'}
+
+        // Vue.filter
+        // Vue.mixin
+        // Vue.directive
+        // Vue.prototype.$myMethod
+        // Vue ...
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+#### 使用插件
+
+~~~js
+import plugin from 'plugin.js'
+
+// 安装插件
+Vue.use(plugin, { options: 'value' })
+~~~
 
 
 
@@ -2497,7 +3311,7 @@ export default {
 
 > ❗==***父级模板里的所有内容都是在父级作用域中编译的；子模板里的所有内容都是在子作用域中编译的***==
 
-+ *子组件*
++ ==*子组件*==
 
 ```vue
 <!-- comp-a 组件 -->
@@ -2519,7 +3333,7 @@ data() {
 },
 ```
 
-+ *父组件*
++ ==*父组件*==
 
 ```vue
 <div class="father-container">
@@ -2538,7 +3352,7 @@ data() {
 },
 ```
 
-+ *编译结果*
++ ==*编译结果*==
 
 ```html
 <div class="father-container">
@@ -2651,6 +3465,45 @@ data() {
 
 
 
+
+
+## Vue与VueComponent的内置关系
+
+~~~js
+// 创建 Vue 根对象
+const vc = Vue.extend({
+    template: '<div></div>'
+});
+
+// 创建 Vue 组件对象
+const vm = new Vue({
+    el: '#app'
+});
+
+vc,vm // VueComponent(options), Vue
+
+// VueComponent 于 Vue 的内置关系
+vc.prototype.__proto__ === vm.__proto__ // true
+~~~
+
+<center><img src="images/%E5%86%85%E7%BD%AE%E5%85%B3%E7%B3%BB.png" alt="内置关系" style="zoom:150%;" title="内置关系" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 🔵自定义指令
 
 ==***除了核心功能默认内置的指令，`Vue` 也允许注册自定义指令***==
@@ -2747,6 +3600,8 @@ Vue.directive('focus', {
 
 ==***一个指令定义对象可以提供如下几个钩子函数 <span style=color:red;>(均为可选)</span>***==
 
+:grey_exclamation:==***钩子函数中的 `this` 均指向 `window`***==
+
 + `bind`：只调用一次，指令第一次绑定到元素时调用
 + `inserted`：被绑定元素插入父节点时调用
 + `update`：所在组件的更新时调用
@@ -2821,6 +3676,240 @@ directives: {
     },
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
+## 🎊过渡&动画
+
+> ###### ==***`Vue` 提供了 `transition` 的封装组件，在下列情形中，可以给任何元素和组件添加进入/离开过渡***==
+>
+> + *条件渲染 `v-if`*
+> + *条件展示 `v-show`*
+> + *动态组件*
+> + *组件根节点*
+
+```html
+<button v-on:click="show = !show">Toggle</button>
+<transition name="fade">
+    <p v-if="show">hello</p>
+</transition>
+```
+
+~~~js
+data: {
+    show: true
+}
+~~~
+
+~~~css
+/* 进入与离开过渡动画生效的状态 */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+
+/* 进入过渡动画的开始状态 与 离开过渡动画的结束状态 */
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+~~~
+
+
+
+
+
+
+
+
+
+### 过渡的类名
+
+<center><img src="images/transition.png" alt="transition" style="zoom:70%;border: 3px solid silver" title="transition" /></center>
+
+1. `v-enter`：<span style=color:red;>进入过渡的开始状态</span>，在元素被插入之前生效，在元素被插入之后的下一帧移除
+2. `v-enter-active`：<span style=color:red;>进入过渡生效时的状态</span>，在元素被插入之前生效，在过渡/动画完成之后移除
+3. `v-enter-to`：<span style=color:red;>进入过渡的结束状态</span>，在元素被插入之后下一帧生效，在过渡/动画完成之后移除
+4. `v-leave`：<span style=color:red;>离开过渡的开始状态</span>，在离开过渡被触发时立刻生效，下一帧被移除
+5. `v-leave-active`：<span style=color:red;>离开过渡生效时的状态</span>，在离开过渡被触发时立刻生效，在过渡/动画完成之后移除
+6. `v-leave-to`：<span style=color:red;>离开过渡的结束状态</span>，在离开过渡被触发之后下一帧生效，在过渡/动画完成之后移除
+
+
+
+
+
+
+
+
+
+
+
+### 类名前缀
+
+> *对于过渡中切换的类名来说，如果没有一个名字的 `<transition>`，则 `v-` 是这些类名的默认前缀；*
+>
+> *如果你使用了 `<transition name="my-transition">`，那么 `v-enter` 会替换为 `my-transition-enter`*
+
+~~~html
+<transition name="linke">
+    <!-- .... -->
+</transition>
+~~~
+
+~~~css
+.linke-enter-active {
+    /* CSS ... */
+}
+
+.linke-leave-active {
+    /* CSS ... */
+}
+
+/* ... */
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 初始渲染的过渡
+
+> *可以通过 `appear` 属性设置节点在初始渲染的过渡*
+
+~~~html
+<transition appear>
+  <!-- ... -->
+</transition>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+### 多个元素的过渡
+
+> *多个元素的过渡，需要通过 `key` 属性设置唯一的值以此来标记区分*
+
+~~~html
+<transition appear>
+    <h2 v-if="isShow" key="1">msg</h2>
+    <h2 v-else key="2">info</h2>
+</transition>
+~~~
+
+
+
+
+
+
+
+
+
+#### 重写多个过滤的元素
+
+~~~html
+<transition>
+    <!-- 使用多个 v-if 的多个元素的过渡可以重写为绑定了动态 property 的单个元素过渡 -->
+    <button v-bind:key="docState">
+          {{ buttonMessage }}
+    </button>
+</transition>
+~~~
+
+~~~js
+computed: {
+    buttonMessage: function () {
+        switch (this.docState) {
+            case 'one': return '1'
+            case 'two': return '2'
+            case 'three': return '3'
+        }
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 过渡模式
+
+> *`<transition>` 的默认同时生效的进入和离开的过渡，但是并不能满足所有要求，所以提供了`mode`属性来设置**过渡模式***
+
++ `in-out`：新元素先进行过渡，完成之后当前元素过渡离开
++ `out-in`：当前元素先进行过渡，完成之后新元素过渡进入
+
+~~~html
+<transition mode="out-in">
+    <!-- ... the buttons ... -->
+</transition>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+### 列表过渡
+
+> *使用 `<transition-group>` 组件，它会以一个真实元素呈现：默认为一个 `<span>`，也可以通过 `tag` 属性更换为其他元素*
+>
+> *内部元素**<span style=color:red;>需要</span>**提供唯一的 `key` 属性值*
+
+~~~html
+<transition-group tag="ul">
+    <li v-for="item in 9" v-bind:key="item" v-show="isShow">
+        {{ item }}
+    </li>
+</transition-group>
+~~~
+
+~~~js
+data: {
+    isShow: true
+}
+~~~
+
+
+
+
 
 
 
@@ -3272,7 +4361,7 @@ const routes = [
 
 >==***如果 `children` 数组中，某个路由规则的 `path` 值为空字符串，则这条路由规则称之为<span style=color:red;>默认子路由</span>***==
 
- ```js
+```js
  const routes = [
      {
          path: '/user/:id',
@@ -3283,7 +4372,7 @@ const routes = [
          ],
      },
  ]
- ```
+```
 
 
 
@@ -3523,4 +4612,28 @@ const routes = [
     },
 ]
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ▫▫▫终
+
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
 

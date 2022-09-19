@@ -4,7 +4,9 @@
 
 ****
 
-***移动Web***
+==***移动 Web***==
+
+
 
 
 
@@ -19,6 +21,8 @@
 
 
 
+
+
 ### 对角线
 
 *<u>指的是**屏幕对角线的长度**，一般使用**英寸**来度量</u>*
@@ -27,10 +31,16 @@
 
 
 
+
+
 ### 💠分辨率分类
 
 1. **<span style="color: red;">物理分辨率</span>** : *<u>生产屏幕时就固定的，是不可改变的</u>*
 2. **<span style="color:red;">逻辑分辨率</span>** : *<u>由软件(驱动) 决定的</u>*
+
+
+
+
 
 
 
@@ -43,6 +53,8 @@
 ```
 
 <img src="images/%E8%A7%86%E5%8F%A3.png" alt="视口" style="zoom: 50%;border: 5px solid" />
+
+
 
 
 
@@ -61,6 +73,10 @@
 
 
 
+
+
+
+
 ### 🎴二部图
 
 ***为高分辨率下图片不会模糊失真***
@@ -71,6 +87,10 @@
 | iPhone6/7/8 Plus | 1080 * 1920 | 414 * 736  | 2.6  :  1 |
 | iPhone12 Pro Max | 1284 * 2778 | 428 * 926  |  3  :  1  |
 |     **...**      |   **...**   |  **...**   |  **...**  |
+
+
+
+
 
 
 
@@ -94,294 +114,6 @@
 
 
 
-## 🟪Flex布局
-
-***<span style='font-family:FZShuTi;'>Flex</span> 是<u>Flexible Box</u>的缩写，意为'<span style='color:red;'>弹性布局</span>'，用来为盒状模型提供最大的灵活性。***
-
-
-
-### 🍀概念
-
-***<u>采用Flex布局的元素</u>，称为<span style='color:red;'>Flex容器（flex container）</span>，简称”<u><span style='color:skyblue'>容器</span></u>”。它的<u>所有子元素自动成为容器成员</u>，称为<span style='color:red;'>Flex项目（flex item）</span>，简称”<u><span style='color:skyblue'>项目</span></u>”。***
-
-
-
-### 🌲组成部分
-
-<img src="./images/Flex.png" alt="Flex" style="zoom: 50%;" />
-
-|                             单词                             |                 含义                 |
-| :----------------------------------------------------------: | :----------------------------------: |
-|  ***<span style='font-family:STXihei ;'>main axis</span>***  |           ***水平的主轴***           |
-| ***<span style='font-family:STXihei ;'>cross axis</span>***  |          ***垂直的交叉轴***          |
-| ***<span style='font-family:STXihei ;'>main start</span>***  | ***主轴的开始位置(与边框的交叉点)*** |
-|  ***<span style='font-family:STXihei ;'>main end</span>***   |         ***主轴的结束位置***         |
-| ***<span style='font-family:STXihei ;'>crooss start</span>*** |        ***交叉轴的开始位置***        |
-| ***<span style='font-family:STXihei ;'>crooss end</span>***  |        ***交叉轴的结束位置***        |
-|  ***<span style='font-family:STXihei ;'>main size</span>***  |     ***单个项目占据的主轴空间***     |
-| ***<span style='font-family:STXihei ;'>crooss size</span>*** |    ***单个项目占据的交叉轴空间***    |
-
-
-
-### 💡设置方式
-
-***<span style='color:red;'>给父元素设置`display: flex/inline-flex; ` 子元素可以自动的挤压或者拉伸</span>***
-
-```css
-display: flex; // 块级
-display: inline-flex; // 行内块
-```
-
-> ❗❗***<u>设为Flex布局以后，子元素的`float`、`clear`和`vertical-align`属性将失效</u>***
-
-
-
-
-
-### 🌳容器属性
-
-#### 主轴方向
-
-***<span style='color:red;'>修改项目的排列方向</span>***
-
-> ```css
-> flex-direction: [可选];
-> ```
->
-> ​		**<code>row</code>**  				 ：*主轴为水平方向，起点在左端(**默认**)*
->
-> ​		**<code>row-reverse</code>**  ：*主轴为水平方向，起点在右端*
->
-> ​		**<code>column</code>**			 :   *主轴为垂直方向，起点在上沿*
->
-> ​		**<code>column-reverse</code>**	:   *主轴为垂直方向，起点在下沿*
-
-<img src="images/flex-direction.png" alt="主轴方向" style="zoom:33%;" />
-
-
-
-#### 主轴项目对齐方式
-
-> ```css
-> justify-content: [可选];
-> ```
->
-> ​		**<code>start</code>**	:  *左对齐(**默认**)*
->
-> ​		**<code>end</code>** 	:  *右对齐*
->
-> ​		**<code>center</code>**	:	*居中*
->
-> ​		**<code>space-between</code>**	:	*两端对齐，项目之间的间隔都相等*
->
-> ​		**<code>space-around</code>**	  :    *两侧的间隔相等，项目之间的间隔比项目与边框的间隔大一倍*
->
-> ​		**<code>space-evenly</code>**		:	*项目之间和项目与边框间隔均匀排列*
-
-<img src="images/justify-content.png" alt="主轴项目的对齐方式" style="zoom:25%;" />
-
-
-
-#### 交叉轴项目对齐方式
-
-> ```css
-> align-items: [可选];
-> ```
->
-> ​		**<code>flex-start</code>**  :   *交叉轴的起点对齐(**默认**)*
->
-> ​		**<code>flex-end</code>** 	:	*交叉轴的终点对齐*	
->
-> ​		**<code>center</code>**		 :	*交叉轴的中点对齐*
->
-> ​		**<code>baseline</code>**	 :	*项目的第一行文字的基线对齐*
->
-> ​		**<code>stretch</code>**		:	 *如果项目未设置高度或设为auto，将占满整个容器的高度*
-
-<img src="images/align-items.png" alt="交叉轴的对齐方式" style="zoom:25%;" />
-
-
-
-#### 交叉轴多行项目对齐方式
-
-***属性在<u><span style='color:red;'>弹性容器内的各项没有占用交叉轴上所有可用的空间时对齐容器内的各项（垂直）</span></u>***
-
-> ```css
-> align-content: [可选];
-> ```
->
-> ​			**<code>flex-start</code>**  :	*交叉轴的起点对齐*
->
-> ​			**<code>flex-end</code>**	:	*交叉轴的终点对齐*
->
-> ​			**<code>center</code>**		:	*交叉轴的中点对齐*
->
-> ​			**<code>space-between</code>**	:	*交叉轴两端对齐，轴线之间的间隔平均分布*
->
-> ​			**<code>space-around</code>**	  :	*每根轴线两侧的间隔相等，轴线之间的间隔比轴线与边框的间隔大一倍*
->
-> ​			**<code>space-evenly</code>**		:	*项目之间和项目与边框间隔均匀排列*
->
-> ​			**<code>stretch</code>**	  :	*轴线占满整个交叉轴(**默认**)*
->
-> ❕***<u>容器内必须有多行的项目，该属性才能渲染出效果</u>***
-
-<img src="images/align-content.png" alt="交叉轴的多行项目对齐方式" style="zoom:25%;" />
-
-
-
-#### 项目在轴线上是否换行
-
-***默认情况下，项目都排在一条线（又称”<span style='color:red;'>轴线</span>”）上。<u>如果一条轴线排不下，该属性如何换行</u>***
-
-> ```css
-> flex-wrap: [可选];
-> ```
->
-> ​			**<code>nowrap</code>**  :	*不换行(**默认**)*
->
-> ​			**<code>wrap</code>**		 :	*换行，第一行在上方*
->
-> ​			**<code>wrap-reverse</code>**	:	*换行，第一行在下方*
-
-<img src="images/flex-warp.png" alt="flex-wrap" style="zoom:25%;" />
-
-
-
-
-
-#### flex-flow
-
-***flex-flow属性是<u>flex-direction属性和flex-wrap属性的简写形式</u>，默认值为<span style='color:red;'>row nowrap</span>。***
-
-```css
- flex-flow: <flex-direction> <flex-wrap>;
-```
-
-
-
-
-
-### 🌱项目属性
-
-#### 项目排序顺序
-
-***<u>定义项目的排列顺序</u>。<span style='color:red;'>数值越小，排列越靠前，默认为0。</span>***
-
-```css
-order: <number>;
-```
-
-<img src="images/order.png" alt="项目排序顺序" style="zoom:33%;" />
-
-
-
-
-
-#### 项目放大比例
-
-***<u>定义项目的放大比例</u>，<u>默认为0，即如果存在剩余空间，也不放大</u>。***
-
-```css
-flex-grow: <number>; /* default 0 */
-```
-
-> ❕*如果所有项目的flex-grow属性都为1，则它们将等分剩余空间（如果有的话）。*
->
-> ❕*如果一个项目的flex-grow属性为2，其他项目都为1，则前者占据的剩余空间将比其他项多一倍。*
-
-<img src="images/flex-grow.png" alt="项目放大比例" style="zoom:33%;" />
-
-
-
-
-
-#### 项目缩小比例
-
-***<u>定义项目的缩小比例</u>，<u>默认为1，即如果空间不足，该项目将缩小</u>。***
-
-```css
-flex-shrink: <number>; /* default 1 */
-```
-
-> ❕*如果所有项目的<code>flex-shrink</code>属性都为1，当空间不足时，都将等比例缩小。*
->
-> *如果一个项目的<code>flex-shrink</code>属性为0，其他项目都为1，则空间不足时，前者不缩小。*
->
-> ❗***负值对该属性无效***
-
-<img src="images/flex-shrink.png" alt="项目缩小比例" style="zoom:33%;" />
-
-
-
-
-
-#### 单个项目的交叉轴对齐方式
-
-```css
-align-self: [auto | flex-start | flex-end | center | baseline | stretch];
-```
-
-> ❕*<u><code>align-self</code>属性允许单个项目有与其他项目不一样的对齐方式，可覆盖<code>align-items</code>属性</u>*
->
-> ❕*<u>默认<code>auto</code>，表示继承父元素的<code>align-items</code>属性，如果没有父元素，则等同于<code>stretch</code></u>*
->
-> ❕*该属性可能取6个值，除了<code>auto</code>，其他都与<code>align-items</code>属性完全一致*
-
-
-
-#### 收缩率
-
-***<u>当伸缩项目设置宽度，比容器宽度还要大时，元素并没有发生溢出的情况</u>，那此时就出现一个东西叫 <span style='color:red;'>收缩因子（收缩率）</span>***
-
-> ```css
-> flex-shirnk: <number>;
-> ```
->
-> ​			**<code>0</code>**	:	不收缩
->
-> ​			**<code>1</code>**	：收缩
->
-> ​			**`number`**	：收缩系数
->
-> **<span style=color:red;>:grey_exclamation:*<u>负值无效</u>*</span>**
-
-
-
-#### 设置项目初始大小
-
-***设置 flex 项目的初始主大小。它设置内容框的大小，除非另有设置`box-sizing`***
-
-> ```css
-> flex-basis: [可选];
-> ```
->
-> ​		**`number`** ：数值，单位：`px`，`%`
->
-> ​		**`auto`**	：自动增长以吸收柔性容器中的任何额外可用空间
->
-> ​		**`content`·**	：自动调整大小
->
-> **<span style=color:red;>:grey_exclamation:*<u>负值无效</u>*</span>**
->
-> *如果主轴是在 `x` 轴上，那么设置的是<u>元素的宽</u>，*
->
-> *如果主轴是在 `y` 轴，那么设置的是<u>元素的高度</u>*
->
-> *并且属性优先级大于`width`，`height`*
-
-
-
-### flex
-
-***<span style=color:red;>设置 flex 项目如何增长或收缩以适合其 flex 容器中的可用空间</span>***
-
-```css
-flex: <flex-grow> <flex-shrink> <flex-basis>;
-```
-
-> ​		**`一个值`**	:	***<u>设置盒子占用父盒子剩余尺寸的 `number` 份数</u>***
-
 
 
 
@@ -392,11 +124,15 @@ flex: <flex-grow> <flex-shrink> <flex-basis>;
 
 
 
+
+
 ### 方式
 
 - ### rem
 
 - ### vm / vh
+
+
 
 
 
@@ -412,6 +148,8 @@ flex: <flex-grow> <flex-shrink> <flex-basis>;
 
 
 
+
+
 #### 相对单位计算结果
 
 $$
@@ -420,9 +158,13 @@ $$
 
 
 
+
+
 #### 媒体查询
 
 ***<u><span style='color:red;'>媒体查询能够检测视口的宽度，然后编写差异化的 CSS 样式；当某个条件成立, 执行对应的CSS样式</span></u>***
+
+
 
 
 
@@ -435,6 +177,8 @@ $$
     }
 }
 ```
+
+
 
 
 
@@ -462,6 +206,8 @@ $$
 
 
 
+
+
 ### 🎐vw / vh
 
 ***<span style='color:red;'>相对视口的尺寸计算</span>***
@@ -482,6 +228,8 @@ $$
 
 
 
+
+
 #### ✨计算公式
 
 $$
@@ -492,9 +240,13 @@ $$
 
 
 
+
+
+
+
 ## 📘Less
 
-***Less是一个<span style='color:red;'>CSS预处理器</span>，Less文件后缀是<span style='color:red;'>.less</span>***。***扩充了CSS语言，使 CSS 具有一定的逻辑性，计算能力***
+***[Less](https://less.bootcss.com/)是一个<span style='color:red;'>CSS预处理器</span>，Less文件后缀是<span style='color:red;'>.less</span>***。***扩充了CSS语言，使 CSS 具有一定的逻辑性，计算能力***
 
 <img src="images/less.png" alt="Less" style="zoom: 50%;" />
 
@@ -503,6 +255,8 @@ $$
 > ❕***浏览器无法识别`Less`代码，需要引入对应的`CSS`文件***
 
 ![lessFile](images/lessfile.png)
+
+
 
 
 
@@ -531,6 +285,8 @@ $$
 
 
 
+
+
 ### 注解
 
 - 单行注释
@@ -545,7 +301,10 @@ $$
     /* 内容 */
     ```
 
-    
+
+
+
+
 
 ### 🖥计算表达式
 
@@ -561,6 +320,10 @@ $$
 
 
 <img src="images/less%E8%BF%90%E7%AE%97%E7%AC%A6.png" alt="less运算符" style="zoom: 50%;" />
+
+
+
+
 
 
 
@@ -583,6 +346,10 @@ $$
 
 
 
+
+
+
+
 #### 🍂& 符号
 
 ***表示不生成后代选择器，表示当前选择器***
@@ -596,6 +363,10 @@ $$
 ```
 
 <img src="images/less_&%E7%AC%A6%E5%8F%B7.png" alt="less_&符号" style="zoom:50%;" />
+
+
+
+
 
 
 
@@ -614,19 +385,25 @@ $$
 
 
 
+
+
 #### 声明变量
 
-- 语法
+- ###### *语法*
 
   - ```less
     @变量名: {属性:值;}
     ```
 
-- 使用
+- ###### *使用*
 
   - ```less
     @变量名();
     ```
+
+
+
+
 
 
 
@@ -635,6 +412,8 @@ $$
 ```less
 @@变量名;
 ```
+
+
 
 
 
@@ -650,6 +429,8 @@ $$
 
 
 
+
+
 #### 📃导出
 
 ***<u><span style='color:red;'>在文件的第一行添加</span></u>***
@@ -661,13 +442,19 @@ $$
 
 
 
+
+
 ##### 🚫静止导出
 
 ***<u><span style='color:red;'>在文件的第一行添加</span></u>***
 
 ```less
-//out: false
+// out: false
 ```
+
+
+
+
 
 
 
@@ -687,9 +474,11 @@ $$
 
 
 
+
+
 #### 有参数
 
-- 语法
+- ###### *语法*
 
   - ```less
     选择器(@参数名) { // 多个使用 "," 隔开
@@ -701,7 +490,7 @@ $$
     }
     ```
 
-- 使用
+- ###### *使用*
 
   - ```less
     选择器(参数);
@@ -713,9 +502,15 @@ $$
 
 
 
+
+
 #### 默认参数
 
 > <code>***<span style='color:red;'>@arguments</span>***</code>: 代表全部参数，传的参数中 必须带着单位
+
+
+
+
 
 
 
@@ -763,9 +558,17 @@ $$
 
 
 
+
+
+
+
 ### 避免编译
 
 > ❗❗<span style="color:red;">*<u>在不需要编译的内容前面加上 "<code>**~**</code>"，然后再将内容以 **单引号** 包裹</u>*</span>
+
+
+
+
 
 
 
@@ -786,12 +589,18 @@ $$
 
 
 
+
+
 ### 书写顺序
 
 ```css
 max-width (从大到小写)
 min-width (从小到大写)
 ```
+
+
+
+
 
 
 
@@ -809,6 +618,10 @@ min-width (从小到大写)
 
 
 
+
+
+
+
 #### 关键字
 
 ***<span style='color:red;'>判断设备宽度的变化</span>***
@@ -818,6 +631,10 @@ min-width (从小到大写)
 | **and**  |       并且       |
 | **only** | 即(一个判断条件) |
 | **not**  |        非        |
+
+
+
+
 
 
 
@@ -834,6 +651,10 @@ min-width (从小到大写)
 
 
 
+
+
+
+
 #### 媒体特征
 
 ***主要用来<span style='color:red;'>猫叔媒体类型的具体特征</span>***
@@ -844,6 +665,10 @@ min-width (从小到大写)
 | 视口的最大宽高 | **<code>max-width，min-height</code>** |              数值               |
 | 视口的最小宽高 | **<code>min-width，min-height</code>** |              数值               |
 |    屏幕方向    |      **<code>orientation</code>**      | portrait(竖屏)，landscape(横屏) |
+
+
+
+
 
 
 
@@ -863,9 +688,351 @@ min-width (从小到大写)
 
 
 
+
+
+
+
+## 🟪Flex布局
+
+***<span style='font-family:FZShuTi;'>Flex</span> 是<u>Flexible Box</u>的缩写，意为'<span style='color:red;'>弹性布局</span>'，用来为盒状模型提供最大的灵活性。***
+
+
+
+
+
+### 🍀概念
+
+***<u>采用Flex布局的元素</u>，称为<span style='color:red;'>Flex容器（flex container）</span>，简称”<u><span style='color:skyblue'>容器</span></u>”。它的<u>所有子元素自动成为容器成员</u>，称为<span style='color:red;'>Flex项目（flex item）</span>，简称”<u><span style='color:skyblue'>项目</span></u>”。***
+
+
+
+
+
+### 🌲组成部分
+
+<img src="./images/Flex.png" alt="Flex" style="zoom: 50%;" />
+
+|                             单词                             |                 含义                 |
+| :----------------------------------------------------------: | :----------------------------------: |
+|  ***<span style='font-family:STXihei ;'>main axis</span>***  |           ***水平的主轴***           |
+| ***<span style='font-family:STXihei ;'>cross axis</span>***  |          ***垂直的交叉轴***          |
+| ***<span style='font-family:STXihei ;'>main start</span>***  | ***主轴的开始位置(与边框的交叉点)*** |
+|  ***<span style='font-family:STXihei ;'>main end</span>***   |         ***主轴的结束位置***         |
+| ***<span style='font-family:STXihei ;'>crooss start</span>*** |        ***交叉轴的开始位置***        |
+| ***<span style='font-family:STXihei ;'>crooss end</span>***  |        ***交叉轴的结束位置***        |
+|  ***<span style='font-family:STXihei ;'>main size</span>***  |     ***单个项目占据的主轴空间***     |
+| ***<span style='font-family:STXihei ;'>crooss size</span>*** |    ***单个项目占据的交叉轴空间***    |
+
+
+
+
+
+### 💡设置方式
+
+***<span style='color:red;'>给父元素设置`display: flex/inline-flex; ` 子元素可以自动的挤压或者拉伸</span>***
+
+```css
+display: flex; // 块级
+display: inline-flex; // 行内块
+```
+
+> ❗❗***<u>设为Flex布局以后，子元素的`float`、`clear`和`vertical-align`属性将失效</u>***
+
+
+
+
+
+
+
+
+
+### 🌳容器属性
+
+#### 主轴方向
+
+***<span style='color:red;'>修改项目的排列方向</span>***
+
+> ```css
+> flex-direction: [可选];
+> ```
+>
+> ​		**<code>row</code>**  				 ：*主轴为水平方向，起点在左端(**默认**)*
+>
+> ​		**<code>row-reverse</code>**  ：*主轴为水平方向，起点在右端*
+>
+> ​		**<code>column</code>**			 :   *主轴为垂直方向，起点在上沿*
+>
+> ​		**<code>column-reverse</code>**	:   *主轴为垂直方向，起点在下沿*
+
+<img src="images/flex-direction.png" alt="主轴方向" style="zoom:33%;" />
+
+
+
+
+
+#### 主轴项目对齐方式
+
+> ```css
+> justify-content: [可选];
+> ```
+>
+> ​		**<code>start</code>**	:  *左对齐(**默认**)*
+>
+> ​		**<code>end</code>** 	:  *右对齐*
+>
+> ​		**<code>center</code>**	:	*居中*
+>
+> ​		**<code>space-between</code>**	:	*两端对齐，项目之间的间隔都相等*
+>
+> ​		**<code>space-around</code>**	  :    *两侧的间隔相等，项目之间的间隔比项目与边框的间隔大一倍*
+>
+> ​		**<code>space-evenly</code>**		:	*项目之间和项目与边框间隔均匀排列*
+
+<img src="images/justify-content.png" alt="主轴项目的对齐方式" style="zoom:25%;" />
+
+
+
+
+
+#### 交叉轴项目对齐方式
+
+> ```css
+> align-items: [可选];
+> ```
+>
+> ​		**<code>flex-start</code>**  :   *交叉轴的起点对齐(**默认**)*
+>
+> ​		**<code>flex-end</code>** 	:	*交叉轴的终点对齐*	
+>
+> ​		**<code>center</code>**		 :	*交叉轴的中点对齐*
+>
+> ​		**<code>baseline</code>**	 :	*项目的第一行文字的基线对齐*
+>
+> ​		**<code>stretch</code>**		:	 *如果项目未设置高度或设为auto，将占满整个容器的高度*
+
+<img src="images/align-items.png" alt="交叉轴的对齐方式" style="zoom:25%;" />
+
+
+
+
+
+#### 交叉轴多行项目对齐方式
+
+***属性在<u><span style='color:red;'>弹性容器内的各项没有占用交叉轴上所有可用的空间时对齐容器内的各项（垂直）</span></u>***
+
+> ```css
+> align-content: [可选];
+> ```
+>
+> ​			**<code>flex-start</code>**  :	*交叉轴的起点对齐*
+>
+> ​			**<code>flex-end</code>**	:	*交叉轴的终点对齐*
+>
+> ​			**<code>center</code>**		:	*交叉轴的中点对齐*
+>
+> ​			**<code>space-between</code>**	:	*交叉轴两端对齐，轴线之间的间隔平均分布*
+>
+> ​			**<code>space-around</code>**	  :	*每根轴线两侧的间隔相等，轴线之间的间隔比轴线与边框的间隔大一倍*
+>
+> ​			**<code>space-evenly</code>**		:	*项目之间和项目与边框间隔均匀排列*
+>
+> ​			**<code>stretch</code>**	  :	*轴线占满整个交叉轴(**默认**)*
+>
+> ❕***<u>容器内必须有多行的项目，该属性才能渲染出效果</u>***
+
+<img src="images/align-content.png" alt="交叉轴的多行项目对齐方式" style="zoom:25%;" />
+
+
+
+
+
+#### 项目在轴线上是否换行
+
+***默认情况下，项目都排在一条线（又称”<span style='color:red;'>轴线</span>”）上。<u>如果一条轴线排不下，该属性如何换行</u>***
+
+> ```css
+> flex-wrap: [可选];
+> ```
+>
+> ​			**<code>nowrap</code>**  :	*不换行(**默认**)*
+>
+> ​			**<code>wrap</code>**		 :	*换行，第一行在上方*
+>
+> ​			**<code>wrap-reverse</code>**	:	*换行，第一行在下方*
+
+<img src="images/flex-warp.png" alt="flex-wrap" style="zoom:25%;" />
+
+
+
+
+
+
+
+#### flex-flow
+
+***flex-flow属性是<u>flex-direction属性和flex-wrap属性的简写形式</u>，默认值为<span style='color:red;'>row nowrap</span>。***
+
+```css
+ flex-flow: <flex-direction> <flex-wrap>;
+```
+
+
+
+
+
+
+
+
+
+### 🌱项目属性
+
+#### 项目排序顺序
+
+***<u>定义项目的排列顺序</u>。<span style='color:red;'>数值越小，排列越靠前，默认为0。</span>***
+
+```css
+order: <number>;
+```
+
+<img src="images/order.png" alt="项目排序顺序" style="zoom:33%;" />
+
+
+
+
+
+
+
+#### 项目放大比例
+
+***<u>定义项目的放大比例</u>，<u>默认为0，即如果存在剩余空间，也不放大</u>。***
+
+```css
+flex-grow: <number>; /* default 0 */
+```
+
+> ❕*如果所有项目的flex-grow属性都为1，则它们将等分剩余空间（如果有的话）。*
+>
+> ❕*如果一个项目的flex-grow属性为2，其他项目都为1，则前者占据的剩余空间将比其他项多一倍。*
+
+<img src="images/flex-grow.png" alt="项目放大比例" style="zoom:33%;" />
+
+
+
+
+
+
+
+#### 项目缩小比例
+
+***<u>定义项目的缩小比例</u>，<u>默认为1，即如果空间不足，该项目将缩小</u>。***
+
+```css
+flex-shrink: <number>; /* default 1 */
+```
+
+> ❕*如果所有项目的<code>flex-shrink</code>属性都为1，当空间不足时，都将等比例缩小。*
+>
+> *如果一个项目的<code>flex-shrink</code>属性为0，其他项目都为1，则空间不足时，前者不缩小。*
+>
+> ❗***负值对该属性无效***
+
+<img src="images/flex-shrink.png" alt="项目缩小比例" style="zoom:33%;" />
+
+
+
+
+
+
+
+#### 单个项目的交叉轴对齐方式
+
+```css
+align-self: [auto | flex-start | flex-end | center | baseline | stretch];
+```
+
+> ❕*<u><code>align-self</code>属性允许单个项目有与其他项目不一样的对齐方式，可覆盖<code>align-items</code>属性</u>*
+>
+> ❕*<u>默认<code>auto</code>，表示继承父元素的<code>align-items</code>属性，如果没有父元素，则等同于<code>stretch</code></u>*
+>
+> ❕*该属性可能取6个值，除了<code>auto</code>，其他都与<code>align-items</code>属性完全一致*
+
+
+
+
+
+#### 收缩率
+
+***<u>当伸缩项目设置宽度，比容器宽度还要大时，元素并没有发生溢出的情况</u>，那此时就出现一个东西叫 <span style='color:red;'>收缩因子（收缩率）</span>***
+
+> ```css
+> flex-shirnk: <number>;
+> ```
+>
+> ​			**<code>0</code>**	:	不收缩
+>
+> ​			**<code>1</code>**	：收缩
+>
+> ​			**`number`**	：收缩系数
+>
+> **<span style=color:red;>:grey_exclamation:*<u>负值无效</u>*</span>**
+
+
+
+
+
+#### 设置项目初始大小
+
+***设置 flex 项目的初始主大小。它设置内容框的大小，除非另有设置`box-sizing`***
+
+> ```css
+> flex-basis: [可选];
+> ```
+>
+> ​		**`number`** ：数值，单位：`px`，`%`
+>
+> ​		**`auto`**	：自动增长以吸收柔性容器中的任何额外可用空间
+>
+> ​		**`content`·**	：自动调整大小
+>
+> **<span style=color:red;>:grey_exclamation:*<u>负值无效</u>*</span>**
+>
+> *如果主轴是在 `x` 轴上，那么设置的是<u>元素的宽</u>，*
+>
+> *如果主轴是在 `y` 轴，那么设置的是<u>元素的高度</u>*
+>
+> *并且属性优先级大于`width`，`height`*
+
+
+
+
+
+### flex
+
+***<span style=color:red;>设置 flex 项目如何增长或收缩以适合其 flex 容器中的可用空间</span>***
+
+```css
+flex: <flex-grow> <flex-shrink> <flex-basis>;
+```
+
+> ​		**`一个值`**	:	***<u>设置盒子占用父盒子剩余尺寸的 `number` 份数</u>***
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 🟧Grid布局
 
 ***<span style='color: red;'>CSS Grid(网格) 布局</span>，是一个<span style='color: red;'>二维</span>的基于网格的布局系统。将容器划分为"<span style='color:red;'>行</span>"和"<span style='color:red;'>列</span>"，<u>产生单元格</u>，然后指定"<span style='color:red;'>项目所在</span>"的单元格。***
+
+
 
 
 
@@ -877,9 +1044,13 @@ min-width (从小到大写)
 
 
 
+
+
 ### 🌲组成部分
 
 <img src="images/Grid.png" alt="Grid网格布局" style="zoom: 25%;" title="Grid"/>
+
+
 
 
 
@@ -893,11 +1064,15 @@ min-width (从小到大写)
 
 
 
+
+
 #### 🍃单元格
 
 ***<u>行和列的交叉区域</u>，称为<span style="color: red;">"单元格"（cell）</span>***。
 
 > ***正常情况下，`n`行和`m`列会产生`(n * m)`个单元格***
+
+
 
 
 
@@ -910,6 +1085,8 @@ min-width (从小到大写)
 > ***正常情况下，`n`行有`(n + 1)`根水平网格线，`m`列有`(m + 1)`根垂直网格线。***
 
 <img src="images/%E7%BD%91%E6%A0%BC%E7%BA%BF.png" alt="网格线" style="zoom:50%;" title="网格线"/>
+
+
 
 
 
@@ -930,6 +1107,8 @@ min-width (从小到大写)
 > ❗<u>❗***设为网格布局以后，容器子元素（项目）的`float`、`display: inline-block`、`display: table-cell`、`vertical-align`和 <code>column-</code> 等设置都将失效***</u>
 
 ![grid布局](images/grid%E5%B8%83%E5%B1%80.png)
+
+
 
 
 
@@ -961,6 +1140,8 @@ min-width (从小到大写)
 > ​					<code>auto</code>	:	<span style='color: red;font-weight: 700;'>关键字，</span><u>由浏览器自己决定长度</u>
 
 <img src="images/grid-template-(rows-columns).png" alt="grid-template-*" style="zoom:40%;" title="columns/rows"/>
+
+
 
 
 
@@ -1007,6 +1188,8 @@ min-width (从小到大写)
 
 
 
+
+
 #### 定义网格区域
 
 > ```css
@@ -1018,6 +1201,8 @@ min-width (从小到大写)
 > ​		<code>.</code>	:	代表一个空网格单元，不是属于任何区域
 >
 > ❕❕***区域的命名会影响到网格线。每个区域的起始网格线，会自动命名为`区域名-start`，终止网格线自动命名为`区域名-end`***
+
+
 
 
 
@@ -1043,6 +1228,8 @@ min-width (从小到大写)
 
 
 
+
+
 #### 项目的内容对齐方式
 
 > ```css
@@ -1060,6 +1247,8 @@ min-width (从小到大写)
 > ​		<code>stretch</code>	:	占满整个单元格
 
 ![项目内容对齐方式](images/grid(items).png)
+
+
 
 
 
@@ -1091,9 +1280,11 @@ min-width (从小到大写)
 
 
 
+
+
 #### 指定隐式网格轨道的大小
 
-❕<u>*指定自动生成的网格轨道（又名隐式网格轨道）的大小。隐式网格轨道在你显式的定位超出指定网格范围的行或列时被创建</u>*
+❕*<u>指定自动生成的网格轨道（又名隐式网格轨道）的大小，隐式网格轨道在你显式的定位超出指定网格范围的行或列时被创建</u>*
 
 > ```css
 > grid-auto-rows: <track-size>; // 隐式行轨道的大小
@@ -1103,6 +1294,8 @@ min-width (从小到大写)
 > ​		<code>track-size</code>	:	数值，**单位：px，%，<code>fr</code>**
 
 <img src="images/grid-auto.png" alt="grid-auto-*" style="zoom:45%;" title="隐式网格大小" />
+
+
 
 
 
@@ -1129,6 +1322,8 @@ min-width (从小到大写)
 > ​			`span` 	:	**<span style='color: red;'>关键字</span>**，当前单元格
 
 <img src="images/grid-column.png" alt="grid-column" style="zoom:45%;" title="跨列"/>
+
+
 
 
 
@@ -1181,6 +1376,8 @@ min-width (从小到大写)
 #### ❗❗注意
 
 > ***网格项可以相互重叠，可以使用`z-index`来控制它们的堆叠顺序***
+
+
 
 
 
