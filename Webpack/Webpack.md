@@ -318,19 +318,19 @@ module.exports = config;
          rules: [
              {
                  test: /\.(png|jpg|gif)$/i,
-                 // use: 'url-loader?limit=22229' // 方式(1): 以查询字符串的形式配置参数
-                 // limit 用来指定图片的大小(字节byte); 默认true,反之false(不限制文件大小)
-                 // 只要 ≤ limit 大小的图片,就会被转为 base64 格式的图片
-                 use: [ // 方式(2)
-                     {
-                         loader: 'url-loader', // 处理的 loader
-                         options: {
-                             limit: 22229,
-                             mimetype: 'image/png', // 设置要转换的文件的 MIME 类型
-                             outputPath: 'images', // 设置文件输出的 path 位置
-                         }
+                 // 方式(1): 以查询字符串的形式配置参数
+     	            // use: 'url-loader?limit=22229'
+     	            // limit 用来指定图片的大小(字节byte); 默认true,反之false(不限制文件大小)
+     	            // 只要 ≤ limit 大小的图片,就会被转为 base64 格式的图片
+                 // 方式(2): 对象形式
+                 use: {
+                     loader: 'url-loader', // 处理的 loader
+                     options: { // 配置选项
+                         limit: 22229,
+                         mimetype: 'image/png', // 设置要转换的文件的 MIME 类型
+                         outputPath: 'images', // 设置文件输出的 path 位置
                      }
-                 ]
+                 }
              }
          ]
      }
@@ -349,7 +349,7 @@ module.exports = config;
 1. ###### *安装*
 
    + ```cmd
-     npm i babel-loader @babel/core @babel/plugin-proposal-decorators -D
+     npm i babel-loader @babel/core @babel/plugin-proposal-class-properties -D
      ```
 
 2. ###### *在 `webpack.config.js` 的 `module.rules` 的节点中配置*
@@ -369,8 +369,8 @@ module.exports = config;
      module.exports = {
          // 声明 babel 可用的插件
          plugins: [
-             // 🔗https://babeljs.io/docs/en/babel-plugin-proposal-decorators
-             ['@babel/plugin-proposal-decorators', { legacy: true }]
+             // 🔗https://babeljs.io/docs/en/babel-plugin-proposal-class-properties
+             ['@babel/plugin-proposal-class-properties', { 'loose': true }]
          ]
      }
      ```
@@ -574,7 +574,7 @@ import module from '@/module-path';
    + 🔗[html-webpack-plugin - GitHub](https://github.com/jantimon/html-webpack-plugin)
 
    + ```cmd
-     npm i --save-dev html-webpack-plugin
+     npm i --save-dev html-webpack-plugin -D
      ```
 
 2. ***配置 `webpack.config.js` 文件***
@@ -636,7 +636,7 @@ import module from '@/module-path';
 1. ***安装***
 
    + ```cmd
-     npm i --save-dev clean-webpack-plugin
+     npm i --save-dev clean-webpack-plugin -D
      ```
 
 2. ***配置 `webpack.config.js` 文件***
@@ -728,3 +728,4 @@ module.exports = webpackConfig;
 ## ▫▫▫终
 
 <center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
+

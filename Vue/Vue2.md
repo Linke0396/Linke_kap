@@ -79,7 +79,7 @@
 
 
 
-## 🚩MVVM
+## 🔺MVVM
 
 🎇==***`MVVM(Model-View-ViewModel)`，是一种软件架构设计模式，它是一种简化用户界面的事件驱动编程方式***==
 
@@ -2148,8 +2148,8 @@ new Vue({
 
 #### 组件名
 
-1. ***W3C 规范** 规定自定义组件名<span style=color:red;> (字母全小写且必须包含一个连字符)</span>*
-2. *或者使用 <span style=color:red;>(首字母大写命名) </span>定义一个组件名*
+1. ***W3C 规范** 规定自定义组件名<span style=color:red;> **短横线命名法**(字母全小写且必须包含一个连字符)</span>*
+2. *或者使用 <span style=color:red;>**大驼峰命名法**(首字母大写命名) </span>定义一个组件名*
 
 
 
@@ -2262,11 +2262,13 @@ data: {
 
 > ==:grey_exclamation:***定制 `prop` 的验证方式，为 `props` 中的值提供一个带有验证需求的对象***==
 >
+> ❗==***支持的类型：`String，Number，Boolean，Array，Object，Date，Function，Symbol`***==
+>
 > ```js
 > props: {
->        propA: { /* 配置选项 */ },
->        propB: { /* 配置选项 */ },
->        propC: { /* 配置选项 */ },
+>     propA: { /* 配置选项 */ },
+>     propB: { /* 配置选项 */ },
+>     propC: { /* 配置选项 */ },
 > }
 > ```
 
@@ -2329,7 +2331,7 @@ data: {
     props: {
         // 自定义验证函数
         propA: {
-            validator: function (value) {
+            validator(value) { // 固定函数名
                 // 这个值必须匹配下列字符串中的一个
                 return ['red', 'yellow', 'green'].includes(value)
             }
@@ -2714,6 +2716,8 @@ data: {
 
 
 
+
+
 #### PubSub JS
 
 > ***`pubsubjs`是一个用脚本编写的<span style=color:red;>发布/订阅</span>库***
@@ -2741,10 +2745,13 @@ npm i pubsub-js
 ##### 基本使用
 
 ~~~js
+// 引入 pubsub 模块
+import PubSub from "pubsub-js";
+
 /* -- 订阅 --
 	subscribe(事件名, 事件处理函数);
-	msg : 被触发的事件名称
-	data : 事件触发时传递的参数
+		msg : 被触发的事件名称
+		data : 事件触发时传递的参数
 */
 let token = PubSub.subscribe('MY TOPIC', (msg, data) => {
     console.log( msg, data);
@@ -3411,7 +3418,7 @@ data() {
 
 #### 独占默认插槽
 
-> ===***当被提供的内容只有默认插槽时，组件的标签才可以被当作插槽的模板来使用，直接可以把 `v-slot` 直接用在组件上***==
+> ==***当被提供的内容只有默认插槽时，组件的标签才可以被当作插槽的模板来使用，直接可以把 `v-slot` 直接用在组件上***==
 
 ```vue
 <!-- comp-a 组件 -->
@@ -4041,7 +4048,8 @@ module.exports = {
 *[Vue Router](https://router.vuejs.org/)：`Vue` 官方路由，只能结合 `vue` 项目进行使用，用于简便管理 `SPA` 项目中组件的切换*
 
 ```cmd
-npm i vue-router@3.6.5
+npm i vue-router@3		# vue2对应版本
+npm i vue-router@next	# vue3对应版本
 ```
 
 
@@ -4146,9 +4154,37 @@ npm i vue-router@3.6.5
 
 
 
+
+
+### 历史模式
+
+~~~js
+const router = new VueRouter({
+    mode: 'history', // 设置历史模式(history), 默认哈希模式(hash)
+    routes: [ ... ]
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 路由重定向
 
 ```js
+// 配置路由时设置 redirec 属性即可重定向
 const routes = [{ path: '/', redirect: '/home' }];
 ```
 
@@ -4204,6 +4240,50 @@ const routes = [{ path: '/', component: Home, alias: '/home' }];
 
 
 
+
+
+### 命名路由
+
+> ==***有时使用 `name` 名称标识路线会更方便链接到路由***==
+>
+> ❗==***`name` 值必须唯一***==
+
+~~~js
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/user/:userId',
+            name: 'user', // 设置该路由的 name 属性
+            component: User
+        }
+    ]
+})
+~~~
+
+~~~vue
+<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+~~~
+
+~~~js
+router.push({ name: 'user', params: { userId: 123 } })
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 动态路由
 
 #### 路径参数
@@ -4215,7 +4295,7 @@ const routes = [{ path: '/', component: Home, alias: '/home' }];
 ```js
 const routes = [
     // 动态字段以冒号开始
-    // 将 props 设置为 true, 则使用 props 传参
+    // 将 props 设置为 true, 则将 params 参数使用 props 形式传参
     { path: '/users/:id', component: User, props: true },
 ]
 ```
@@ -4254,7 +4334,13 @@ export default {
 > + *`query` ：从 `URL` 的 `search` 部分提取的已解码查询参数*
 
 ```vue
+<!-- 方式(1) -->
 <router-link to="/footer?id=1&username=linke">footer</router-link>
+
+<!-- 方式(2)对象形式 -->
+<router-link :to="{ path: '/footer', query: { id: 1, username: 'linke' } }">
+    footer
+</router-link>
 ```
 
 ```html
@@ -4307,6 +4393,121 @@ export default {
 {{ $route.fullPath }}
 <!-- "/footer?id=1&username=linke" -->
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 将数据传递到路由组件
+
+> ==***配置 `props` 选项，不依赖 `$route` 获取传递的参数***==
+
+
+
+
+
+
+
+
+
+#### 布尔模式
+
+> ***设置为 `true` 时，将 `params` 参数使用 `props` 形式传参***
+
+~~~js
+routes: {
+    {
+        path: '/footer/:id',
+        component: Footer,
+        props: true
+    }
+}
+~~~
+
+~~~js
+export default {
+    // 接收参数
+    props: ['id']
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+#### 对象模式
+
+> ==***当数据是静态的时很有用***==
+
+~~~js
+routes: {
+    {
+        path: '/footer',
+        component: Footer,
+        props: {
+            id: 1
+        }
+    }
+}
+~~~
+
+~~~js
+export default {
+    // 接收参数
+    props: ['id']
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+#### 函数模式
+
+~~~js
+routes: {
+    {
+        path: '/footer',
+        component: Footer,
+        props: route => ({ id: route.query.id })
+    }
+}
+~~~
+
+~~~js
+export default {
+    // 接收参数
+    props: ['id']
+}
+~~~
+
+
+
+
+
+
 
 
 
@@ -4456,6 +4657,13 @@ router.push({ path: '/home', replace: true })
 router.replace({ path: '/home' })
 ```
 
+~~~vue
+<!-- (另一种方式)可使用組件配置时添加 replace 属性即可替换当前 -->
+<router-link replace to="/home">home</router-link>
+~~~
+
+
+
 
 
 
@@ -4501,7 +4709,11 @@ router.go(-100)
 
 ## :stop_sign:导航守卫
 
-> ==***导航守卫主要用来通过跳转或取消的方式守卫导航***==
+> ==***导航守卫主要用来通过<span style=color:red;>跳转</span>或<span style=color:red;>取消</span>的方式守卫导航***==
+
+<center><img src="images/%E5%AF%BC%E8%88%AA%E5%AE%88%E5%8D%AB.png" alt="导航守卫" style="zoom:50%;border: 3px solid silver;" title="导航守卫" /></center>
+
+
 
 
 
@@ -4514,7 +4726,7 @@ router.go(-100)
 ### 全局前置守卫
 
 >```js
->router.beforeEach(callback) 注册一个全局前置守卫
+>router.beforeEach(callback)
 >```
 >
 >​		**`callback`**	：当路由发生跳转，在此之前触发该回调函数
@@ -4534,20 +4746,12 @@ router.go(-100)
 ```js
 const router = new VueRouter({ ... })
 
+// 注册一个全局前置守卫
 router.beforeEach((to, from, next) => {
     console.log(to, from) // { name, params, path, hash, query, ... }
 
     // 放行路由
     next()
-
-    // 返回 false 以取消导航
-    /* return false */
-
-    // 返回 一个路由字符串
-    /* return to.path === '/header' ? next() : '/header' */
-
-    // 返回 一个路由对象
-    /* return to.path === '/main' ? next() : { path: '/main' } */
 })
 ```
 
@@ -4561,7 +4765,40 @@ router.beforeEach((to, from, next) => {
 
 
 
-#### next()
+
+
+
+
+### 全局后置守卫
+
+> ~~~js
+> router.afterEach(callback)
+> ~~~
+>
+> ==***与 `beforeEach` 不同的是，回调函数没有 next 参数，也不会影响导航***==
+
+~~~js
+const router = new VueRouter({ ... })
+
+// 注册一个全局后置守卫
+router.beforeEach((to, from) => {
+    // ...
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### next()
 
 >```js
 >next([args]);
@@ -4597,6 +4834,44 @@ router.beforeEach((to, from, next) => {
 
 
 
+
+
+### 路由元字段
+
+~~~js
+routes: [
+    {
+        path: '/home',
+        component: Home,
+        meta: { // 可将任意信息附加到路由
+            requiresAuth: true
+        }
+    }
+]
+~~~
+
+~~~js
+route.meta.requiresAuth // true
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### 路由独享的守卫
 
 > ==***可以直接在路由配置上定义 `beforeEnter` 守卫，值类型：`fn/Array`***==
@@ -4606,14 +4881,41 @@ const routes = [
     {
         path: '/users/:id',
         component: User,
-        beforeEnter: (to, from) => {
-            return false
+        beforeEnter: (to, from, next) => {
+            // ...
         },
     },
 ]
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+### 组件内路由守卫
+
+- **`beforeRouteEnter`**	：<u>通过路由</u>**进入**组件时触发守卫
+- **`beforeRouteLeave`**	：<u>通过路由</u>**离开**组件时触发守卫
+
+~~~js
+export default {
+	// ...
+    beforeRouteEnter(to, from, next) {
+        // ...
+    },
+    beforeRouteLeave(to, from, next) {
+        // ...
+    }
+}
+~~~
 
 
 

@@ -1578,8 +1578,8 @@ npm i -D 包名	# 简写
 ### ➖卸载包
 
 >```cmd
->npm uninstall 需要卸载的包名 # 全写
->npm uni 需要卸载的包名		# 简写
+>npm uninstall 需要卸载的包名	# 全写
+>npm uni 需要卸载的包名			# 简写
 >```
 >
 >:grey_exclamation:==***`npm uninstall` 命令执行成功后，会把卸载的包，自动从 `package.json` 的 `dependencies` 中移除掉***==
@@ -1727,6 +1727,8 @@ npm i 包名	# 核心依赖包(被记录到 dependencies 节点中)
 
 
 
+
+
 #### 🔳全局包
 
 > ==***在执行 `npm install` 命令时，如果提供了 `-g` 参数，则会把包安装为<span style=color:red;>全局包</span>***==
@@ -1739,6 +1741,32 @@ npm i 包名	# 核心依赖包(被记录到 dependencies 节点中)
 npm i -g 包名			# 全局安装指定的包
 npm uninstall -g 包名	# 卸载全局安装的包
 ```
+
+
+
+
+
+
+
+##### ❗注意
+
+> ❗❗==***解决 `Windows PowerShell` 不识别 `xxx` 命令***==
+
+1. ###### 1️⃣*以<span style=color:red;>管理员身份</span>运行 `PowerShell`*
+
+2. ###### 2️⃣*执行 `set-ExecutionPolicy RemoteSigned` 命令*
+
+3. ###### 3️⃣*输入字符 `Y`，<span style=color:red;>回车</span>即可*
+
+
+
+
+
+
+
+
+
+
 
 
 
