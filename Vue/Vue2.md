@@ -960,10 +960,12 @@ data: {
     });
     
     new Vue({
-        // ...
+        data: {
+            text: 'linke'
+        }
     });
     ```
-
+    
   + ```html
     <!-- 执行结果 -->
     <span>Linke</span>
@@ -2123,7 +2125,7 @@ new Vue({
 + ==***全局注册***==
 
 + >```js
-  >Vue.component(componentName, component);
+  >Vue.component(componentName[, component]);
   >```
   >
   >​        **`componentName`**  ：全局组件的**注册名称**
@@ -2136,6 +2138,9 @@ new Vue({
     
     // 注册之后可以用在任何新创建的 Vue 根实例的模板中
     Vue.component('ComponentA', ComponentA);
+    
+    // 得到一个已注册的组件
+    Vue.component('ComponentA') === ComponentA // true
     ```
 
 
@@ -3571,10 +3576,10 @@ export default {
 ### 全局自定义指令
 
 >```js
->Vue.directive(id, [definition]);
+>Vue.directive(definitionName, [definition]);
 >```
 >
->​		**`id`**	：全局自定义指令的名称
+>​		**`definitionName`**	：全局自定义指令的名称
 >
 >​		**`definition`**	：全局自定义指令的配置对象
 >

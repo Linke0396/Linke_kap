@@ -3480,7 +3480,11 @@ Object.assign(config1, config2) // {id: 2, name: 'du', sex: 11, age: 'male'}
 > ❗❗*大括号里面指定要从其他模块导入的变量名，必须与被导入模块对外接口的名称相同*
 
 ```js
+// 静态导入
 import 导入方式 from '模块文件的位置';
+
+// 动态导入,返回一个Promise对象
+import('模块文件的位置')
 ```
 
 

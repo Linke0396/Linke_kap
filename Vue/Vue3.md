@@ -228,6 +228,26 @@ app.mount('#app')
 
 ## 应用实例
 
+### config
+
+> ==***每个应用实例都会暴露一个 `config` 对象，对这个对象的配置设定***==
+
+~~~js
+console.log(app.config)
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### globalProperties
 
 > ==***用于注册能够被应用内所有组件实例访问到的全局属性的对象***==
@@ -235,6 +255,127 @@ app.mount('#app')
 ~~~js
 app.config.globalProperties.$http = 'axios'
 ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### use()
+
+> ~~~js
+> app.use(Plugin);
+> ~~~
+>
+> ==***安装一个插件***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+### component()
+
+>~~~js
+>app.component(componentName[, component]);
+>~~~
+>
+>​        **`componentName`**  ：全局组件的**注册名称**
+>
+>​        **`component`**  ：需要全局注册的**组件**
+>
+>==***注册或获取一个全局组件***==
+
+~~~js
+// 注册一个选项对象
+app.component('my-component', {
+    /* ... */
+})
+
+// 得到一个已注册的组件
+const MyComponent = app.component('my-component')
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### directive()
+
+> ~~~js
+> app.directive(directiveName, [definition]);
+> ~~~
+>
+> ​		**`definitionName`**	：全局自定义指令的名称
+>
+> ​		**`definition`**	：全局自定义指令的配置对象
+>
+> ==***注册或获取一个全局指令***==
+
+~~~js
+// 注册（对象形式的指令）
+app.directive('my-directive', {
+    /* 自定义指令钩子 */
+})
+
+// 注册（函数形式的指令）
+app.directive('my-directive', () => {
+    /* ... */
+})
+
+// 得到一个已注册的指令
+const myDirective = app.directive('my-directive')
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### mixin()
+
+> ~~~js
+> app.mixin(mixin);
+> ~~~
+>
+> ==***应用一个全局 `mixin`***==
+
+
+
+
 
 
 
@@ -275,6 +416,8 @@ app.config.globalProperties.$http = 'axios'
 > ~~~
 >
 > ==***卸载一个已挂载的应用实例***==
+
+
 
 
 
@@ -459,21 +602,130 @@ app.component(Test.name, Test);
 
 > ==***用于声明由组件触发的自定义事件***==
 
-+ ==***数组语法***==
++ ~~~js
+  export default {
+      emits: ['init'],
+      created() {
+          this.$emit('init')
+      }
+  }
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔹依赖注入
+
+> ==***父组件相对于其所有的后代组件，会作为<span style=color:red;>依赖提供者</span>，任何后代的组件树，无论层级有多深，都可以<span style=color:red;>注入</span>由父组件提供给整条链路的依赖***==
+
+<center><img src="images/provide-inject.png" alt="依赖注入" style="zoom:90%;border: 2px solid silver;" title="依赖注入" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Provide (提供)
+
+> ==*要为组件后代提供数据，需要使用到 **`provide`** 选项*==
+
++ ###### *对象形式*
 
   + ~~~js
     export default {
-        emits: ['init'],
-        created() {
-            this.$emit('init')
+        provide: {
+            message: 'hello ke!'
         }
     }
     ~~~
 
-+ ==***对象语法***==
++ ###### *函数形式*
 
   + ~~~js
+    export default {
+      data() {
+          return {
+              message: 'hello ke!'
+          }
+      },
+      provide() {
+          // 使用函数的形式，可以访问到 this
+          return {
+              message: this.message
+          }
+      }
+    }
     ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Inject (注入)
+
+> ==*要注入上层组件提供的数据，需使用 **`inject`** 选项来声明*==
+
++ ###### *数组形式*
+
+  + ~~~js
+    export default {
+        inject: ['message'],
+        created() {
+            console.log(this.message) // injected value
+        }
+    }
+    ~~~
+
++ ###### *对象形式*
+
+  + ~~~js
+    export default {
+        inject: {
+            msg: { // msg 本地属性名
+                from: 'message', // 注入的来源名
+                default: 'default value' // 声明注入的默认值
+            }
+        }
+    }
+    ~~~
+
+
+
+
+
+
+
+
 
 
 
@@ -791,7 +1043,7 @@ app.component(Test.name, Test);
     }
     ~~~
 
-+ ==*子组件*==
++ ==*后代组件*==
 
   + ~~~js
     /* 在 inject 中声明需要接收的数据
@@ -985,6 +1237,8 @@ app.directive('color', (el, binding) => {
     // ...
 });
 ~~~
+
+
 
 
 
@@ -1234,7 +1488,7 @@ router.beforeEach((to, from, next) => {
 
 
 
-## Composition API
+## 📚Composition API
 
 ==***组合式 `API`***==
 
@@ -1248,13 +1502,1335 @@ router.beforeEach((to, from, next) => {
 
 
 
-### setup()
+### 📙setup()
 
-> ***`setup()` 钩子是在组件中使用组合式 `API` 的入口***
+> ==***`setup()` 钩子是在组件中使用组合式 `API` 的入口***==
+>
+> :grey_exclamation:==***在 `setup()` 函数中返回的对象会暴露给模板和组件实例***==
+>
+> :grey_exclamation:==***也可以通过组件实例来获取 `setup()` 暴露的属性***==
+>
+> ❗==***`setup` 钩子在 `beforeCreate` 之前执行***==
+
+~~~js
+export default {
+    setup() {
+        const count = 0
+        // 返回值会暴露给模板和其他的选项式 API 钩子
+        return {
+            count
+        }
+    },
+    mounted() {
+        console.log(this.count) // 0
+    }
+}
+~~~
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#### 返回渲染函数
+
+> ==***`setup` 也可以返回一个<span style=color:red;>渲染函数</span>，自定义渲染内容***==
+
+~~~js
+// 引入渲染函数
+import { h } from 'vue'
+
+export default {
+    setup() {
+        return () => h('div', 'value')
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Props
+
+> ==***`setup` 函数的第一个参数是组件的 `props`，`setup` 函数的 `props` 是响应式的***==
+>
+> :grey_exclamation:==***如果解构了 `props` 对象，解构出的变量将会丢失响应性***==
+
+~~~js
+export default {
+    props: {
+        title: String
+    },
+    setup(props) {
+        console.log(props.title)
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 上下文
+
+> ==***`setup` 函数的第二个参数是一个 `Setup 上下文`对象***==
+
+~~~js
+export default {
+    setup(props, context) { // 该上下文对象是非响应式的，可以安全地解构
+        // 透传 Attributes（非响应式的对象，等价于 $attrs）
+        console.log(context.attrs)
+        
+        // 插槽（非响应式的对象，等价于 $slots）
+        console.log(context.slots)
+        
+        // 触发事件（函数，等价于 $emit）
+        console.log(context.emit)
+          
+        // 暴露公共属性（函数）
+        console.log(context.expose)
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### ❕❕注意
+
++ ❕==***`data, methods, ...` 中可以访问到 `setup` 中的属性，方式***==
++ ❕==***`setup` 中不能访问到 `data, methods, ...` 的数据***==
++ ❕==***如果存在重名，`setup` 数据优先级高***==
++ ❕==***`setup` 函数不能被 `async` 修饰***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📘ref()
+
+> ~~~js
+> // 引入 ref 函数
+> import { ref } from 'vue'
+> 
+> ref(vlaue|Object);
+> ~~~
+>
+> ==***接受一个内部值，返回一个响应式的、可更改的 `ref` 对象，需要使用 `.value`获取属性值***==
+>
+> :grey_exclamation:==***在 `template` 中使用无需 `.value`***==
+>
+> + ==***基本类型**的数据：响应式依旧依赖 `Object.defineProperty()`的 `set/get`完成*==
+> + ==***对象类型**的数据：在内部调用 `Vue3`的 `reactive`新函数*==
+
+~~~html
+<h2>count={{ count }}</h2>
+<button @click="count++">count++</button>
+<button @click="addCount">count+2</button>
+~~~
+
+~~~js
+setup() {
+    let count = ref(0) // 创建响应式的对象
+    console.log(count) // RefImpl{__v_isShallow, dep, __v_isRef, _rawValue, _value}
+    
+   	function addCount() {
+		count.value += 2 // 通过 .value 赋予新的值
+    } 
+    
+    return {
+        count,
+        addCount
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📔reactive()
+
+> ~~~js
+> // 导入 reactive 函数
+> import { reactive } from 'vue'
+> 
+> reactive(Object);
+> ~~~
+>
+> ==***返回一个对象的响应式代理 `(Proxy)`，会影响到所有嵌套的属性保持响应性***==
+>
+> :grey_exclamation:==***内部基于 `ES6` 的 `Proxy`实现，通过代理对象操作源对象内部数据***==
+
+~~~html
+<h2>obj={{ obj }}</h2>
+<button @click="obj.status++">obj-status++</button>
+<button @click="updObj">updateObj</button>
+~~~
+
+~~~js
+setup(props, context) {
+    let obj = reactive({
+        type: 'success',
+        status: 0
+    })
+    console.log(obj) // Proxy{type, status}
+   
+    function updObj() {
+        obj.status++
+    }
+
+    return {
+        obj,
+        updObj
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📓computed ()
+
+> ~~~js
+> // 导入 computed 函数
+> import { computed } from 'vue'
+> 
+> computed(Function|Object);
+> ~~~
+>
+> ==***接受一个 `getter` 函数，返回一个只读的响应式 `ref` 对象；也可以接受一个带有 `get` 和 `set` 函数的对象来创建一个可写的 `ref` 对象***==
+
++ ==*函数形式*==
+
+  ~~~js
+  const count = ref(1)
+  const plusOne = computed(() => count.value + 1)
+  
+  plusOne.value // 2
+  ~~~
+
++ ==*对象形式*==
+
+  ~~~js
+  const count = ref(1)
+  const plusOne = computed({
+  	get: () => count.value + 1,
+      set: (val) => {
+          count.value = val - 1
+      }
+  })
+  
+  plusOne.value = 1
+  count.value // 0
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📗watch()
+
+> ~~~js
+> // 导入 wattc 函数
+> import { watch } from 'vue'
+> 
+> watch(source, callback[, config]);
+> ~~~
+>
+> ==***侦听一个或多个响应式数据源，并在数据源变化时调用所给的回调函数***==
+>
+> + **`source` ：侦听器的的数据**
+>   + 一个函数，返回一个值
+>   + 一个 `ref`
+>   + 一个响应式对象
+>   + 由以上类型的值组成的数组
+> + **`callback` ：侦听的数据在发生变化时要调用的回调函数，函数接受二个参数`(新值、旧值)`**
+> + **`config` ：配置对象，<span style=color:red;>可选</span>**
+>   + **`immediate`**：在侦听器创建时立即触发回调
+>   + **`deep`**：如果源是对象，深度监听所有嵌套的属性
+>   + **`flush`**：调整回调函数的刷新时机，`post/sync`
+>     + `post` 将会使侦听器延迟到组件渲染之后再执行
+>     + `sync` 在响应式依赖发生改变时立即触发侦听器
+>
+> :grey_exclamation:==***当直接侦听一个响应式对象时，侦听器会自动启用深层模式***==
+
+~~~js
+setup() {
+    let count = ref(0)
+    let obj = reactive({
+        type: 'success',
+        status: 0,
+        data: {
+            username: 'linke'
+        }
+    })
+    
+    // 侦听一个 ref
+    watch(count, (newVal, oldVal) => {
+        console.log(newVal, oldVal) // 新值, 旧值
+    })
+    
+    // 侦听多个
+    watch([count, obj], (newVal, oldVal) => {
+        console.log(newVal, oldVal) // [...], [...]
+    })
+    
+    // 侦听一个 getter 函数
+	watch(() => obj.status, (newVal, oldVal) => {
+		// ...
+    })
+    
+   	// 配置对象
+    watch(count, (newVal, oldVal) => {
+		// ...
+    }, { immediate: true })
+    
+    /*
+    直接监听 reactive 所定义的响应式数据
+    	*无法获取正确的旧值*
+        *强制开启深层监听,deep配置无效*
+     */
+    watch(obj, (newVal, oldVal) => {
+		// ...
+    }, { deep: false }) // 此处配置无效
+    
+    // 监听 reactive 定义的对象中的属性为对象时, deep配置才有效
+    watch(() => obj.data, (newVal, oldVal) => {
+        // ...
+    }, { deep: true })
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📒watchEffect()
+
+> ~~~js
+> // 导入 watchEffect 函数
+> import { watchEffect } from 'vue'
+> 
+>  watchEffect(Function);
+> ~~~
+>
+> ==***立即运行一个函数，同时响应式地追踪其依赖，并在依赖更改时重新执行***===
+
+~~~js
+const count = ref(0)
+
+watchEffect(() => console.log(count.value))
+// -> 输出 0
+
+count.value++
+// -> 输出 1
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 📖readonly()
+
+> ~~~js
+> // 导入 readonly 函数
+> import { readonly } from 'vue'
+> 
+> readonly(person)
+> ~~~
+>
+> ###### ==***接受一个对象，返回一个原值的只读代理***==
+
+~~~js
+const original = reactive({ count: 0 })
+
+const copy = readonly(original)
+
+watchEffect(() => {
+    // 用来做响应性追踪
+    console.log(copy.count)
+})
+
+// 更改源属性会触发其依赖的侦听器
+original.count++
+
+// 更改该只读副本将会失败，并会得到一个警告
+copy.count++ // warning!
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### ✨生命周期钩子
+
+|    Composition API    |                  调用时机                  |
+| :-------------------: | :----------------------------------------: |
+|  **`onBeforeMount`**  |           **在挂载开始之前调用**           |
+|    **`onMounted`**    |            **在挂载组件时调用**            |
+| **`onBeforeUpdate`**  | **在响应性数据更改时以及重新渲染之前调用** |
+|    **`onUpdated`**    |             **重新渲染后调用**             |
+| **`onBeforeUnmount`** |           **在卸载实例之前调用**           |
+|   **`onUnmounted`**   |            **在卸载销毁后调用**            |
+|   **`onActivated`**   |     **激活 `keep-alive` 的组件时调用**     |
+|  **`onDeactivated`**  |     **停用 `keep-alive` 的组件时调用**     |
+| **`onErrorCaptured`** |         **从子组件捕获错误时调用**         |
+
+~~~vue
+<template>
+	<div ref="el"></div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+
+// 使用组合式 API, 引用将存储在与名字匹配的 ref 里
+const el = ref()
+
+onMounted(() => {
+    el.value // <div>
+})
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🍴工具函数
+
++ ==***isRef***==
+
+  + > ~~~js
+    > import { isRef } from 'vue'
+    > 
+    > isRef(preson)
+    > ~~~
+    >
+    > ***检查某个值是否为 `ref`***
+
++ ==***unref***==
+
+  + > ~~~js
+    > import { unref } from 'vue'
+    > 
+    > unref(preson)
+    > ~~~
+    >
+    > ***如果参数是 `ref`，则返回内部值，否则返回参数本身***
+
++ ==***toRef***==
+
+  + > ~~~js
+    > import { toRef } from 'vue'
+    > 
+    > toRef(preson, prop)
+    > ~~~
+    >
+    > ***基于响应式对象上的一个属性，创建一个对应的 `ref`***
+    >
+    > ==***创建的 `ref` 与其源属性保持同步：改变源属性的值将更新 `ref` 的值，反之亦然***==
+
+    ~~~js
+    const state = reactive({
+        foo: 1,
+        bar: 2
+    })
+    
+    const fooRef = toRef(state, 'foo')
+    
+    // 更改该 ref 会更新源属性
+    fooRef.value++
+    console.log(state.foo) // 2
+    
+    // 更改源属性也会更新该 ref
+    state.foo++
+    console.log(fooRef.value) // 3
+    ~~~
+
++ ==***toRefs***==
+
+  + > ~~~js
+    > import { toRefs } from 'vue'
+    > 
+    > toRefs(preson)
+    > ~~~
+    >
+    > ==***将一个响应式对象转换为一个普通对象，这个普通对象的每个属性都是指向源对象相应属性的 `ref`***==
+
+    ~~~js
+    const state = reactive({
+      foo: 1,
+      bar: 2
+    })
+    
+    const stateAsRefs = toRefs(state)
+    
+    state.foo++
+    console.log(stateAsRefs.foo.value) // 2
+    
+    stateAsRefs.foo.value++
+    console.log(state.foo) // 3
+    
+    // 可以解构而不会失去响应性
+    let { foo, bar} = stateAsRefs
+    foo.value++
+    console.log(state.foo) // 4
+    ~~~
+
++ ==***shallowRef / shallowReactive***==
+
+  + > ~~~js
+    > import { shallowRef, shallowReactive } from 'vue'
+    > 
+    > shallowRef(person)
+    > shallowReactive(person)
+    > ~~~
+    >
+    > ***是`ref()`与 `reactive()` 的浅层作用形式***
+    >
+    > + ==*不改变响应式对象中的属性，只生成新的对象替换，可使用 `shallowRef`*==
+    > + ==*只改变响应式对象的顶层数据变化，可使用 `shallowReactive`*==
+
++ ==***shallowReadonly***==
+
+  + > ~~~js
+    > import { shallowReadonly } from 'vue'
+    > 
+    > shallowReadonly(person)
+    > ~~~
+    >
+    > ***`readonly()` 的浅层作用形式***
+
++ ==***toRaw***==
+
+  + > ~~~js
+    > import { toRaw } from 'vue'
+    > 
+    > toRaw(person)
+    > ~~~
+    >
+    > ***根据一个 `Vue` 创建的代理返回其原始对象***
+
+    ~~~js
+    const foo = {}
+    const reactiveFoo = reactive(foo)
+    
+    toRaw(reactiveFoo) === foo // true
+    ~~~
+
++ ==***markRaw***==
+
+  + > ~~~js
+    > import { markRaw } from 'vue'
+    > 
+    > markRaw(person)
+    > ~~~
+    >
+    > ***将一个对象标记为不可被转为代理，返回该对象本身***
+
+    ~~~js
+    const foo = markRaw({})
+    isReactive(reactive(foo)) // false
+    
+    // 也适用于嵌套在其他响应性对象
+    const bar = reactive({ foo })
+    isReactive(bar.foo) // false
+    ~~~
+
++ ==***customRef***==
+
+  + > ==***创建一个自定义的 `ref`，显式声明对其依赖追踪和更新触发的控制方式***==
+
+    ~~~vue
+    <template>
+    	<input v-model="text">
+    	<h2>{{ text }}</h2>
+    </template>
+    
+    <script setup>
+    import { customRef } from 'vue'
+    
+    // 定义自定义防抖 ref
+    function useDebouncedRef(value, delay = 1500) {
+        let timeout
+        return customRef((track, trigger) => {
+            return {
+                get() {
+                    track() // 追踪数据的变化
+                    return value
+                },
+                set(newValue) {
+                    clearTimeout(timeout)
+                    timeout = setTimeout(() => {
+                        value = newValue
+                        trigger() // 触发重新解析模块
+                    }, delay)
+                }
+            }
+        })
+    }
+    
+    // 使用自定义 ref
+    let text = useDebouncedRef(1)
+    </script>
+    ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔷provide 与 inject
+
+<center><img src="images/provide-inject-2.png" alt="provide-inject" style="zoom:80%;border: 2px solid silver;" title="provide-inject" /></center>
+
+#### provide()
+
+> ~~~js
+> import { provide } from 'vue'
+> 
+> provide(key, value);
+> ~~~
+>
+> ​		`key`：注入的 `key`
+>
+> ​		`value`：注入的值
+
+~~~vue
+<script setup>
+import { ref, provide } from 'vue'
+
+// 提供静态值
+provide('foo', 'bar')
+
+// 提供响应式的值
+const count = ref(0)
+provide('count', count)
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### inject()
+
+> ~~~js
+> import { inject } from 'vue'
+> 
+> inject(key[, defaultValue]);
+> ~~~
+>
+> ​		`key`	：注入的 `key`
+>
+> ​		`defaultValue`	：默认值
+>
+> ==*`Vue` 会遍历父组件链，通过匹配 `key` 来确定所提供的值，如果父组件链上多个组件对同一个 `key` 提供了值，那么采用就近原则，如果没有能通过 `key` 匹配到值，`inject()` 将返回 `undefined`，除非提供了一个默认值*==
+
+~~~vue
+<script setup>
+import { inject } from 'vue'
+
+// 注入值的默认方式
+const foo = inject('foo')
+
+// 注入响应式的值
+const count = inject('count')
+
+// 注入一个值，若为空则使用提供的默认值
+const bar = inject('foo', 'default value')
+
+// 注入时为了表明提供的默认值是个函数，需要传入第三个参数
+const fn = inject('function', () => {}, false)
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🟣hook函数
+
+> ==***`hook` 本质上是一个函数，把 `setup` 函数中使用的 `Composition API` 进行封装***==
+
++ ==*创建 `src/hooks/useIndex.js`*==
+
+  ~~~js
+  import { onMounted } from 'vue'
+  
+  export default function userIndex() {
+      onMounted(() => {
+          console.log('use index ...')
+      })
+  }
+  ~~~
+
++ ==*使用*==
+
+  ~~~vue
+  <script setup>
+  // 引入 useIndex.js    
+  import useIndex from '@/hooks/useIndex.js'
+  
+  useIndex() // use index ...
+      
+  // ...
+  </script>
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🧩组件
+
+### Fragment
+
+> *在 `vue3` 中，如果组件中有多个根元素节点，那么编译时 `vue` 会在这些元素节点上包含在一个 `<Fragment>` 标签中*
+
+
+
+
+
+
+
+
+
+
+
+### Teleport
+
+> *将一个组件内部的一部分模板内容渲染到 `DOM` 中的另一个位置*
+>
+> + `to` ：指定传送的目标，`CSS选择器/DOM元素`
+> + `disabled` ：是否禁用 `Teleport`
+
+~~~vue
+<button @click="open = true">Open Modal</button>
+
+<Teleport to="body">
+    <div v-if="open" class="modal">
+        <p>Hello from the modal!</p>
+        <button @click="open = false">Close</button>
+    </div>
+</Teleport>
+~~~
+
+~~~vue
+<script setup>
+import { ref } from 'vue'
+
+const open = ref(false)
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+### Suspense
+
+> ###### ==*异步依赖*==
+>
+> ==***`<Suspense>` 组件有两个插槽：`#default` 和 `#fallback`，两个插槽都只允许一个直接子节点***==
+
+~~~vue
+<Suspense>
+    <!-- 具有深层异步依赖的组件 -->
+    <Dashboard />
+
+    <!-- 在 #fallback 插槽中显示 “正在加载中” -->
+    <template #fallback>
+		Loading...
+    </template>
+</Suspense>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Transition
+
+> ==***过渡动画组件***==
+
+~~~vue
+<button @click="show = !show">Toggle</button>
+<Transition>
+    <p v-if="show">hello</p>
+</Transition>
+~~~
+
+~~~css
+/* 进入与离开的动画生效状态 */
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+/* 进入动画的起始状态 与 离开的动画的结束状态 */
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### CSS 过渡 class
+
+<center><img src="images/transition-classes.png" alt="classes" style="zoom:90%;border: 2px solid silver;padding: 0 30px;" title="classes" /></center>
+
++ `v-enter-from`：**进入**动画的**起始**状态
++ `v-enter-active`：**进入**动画的**生效**状态
++ `v-enter-to`：**进入**动画的**结束**状态
++ `v-leave-from`：**离开**动画的**起始**状态
++ `v-leave-active`：**离开**动画的**生效**状态
++ `v-leave-to`：**离开**动画的**结束**状态
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🥕script-setup
+
+> ~~~vue
+> <script setup>
+> 	console.log('hello script setup')
+> </script>
+> ~~~
+>
+> ==***需要在 `<script>` 代码块上添加 `setup`属性，里面的代码会被编译成组件 `setup()` 函数的内容，同时顶层的绑定会被暴露给模板***==
+
+~~~vue
+<template>
+	<button @click="log">{{ msg }}</button>
+</template>
+
+<script setup>
+// 变量
+const msg = 'Hello!'
+
+// 函数
+function log() {
+    console.log(msg)
+}
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 响应式
+
+> ==***响应式状态需要明确使用 `响应式 API`来创建***==
+
+~~~vue
+<template>
+	<button @click="count++">{{ count }}</button>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 顶层 await
+
+> ==***`<script setup>` 中可以使用顶层 `await`***==
+
+~~~vue
+<script setup>
+	const post = await fetch(`/api/post`).then((res) => res.json())
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### defineProps() 和 defineEmits()
+
+> ==***可以使用 `defineProps` 和 `defineEmits` API 来获得 `props` 和 `emits` ，它们将自动地在 `<script setup>` 中可用***==
+>
+> :grey_exclamation:==***`defineProps` 接收与 `props` 选项相同的值，`defineEmits` 接收与 `emits` 选项相同的值***==
+
+~~~vue
+<script setup>
+// props
+const props = defineProps({
+    name: String
+})
+
+// emit
+const emit = defineEmits(['change', 'delete'])
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### useSlots() 和 useAttrs()
+
+> ==***`useSlots` 和 `useAttrs` 返回与 `setupContext.slots` 和 `setupContext.attrs` 等价，同样也能在普通的`组合式 API` 中使用***==
+
+~~~vue
+<script setup>
+import { useSlots, useAttrs } from 'vue'
+
+const slots = useSlots() // 等价 context.slots
+const attrs = useAttrs() // 等价 context.attrs
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🍬响应性语法糖
+
+==***响应性语法糖目前默认是关闭状态，需要你显式选择启用***==
+
+### 启用
+
++ ==***Vite***==
+
+  + ~~~js
+    // vite.config.js
+    export default {
+        plugins: [
+            vue({
+                reactivityTransform: true
+            })
+        ]
+    }
+    ~~~
+
++ ==***vue-cli***==
+
+  + ~~~js
+    // vue.config.js
+    module.exports = {
+        chainWebpack: (config) => {
+            config.module
+                .rule('vue')
+                .use('vue-loader')
+                .tap((options) => {
+                return {
+                    ...options,
+                    reactivityTransform: true
+                }
+            })
+        }
+    }
+    ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 宏函数
+
+> ==***宏函数都是全局可用的、无需手动导入，不是一个真实的、在运行时会调用的方法。而是用作 `Vue` 编译器的标记***==
+
+|       API        |       宏函数       |
+| :--------------: | :----------------: |
+|    **`ref`**     |     **`$ref`**     |
+|  **`computed`**  |  **`$computed`**   |
+| **`shallowRef`** | **`$shallowRef`**` |
+| **`customRef`**  | **`$customRef`**`  |
+|   **`toRef`**    |    **`toRef`**     |
+
+~~~vue
+<template>
+	<button @click="increment">{{ count }}</button>
+</template>
+
+<script setup>
+let count = $ref(0)
+
+console.log(count) // -> 0
+
+function increment() {
+    count++
+}
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🎐$() 宏
+
+~~~js
+$(...)
+~~~
+
+#### 解构
+
+> ==***可用于解构在响应式对象***==
+
+~~~js
+const position = reactive({
+    z: 1,
+    y: 2
+})
+
+// 解构而不会失去响应性
+const { x, y } = $(position)
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 将 ref 转换为响应式对象
+
+~~~js
+let countRef = ref(0)
+
+let count = $(countRef)
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 作为函数返回值
+
+~~~js
+function useMouse() {
+    let x = $ref(0)
+    let y = $ref(0)
+
+    // 将响应式变量直接放在返回值表达式中会丢失掉响应性
+    // 使用以下方式后起效
+    return $$({
+        x,
+        y
+    })
+}
+~~~
 
 
 
@@ -1849,6 +3425,23 @@ export default {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+## 🌟改变
+
+- [x] :grey_exclamation:***移除 `keyCode` 修饰符，不支持  `config.keyCodes`***
+- [x] :grey_exclamation:***移除 `.native` 修饰符，`click`默认原生事件***
+- [x] :grey_exclamation:***移除 `Filter(过滤器)`***
+- [x] ▫▫▫▫
 
 
 
