@@ -4786,7 +4786,7 @@ router.beforeEach((to, from, next) => {
 const router = new VueRouter({ ... })
 
 // 注册一个全局后置守卫
-router.beforeEach((to, from) => {
+router.afterEach((to, from) => {
     // ...
 })
 ~~~

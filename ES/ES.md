@@ -2724,7 +2724,7 @@ class Point {
 > **❗❗类的所有方法都定义在类的`prototype`属性上面**
 >
 > ```javascript
-> // 上面单等同于以下
+> // 上面代码等同于以下
 > Point.prototype = {
 >        constructor() {},
 >        toString() {},

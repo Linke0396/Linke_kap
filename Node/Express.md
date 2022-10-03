@@ -649,7 +649,7 @@ use. 1 2
     >
     > + ```js
     >   const bodyParser = require("body-parser");
-    >     
+    >       
     >   // 解析 json 格式数据
     >   app.use(bodyParser.json());
     >   // 解析 application/x-www-form-urlencoded 格式数据

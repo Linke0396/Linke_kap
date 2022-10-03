@@ -1011,6 +1011,7 @@ align-self: [auto | flex-start | flex-end | center | baseline | stretch];
 ***<span style=color:red;>设置 flex 项目如何增长或收缩以适合其 flex 容器中的可用空间</span>***
 
 ```css
+flex: <flex-shrink> <flex-basis>;
 flex: <flex-grow> <flex-shrink> <flex-basis>;
 ```
 

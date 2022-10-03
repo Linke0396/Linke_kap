@@ -3221,7 +3221,7 @@ export default {
 
 ### Getters
 
-> ==***定义 `store`实例中 `store` 的计算属性***==
+> ==***定义 `store`实例中 `state` 的计算属性***==
 
 ~~~js
 const store = new Vuex.Store({
