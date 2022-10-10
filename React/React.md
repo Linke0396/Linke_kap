@@ -43,11 +43,11 @@
 
 
 
-## 🌱搭建本地开发环境
+## 🌱脚手架创建项目
 
 1. ==*确保安装了最新版本的 `Node.js`*==
 
-2. ==*`cmd`创建一个新项目*==
+2. ==*使用脚手架创建项目*==
 
    1. 方式一
 
@@ -87,6 +87,109 @@
    
    Happy hacking!
    ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 项目结构
+
+<center><img src="images/React%E8%84%9A%E6%89%8B%E6%9E%B6%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.png" alt="项目结构" style="zoom:65%;" title="项目结构" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### index.html
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <!-- %PUBLIC_URL% 表示 public 文件夹的路径 -->
+        <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+        <!-- 视口标签 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- 用于配置浏览器页签的颜色(仅支持安卓移动端浏览器) -->
+        <meta name="theme-color" content="#000000" />
+        <!-- 网页描述标签 -->
+        <meta name="description" content="Web site created using create-react-app" />
+        <!-- 用于指定网页添加到手机桌面的图标(只支持苹果手机) -->
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        <!-- 应用加壳时的配置文件 -->
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        <title>React App</title>
+    </head>
+    <body>
+        <!-- 如果浏览器不支持js, 则显示标签中的内容 -->
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <!-- 容器 -->
+        <div id="root"></div>
+    </body>
+</html>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### index.js
+
+~~~jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+    // React.StrictMode 用来检查项目中潜在问题的工具,不会渲染任何真实的UI,为其后代元素触发额外的检查和警告
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
+);
+~~~
+
+
+
+
+
+
 
 
 
@@ -468,7 +571,7 @@ createRoot(document.getElementById('root')).render(<App/>);
 ~~~
 
 ~~~html
-<!-- 渲染结果 -->
+<!-- result -->
 <div>
     app
     <div>Son</div>
@@ -510,7 +613,7 @@ createRoot(document.getElementById('root')).render(<App/>);
     ~~~
 
   + ~~~html
-    <!-- 渲染结果 -->
+    <!-- result -->
     <div style="width: 100px; height: 100px; background-color: skyblue;">box</div>
     ~~~
 
@@ -533,7 +636,7 @@ createRoot(document.getElementById('root')).render(<App/>);
     ~~~
 
   + ~~~html
-    <!-- 渲染结果 -->
+    <!-- result -->
     <div class="box">box</div>
     ~~~
 
@@ -553,9 +656,89 @@ createRoot(document.getElementById('root')).render(<App/>);
 
 
 
+### 💡Key的作用
+
+> ==***一个特殊的属性,用来追踪列表的元素被修改，被添加或者是被删除的<span style=color:red;>唯一标识</span>***==
+>
+> <span style=color:black;>***当状态中的数据发生变化时，`React`会根据【新数据】生成【新的虚拟`DOM`】，随后`React`进行【新虚拟`DOM`】与【旧虚拟`DOM`】的`diff`比较,比较规则:***</span>
+>
+> 1. *旧虚拟`DOM`中找到了与新虚拟`DOM`相同的`key`*
+>    1. 若虚拟`DOM`中内容没变，直接使用之前的真实`DOM`
+>    2. 若虚拟`DOM`中内容改变，则生成新的真实`DOM`，随后替换掉页面中之前的真实`DOM`
+> 2.  *旧虚拟`DOM`中未找到与新虚拟`DOM`相同的`key`*
+>    1. 根据数据创建的新的真实`DOM`，随后渲染到页面
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 组件样式模块化
+
+1. ###### ==*样式文件名格式为`文件名.module.css`*==
+
+   1. ~~~css
+      /* public.module.css */
+      .bgc {
+          color: skyblue;
+      }
+      ~~~
+
+2. ==*引入样式文件时接收*==
+
+   1. ~~~jsx
+      // 组件样式模块化
+      import public from './public.module.css';
+      ~~~
+
+3. ###### ==*使用方式*==
+
+   1. ~~~jsx
+      render() {
+          return (
+              <div className={public.bgc}></div>
+          );
+      }
+      ~~~
+
+      ~~~html
+      <!-- result -->
+      <div class="public_bgc__xxxxx"></div>
+      ~~~
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## ⭐核心属性
 
-### 🟣State
+### 🟠State
 
 > ==***`state`是组件对象最重要的属性，值是对象(可包含多个`key:value`的组合)***==
 >
@@ -564,7 +747,7 @@ createRoot(document.getElementById('root')).render(<App/>);
 > :grey_exclamation:<span style=color:red;>***状态数据不能直接更改,需要调用API中的`setState()`方法修改更新***</span>
 
 ~~~jsx
-class App extends Component {
+class App extends React.Component {
     constructor(props) { // 初始化组件状态
         super(props);
         this.state = { // state 值必须是对象
@@ -610,7 +793,7 @@ class App extends Component {
 #### 简写
 
 ~~~js
-class App extends Component {
+class App extends React.Component {
     state = {/* ... */}; // 简写方式
     render() {/* ... */}
 }
@@ -635,3 +818,768 @@ class App extends Component {
 
 
 ### 🔵Props
+
+> ❗<span style=color:red;>***`Props`是只读的***</span>
+
++ ==*类式组件*==
+
+  ~~~jsx
+  class Son extends React.Component {
+      render() {
+          console.log(this.props) // {/* ... */}
+          const { name, age } = this.props;
+          return (
+              <ul>
+                  <li>name:{ name }</li>
+                  <li>age:{ age }</li>
+              </ul>
+          );
+      }
+  }
+  
+  render() {
+      const stu = { name: 'keke', age: 11 }
+      return (
+          <div>
+              {/* 方式(1) */}
+              <Son name="linke" age={19}/> 
+              {/* 方式(2) */}
+              <Son {...stu}/>
+          </div>
+      );
+  }
+  ~~~
+
+  ~~~html
+  <!-- result -->
+  <div>
+      <ul>
+          <li>name:linke</li>
+          <li>age:19</li>
+      </ul>
+      <ul>
+          <li>name:keke</li>
+          <li>age:11</li>
+      </ul>
+  </div>
+  ~~~
+
++ ==*函数式组件*==
+
+  ~~~jsx
+  // 函数式组件获取props
+  function Person(props) {
+      return (
+          <ul>
+              <li>name: {props.name}</li>
+          </ul>
+      )
+  }
+  
+  render() {
+      return (
+          {/* 使用函数式组件传递props */}
+          <Person name="KeKe"/>
+      );
+  }
+  ~~~
+
+  ```html
+  <!-- result -->
+  <ul><li>name: KeKe</li></ul>
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Props 验证
+
+```jsx
+// 引入 PropTypes 进行类型验证
+import PropTypes from 'prop-types';
+```
+
+|    类型    |        类型验证        |
+| :--------: | :--------------------: |
+|  `Array`   | **`PropTypes.array`**  |
+| `Function` |  **`PropTypes.func`**  |
+|  `Number`  | **`PropTypes.number`** |
+|  `Object`  | **`PropTypes.object`** |
+|  `String`  | **`PropTypes.string`** |
+|    ...     |          ...           |
+
++ ==*类型检查*==
+
+  ~~~jsx
+  class App extends React.Component {
+      render() {/* ... */}
+  }
+  
+  // 类型检查
+  App.propTypes = {
+      name: PropTypes.string
+  };
+  ~~~
+
++ ==*必选项*==
+
+  ~~~jsx
+  // isRequired 必填项
+  App.propTypes = {
+      name: PropTypes.string.isRequired
+  };
+  ~~~
+
++ ==*默认值*==
+
+  ~~~jsx
+  // 属性默认值
+  App.defaultProps = {
+      name: 'Linke'
+  };
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 简写
+
+~~~jsx
+class App extends React.Component {
+    // 类型检查
+    static propTypes = {
+        name: PropTypes.string
+    }
+    // 属性默认值
+    static defaultProps = {
+        name: 'linke'
+    }
+    
+    render() {/* ... */}
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 组件类的构成函数
+
+~~~jsx
+class APP extends React.Component {
+	// 构造器是否接收props,是否传递给super,取决于是否希望在构造器中通过this访问props
+    constructor(props) {
+        super(props);
+        console.log(this.props) // { ... }
+    }
+    
+    render() {/* ... */}
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🟣Refs
+
+#### 字符串引用
+
+~~~jsx
+class App extends React.Component {
+	getData = () => { // 旧版 API 使用 refs 获取
+	    console.log(this.refs) // { inputKey: input }
+		console.log(this.refs.inputKey.value) // 通过字符串引用访问节点的引用
+    }
+    
+    render() {
+        return (
+            {/* 旧版 API(ref：字符串引用) */}
+            <input ref="inputKey" onBlur={this.getData}/>
+        );
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Ref API
+
+~~~jsx
+class App extends React.Component {
+
+    /*
+    创建 Ref 容器,用于存储ref标识的节点;
+    如果同时标识多个,存储最后标识的节点
+    */
+    textInput = React.createRef();
+    
+    getData = () => {
+        console.log(this.textInput) // {current: input}
+		console.log(this.textInput.current.value) // 通过 current 访问对节点的引用
+    }
+   
+    render() {
+        return (
+            {/* 新版 API 的使用 */}
+            <input ref={this.textInput} onBlur={this.getData}/>
+        );
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 回调引用
+
+~~~jsx
+class App extends React.Component {
+    getData = () => {
+        console.log(this.textInput) // <input/>
+        console.log(this.textInput.value)
+    }
+    
+    render() {
+        return (
+            {/* 回调函数引用 */}
+            <input ref={el => this.textInput = el} onBlur={this.getData}/>
+        );
+    }
+}
+
+// 上面代码等同于以下
+class App extends React.Component {
+    /* 定义存储对 DOM 节点的引用 */
+    textInput;
+    setTextInputRef = element => {
+        this.textInput = element;
+    }
+    
+    getData = () => {
+        console.log(this.textInput) // <input/>
+        console.log(this.textInput.value)
+    }
+    
+    render() {
+        return (
+            {/* 回调函数引用 */}
+            <input ref={this.setTextInputRef} onBlur={this.getData}/>
+        );
+    }
+}
+
+/*
+两种方式绑定的区别:
+	如果回调被定义为内联函数，它将在更新期间被调用两次,第一次为null,第二次为DOM元素
+	如果回调定义为类上的绑定方法可避免以上这种情况
+*/
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 处理事件
+
+> `React` 元素处理事件与处理 `DOM` 元素上的事件非常相似，但也存在一些差异
+>
+> + 事件使用驼峰大小写
+> + 使用的是自定义(合成)事件，而不是原生`DOM`事件
+> + 中的事件通过事件委托方式处理的(委托给最外层的元素)
+
+~~~jsx
+<button onClick={tihs.add}>Number++</button>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 非受控组件
+
+> :grey_exclamation:==***非受控组件也就是一个独立组件,不需要传值也无任何与当前组件的父组件有所交集; <span style=color:red;>一切逻辑只与自身有关,与其他的组件没有通信与交集</span>***==
+
+~~~jsx
+class From extends Component {
+
+    handleSubmit = e => {
+        e.preventDefault();
+        console.log(this.txtInput.value)
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Name:
+                    <input type="text" ref={el => this.txtInput = el}/>
+                </label>
+                <button>Submit</button>
+            </form>
+        );
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 默认值
+
+> 对于不受控制的组件,可与使用 `defaultValue` 指定初始值
+
+~~~jsx
+render() {
+    return (
+        <form onSubmit={this.handleSubmit}>
+            <label>
+                Name:
+                <input type="text" defaultValue="linke" ref={el => this.txtInput = el}/>
+            </label>
+            <button>Submit</button>
+        </form>
+    );
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 受控组件
+
+> ==***通过使 `React` 的 `state` 为<span style=color:red;>唯一数据源</span>; 然后呈现表单的 `React` 组件还控制后续用户输入时该表单中发生的操作。以这种方式由 `React` 控制其值的输入表单元素称为<span style=color:red;>受控组件</span>***==
+
+~~~jsx
+class Form extends Component {
+
+    // 初始化状态
+    state = { value: '' }
+
+    // 更新数据到状态中
+    handleChange = ({ target: { value } }) => {
+        this.setState({ value })
+    }
+    
+    // 表单提交
+    handleSubmit = e => {
+        e.preventDefault();
+        console.log(this.state.value)
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Name:
+                    <input type="text" value={this.state.value} onChange={this.handleChange} />
+                </label>
+                <button>Submit</button>
+            </form>
+        );
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 处理多个输入
+
++ ==*方式一*==
+
+  ~~~jsx
+  class Form extends Component {
+  
+      // 初始化状态
+      state = {
+          username: '',
+          password: ''
+      }
+  
+      // 表单提交
+      handleSubmit = e => {
+          e.preventDefault();
+          console.log(this.state)
+      }
+  
+      // 更新数据到状态中
+      handleInputChange = ({ target: { name, value } }) => {
+          this.setState({ [name]: value });
+      }
+  
+      render() {
+          const { username, password } = this.state
+          return (
+              <form onSubmit={this.handleSubmit}>
+                  <label>
+                      Username:
+                      <input type="text" name="username"
+                          value={username} onChange={this.handleInputChange} />
+                  </label>
+                  <label>
+                      Password:
+                      <input type="password" name="password"
+                          value={password} onChange={this.handleInputChange} />
+                  </label>
+                  <button>Submit</button>
+              </form>
+          );
+      }
+  }
+  ~~~
+
++ ==*方式二*==
+
+  ~~~jsx
+  class Form extends Component {
+  
+      // 初始化状态
+      state = {
+          username: '',
+          password: ''
+      }
+  
+      // 表单提交
+      handleSubmit = e => {
+          e.preventDefault();
+          console.log(this.state)
+      }
+  
+      // 使用柯里化函数更新数据到状态中
+      handleInputChange = (dataType) => {
+          return ({ target: { value } }) => {
+              this.setState({ [dataType]: value });
+          }
+      }
+  
+      render() {
+          const { username, password } = this.state
+          return (
+              <form onSubmit={this.handleSubmit}>
+                  <label>
+                      Username:
+                      <input type="text" value={username}
+                          onChange={this.handleInputChange('username')}/>
+                  </label>
+                  <label>
+                      Password:
+                      <input type="password" value={password}
+                          onChange={this.handleInputChange('password')}/>
+                  </label>
+                  <button>Submit</button>
+              </form>
+          );
+      }
+  }
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ⭐生命周期
+
+<center><img src="images/React%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="生命周期" style="zoom:110%;border: 1px solid silver;" title="React生命周期" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 生命周期钩子
+
++ ==***挂载***==
+
+  |                钩子函数                 |                        调用时机                        |
+  | :-------------------------------------: | :----------------------------------------------------: |
+  |           **`constructor()`**           |            组件挂载之前,会调用它的构造函数             |
+  | **`static getDerivedStateFromProps()`** |               在调用`render`方法之前调用               |
+  |       **`componentWillMount()`**        | 在挂载之前被调用<span style=color:red;>(已过时)</span> |
+  |             **`render()`**              |                初始渲染和组件更新时调用                |
+  |        **`componentDidMount()`**        |          在组件挂载后(插入`DOM`树中)立即调用           |
+
++ ==***更新***==
+
+  |                钩子函数                 |                           调用时机                           |
+  | :-------------------------------------: | :----------------------------------------------------------: |
+  | **`static getDerivedStateFromProps()`** |                  在调用`render`方法之前调用                  |
+  |      **`shouldComponentUpdate()`**      | 当 `props` 或 `state` 发生变化时,会在渲染执行之前被调用<br/>首次渲染或使用 `forceUpdate()` 时不会调用该方法 |
+  |    **`componentWillReceiveProps()`**    | 在装载的组件接收新属性之前调用<span style=color:red;>(已过时)</span> |
+  |       **`componentWillUpdate()`**       | 当组件收到新的 `props` 或 `state` 时,会在渲染之前调用<br/>初始渲染不会调用此方法<span style=color:red;>(已过时)</span> |
+  |             **`render()`**              |                   初始渲染和组件更新时调用                   |
+  |     **`getSnapshotBeforeUpdate()`**     |        在最近一次渲染输出(提交到`DOM`节点)之前被调用         |
+  |       **`componentDidUpdate()`**        |         在更新后会被立即调用,首次渲染不会执行此方法          |
+
++ ==***卸载***==
+
+  |           钩子函数           |           调用时机           |
+  | :--------------------------: | :--------------------------: |
+  | **`componentWillUnmount()`** | 在组件卸载及销毁之前直接调用 |
+
+~~~js
+// 组件挂载之前,会调用它的构造函数
+constructor(props) {
+    super(props);
+    console.log('constructor()')
+}
+
+// 在调用 render 方法之前调用
+static getDerivedStateFromProps(props, state) { // 当 state 的值在任何时候都取决于 props,则可使用该钩子
+    console.log('static getDerivedStateFromProps()', props, state)
+    return true // 返回一个状态对象,或者null
+}
+
+// 在组件挂载后(插入 DOM 树中)立即调用
+componentDidMount() {
+    console.log('componentDidMount()')
+}
+
+// 当 props 或 state 发生变化时,会在渲染执行之前被调用,首次渲染或使用 forceUpdate() 时不会调用该方法
+shouldComponentUpdate(nextProps, nextState) {
+    /*
+    根据方法的返回值,判断组件的输出是否受当前 state 或 props 更改的影响; 
+    默认行为是 state 每次发生变化组件都会重新渲染,返回值默认为 true
+    */
+    console.log('shouldComponentUpdate()', nextProps, nextState)
+    return true;
+  }
+
+// 在最近一次渲染输出(提交到DOM节点)之前被调用
+getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log('getSnapshotBeforeUpdate()', prevProps, prevState)
+    return { name: 'linke' } // 此生命周期方法返回的任何值都将作为参数传递给componentDidUpdate()
+}
+
+// 在更新后会被立即调用,首次渲染不会执行此方法
+componentDidUpdate(prevProps, prevState, snapshot) {
+    // snapshot 为 getSnapshotBeforeUpdate() 生命周期钩子的返回值
+    console.log('componentDidUpdate()', prevProps, prevState, snapshot);
+}
+
+// 在组件卸载及销毁之前直接调用
+componentWillUnmount() {
+    console.log('componentWillUnmount()')
+}
+
+// 初始渲染和组件更新时调用
+render() {
+    return {/* ... */}
+}
+
+/* 钩子调用顺序 */
+// 挂载
+// => constructor()
+// => static getDerivedStateFromProps()
+// => render()
+// => componentDidMount()
+
+// 更新
+// => static getDerivedStateFromProps()
+// => shouldComponentUpdate()
+// => render()
+// => getSnapshotBeforeUpdate()
+// => componentDidUpdate()
+
+// 销毁
+// => componentWillUnmount()
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### ❕❕注意
+
+> :grey_exclamation:<span style=color:red;>***在使用已过时的钩子函数时，需要指定函数名前缀为`UNSAFE_`才可正常使用***</span>
+
+~~~js
+// 在挂载之前被调用,在render()之前调用(已过时)
+UNSAFE_componentWillMount() {
+    console.log('componentWillMount()')
+}
+~~~
+
+
+
+
+
+
+
+
+

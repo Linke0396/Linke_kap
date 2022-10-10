@@ -2419,7 +2419,11 @@ data: {
 
 > ==***当前组件的 `style` 节点添加了 `scoped` 属性，则当前组件的样式对其子组件是不生效的***==
 >
-> :grey_exclamation:==***如果想让某些样式对子组件生效，可以使用 `/deep/` 深度选择器***==
+> :grey_exclamation:==***如果想让某些样式对子组件生效，可以使用<span style=color:red;>深度选择器</span>，以下`3`种写法***==
+>
+> 1. **`/deep/`**
+> 2. **`::v-deep`**
+> 3. **`:deep()`** 
 
 ```vue
 <style scoped>
@@ -2431,6 +2435,15 @@ data: {
 */
 
 /deep/ <CSS选择器> {
+	// CSS ...
+}
+
+::v-deep <CSS选择器> {
+	// CSS ...
+}
+
+/* 最新写法 */
+:deep(<CSS选择器>) {
 	// CSS ...
 }
 </style>
@@ -2773,6 +2786,57 @@ PubSub.publish('MY TOPIC', 'hello world!');
 	unsubscribe(token);
 */
 PubSub.unsubscribe(token);
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🍧组件上使用 v-model
+
+> 自定义事件也可以用于创建支持 `v-model` 的自定义输入组件
+>
+> 组件上的 `v-model` 默认会利用名为 `value` 的 `prop` 和名为 `input` 的事件
+
+~~~html
+<ke-input v-model="searchText"/>
+
+<!-- 等价于下面代码 -->
+<ke-input
+  v-bind:value="searchText"
+  v-on:input="searchText = $event"
+></ke-input>
+~~~
+
+~~~vue
+<template>
+	<!-- 在其 input 事件被触发时，将新的值通过自定义的 input 事件抛出 -->
+	<input
+      v-bind:value="value"
+      v-on:input="$emit('input', $event.target.value)"
+    />
+</template>
+
+<script>
+export default {
+    name: 'keInput'
+    props: ['value'] // 将其 value 属性绑定到一个名叫 value 的 prop 上
+}
+</script>
 ~~~
 
 

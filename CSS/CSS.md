@@ -2068,6 +2068,41 @@ animation:
 
 
 
+
+
+
+
+
+
+## ⚪round()
+
+> ***`round()` 该函数返回一个数字<span style=color:red;>四舍五入</span>之后的整数***
+
+
+
+### 语法
+
+> ~~~css
+> round(十进制数);
+> 
+> // 例
+> width: round(10% - 1.5);
+> ~~~
+>
+> *`-0.5` 舍入为负零；`0.4` 舍入为正零*
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## BFC
 
 > *==**BFC即block formatting contexts（`块级格式化上下文`）**==，它是一个独立的渲染区*
@@ -2093,6 +2128,12 @@ animation:
 > ​		`image`	:	反射的背景
 >
 > :grey_exclamation:**<span style=color:red;>*倒影不占空间*</span>**
+
+
+
+
+
+
 
 
 
