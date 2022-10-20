@@ -62,7 +62,7 @@
       create-react-app -V
       ~~~
 
-   2. 方式二
+   2. 方式二*(推荐)*
 
       ~~~cmd
       npx create-react-app 项目名称
@@ -444,7 +444,7 @@ const element = <img src={user.avatarUrl} />;
 
 
 
-## 🔧组件
+## 🔩组件
 
 ### Class组件
 
@@ -715,6 +715,166 @@ createRoot(document.getElementById('root')).render(<App/>);
       <div class="public_bgc__xxxxx"></div>
       ~~~
       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔄组件之间的数据共享
+
+#### :arrow_down:父向子共享
+
+> ==***父向子共享数据  ：通过 `props` 传递***==
+
++ ==***父组件***==
+
+  ~~~jsx
+  class App extends Component {
+  	state = {
+          number： 0
+      }
+      render() {
+          return <Son number={this.state.number} />
+      }
+  }
+  ~~~
+
++ ==***子组件***==
+
+  ~~~jsx
+  class Son extends Component {
+      // 可使用 propTypes 限制 props 类型
+      // 可使用 defaultProps 设置 props 默认值
+      
+      render() {
+          return <div>{this.props.number}</div>
+      }
+  }
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### :arrow_up:子向父共享
+
+> ==***子向父共享数据 ：通过 `props`传递<span style=color:red;>函数</span>***==
+
++ ==***子组件***==
+
+  ~~~jsx
+  class Son extends Component {
+      render() {
+  		return <button onClick={this.props.add}>number++</button>
+      }
+  }
+  ~~~
+
++ ==***父组件***==
+
+  ~~~jsx
+  class App extends Component {
+      state = { number: 0 }
+      // 定义函数
+      add = () => {
+          this.setState({ number: this.state.number + 1 });
+      }
+      
+  	render() {
+          return (
+              <div>{this.state.number}</div>
+              <Son add={this.add} />
+          );
+      }
+  }
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### PubSub JS
+
+> ***`pubsubjs`是一个用脚本编写的<span style=color:red;>发布/订阅</span>库***
+
+
+
+
+
+
+
+##### 安裝
+
+~~~cmd
+npm i pubsub-js
+~~~
+
+
+
+
+
+
+
+
+
+##### 基本使用
+
+~~~js
+// 引入 pubsub 模块
+import PubSub from "pubsub-js";
+
+/* -- 订阅 --
+	subscribe(事件名, 事件处理函数);
+		msg : 被触发的事件名称
+		data : 事件触发时传递的参数
+*/
+let token = PubSub.subscribe('MY TOPIC', (msg, data) => {
+    console.log( msg, data);
+});
+
+
+/* -- 发布 --
+	publish(触发的事件名称, 额外传递的参数);
+*/
+PubSub.publish('MY TOPIC', 'hello world!');
+
+
+/* -- 取消特定订阅 --
+	unsubscribe(token);
+*/
+PubSub.unsubscribe(token);
+~~~
 
 
 
@@ -1235,7 +1395,7 @@ class From extends Component {
 
 ### 默认值
 
-> 对于不受控制的组件,可与使用 `defaultValue` 指定初始值
+> 对于不受控制的组件,可与使用 `defaultValue/defaultChecked` 指定初始值
 
 ~~~jsx
 render() {
@@ -1250,6 +1410,33 @@ render() {
     );
 }
 ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 只读
+
+> 设置输入输入组件为只读`readOnly={true}`
+
+~~~jsx
+class App extends Component {
+
+    render() {
+        return <input type="text" defaultValue="linke" readOnly={true} />;
+    }
+}
+~~~
+
+
 
 
 
@@ -1578,6 +1765,242 @@ UNSAFE_componentWillMount() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🌍配置代理
+
++ *方式一*
+
+  1. ==*在 `package.json` 文件中添加配置*==
+
+    ~~~json
+    {
+        // ...
+        "proxy": "http://localhost:5000" // 缺点: 如果请求的资源本地存在，则请求本地
+    }
+    ~~~
+
++ *方式二*
+
+  1. ==***项目中创建 `src/setupProxy.js`文件，并配置***==
+
+    ~~~json
+    // 导入 createProxyMiddleware
+    const { createProxyMiddleware } = require('http-proxy-middleware');
+    
+    module.exports = function (app) {
+        app.use(
+            '/api', // 请求前缀
+            createProxyMiddleware({
+                target: 'http://localhost:5000', // 配置请求服务器地址
+                changeOrigin: true, // 控制服务器接收的请求头中Host的值,默认值false
+                pathRewrite: {'^/api': ''} // 重写目标的网址路径
+            })
+        );
+    };
+    ~~~
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 路由
+
+### v5
+
+#### 安装
+
+~~~cmd
+npm install react-router-dom@5
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 基本使用
+
+1. ***导入 `react-router`***
+
+   - ~~~jsx
+     /* App */
+     
+     // 导入 react-router
+     import {
+       BrowserRouter,
+       Routes,
+       Route,
+       Link
+     } from 'react-router-dom'
+     ~~~
+
+2. ***引入路由组件***
+
+   - ~~~jsx
+     /* App */
+     
+     // 引入路由组件
+     import Home from "./components/Home";
+     import Login from "./components/Login";
+     ~~~
+
+3. ***定义路由规则***
+
+   - ~~~jsx
+     /* index.js */
+     
+     // 导入 BrowserRouter 或 HashRouter
+     import { BrowserRouter } from "react-router-dom";
+     // import { HashRouter } from "react-router-dom";
+     
+     
+     render(
+         // 必须使用 BrowserRouter/BrowserRouter 包裹路由链接
+         <BrowserRouter>
+             <App/>
+         </BrowserRouter>
+         , document.getElementById('root'));
+     ~~~
+
+4. ***声明路由链接和注册路由***
+
+   - ~~~jsx
+     /* App */
+     
+     render() {
+         return (
+             <div>
+                 {/* 定义路由链接 */}
+                 <Link to="/home">home</Link>
+                 <Link to="/login">login</Link>
+                 
+                 {/* 注册路由 */}
+                 <Routes>
+                     <Route path="/home" component={<Home />} />
+                     <Route path="/login" component={<Login />} />
+                 </Routes>
+             </div>
+         );
+     }
+     ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### v6
+
+#### 安装
+
+~~~cmd
+npm install react-router-dom
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 基本使用
+
+~~~jsx
+import React, { Component } from 'react';
+
+// 1.导入 react-router
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom'
+
+// 2.引入路由组件
+import Home from "./components/Home";
+import Login from "./components/Login";
+
+export default class App extends Component {
+    render() {
+        return (
+            <div>
+                {/* 必须使用 BrowserRouter 包裹路由链接 */}
+                <BrowserRouter>
+                    {/* 2.定义路由链接 */}
+                    <Link to="/home">home</Link>
+                    <Link to="/login">login</Link>
+                    
+                    {/* 3.注册路由 */}
+                    <Routes>
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                    </Routes>
+                </BrowserRouter>
+            </div>
+        );
+    }
+}
+~~~
 
 
 

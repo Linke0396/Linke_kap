@@ -2492,7 +2492,7 @@ main {
 
 
 
-### @use
+### 🥕@use
 
 > ==***该规则从其他 `Sass` 样式表中加载 `mixin`、`function`和 `变量`，并将多个样式表中的 CSS 组合在一起；***==
 >
@@ -2501,7 +2501,7 @@ main {
 > + ==:grey_exclamation:<span style=color:black;>*如果在文件夹中写入 `_index.scss`，则在加载文件夹本身的 `URL` 时，将自动加载索引文件*</span>==
 >
 > ~~~scss
-> @use <url> [as alias|namespace]
+> @use "<url>" [as alias|namespace]
 > ~~~
 
 ~~~scss
@@ -2665,7 +2665,7 @@ $_h: 150px; // 方式(2)
 
 
 
-#### 配置默认值
+#### 配置模块
 
 > ==***样式表可以使用 `！default` 标志定义变量，以使其可配置；***==
 >
@@ -2682,8 +2682,8 @@ $box-shadow: 0 0.5rem 1rem rgba($color, 0.15) !default;
     box-shadow: $box-shadow;
 }
 
-//引入, 同时配置模块默认值
-@use 'user/library' with (
+// 引入, 同时配置模块默认值
+@use './btns' with (
     $color: lightpink,
     $border-radius: 5px
 );
@@ -2692,6 +2692,338 @@ $box-shadow: 0 0.5rem 1rem rgba($color, 0.15) !default;
 .btn {
     border-radius: 5px;
     box-shadow: 0 0.5rem 1rem rgba(255, 182, 193, 0.15);
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔄@forward
+
+> ==***`@forward` 可以跨多个文件组织 `Sass` 库，同时允许用户加载单个入口点文件***==
+>
+> + :grey_exclamation:<span style=color:black;>*在模块内 `@forward` 成员后，该成员在当前的模块中不可用，如果要使用该模块成员，则需要在 `@forward` 之后面 `@use`*</span>
+>
+> ~~~scss
+> @forward "<url>"
+> ~~~
+
+ ~~~scss
+ // src/_list.scss
+ $color: skyblue;
+ @mixin list-reset {
+     margin: 0;
+     padding: 0;
+     list-style: none;
+ }
+ 
+ // bootstrap.scss
+ @forward "src/list";
+ 
+ // styles.scss
+ @use "bootstrap";
+ 
+ li {
+     @include bootstrap.list-reset;
+     color: bootstrap.$color;
+ }
+ 
+ // 编译后的 css
+ li {
+     margin: 0;
+     padding: 0;
+     list-style: none;
+     color: skyblue;
+ }
+ ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 添加前缀
+
+> ==*通过 `@forward "<url>" as <prefix>-*`给添加到模块转发的每个`mixin`，`function`和变量名称的前缀开头*==
+
+~~~scss
+// src/_list.scss
+$color: skyblue;
+@mixin reset {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// bootstrap.scss
+@forward "src/list" as list-*;
+
+// styles.scss
+@use "bootstrap";
+
+li {
+    @include bootstrap.list-reset;
+    color: bootstrap.$list-color;
+}
+
+// 编译后的 css
+li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: skyblue;
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 控制可见性
+
++ 🚫*`@forward "<url>" hide <members...>`：设置隐藏成员后，该成员无法转发*
++ ⭕*`@forward "<url>" show <members...>`：设置显示成员后，只转发指定成员*
+
+~~~scss
+// src/_list.scss
+$color: skyblue;
+$border-radius: 3px;
+@mixin reset {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+// bootstrap.scss
+@forward "src/list" hide reset, $color;
+// 转发时设置前缀，如有再控制可见性时，也应当添加前缀
+@forward "src/list" as list-* hide list-reset, $list-color;
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 配置模块
+
+> ==***规则的配置可以在其配置中使用 `!default` 标志，允许模块更改上游样式表的默认值，同时仍允许下游样式表覆盖它们***==
+>
+> ~~~scss
+> @forward <url> with (<variable>: <value>, ...)
+> ~~~
+
+~~~scss
+// _btns.scss
+$color: skyblue !default;
+$border-radius: 3px !default;
+$box-shadow: 0 0.5rem 1rem rgba($color, 0.15) !default;
+
+.btn {
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+}
+
+// _opinionated.scss
+@forward './btns' with (
+	$color: lightpink !default, // 覆盖模块默认值
+    $border-radius: 5px !default
+);
+
+// style.scss
+@use 'opinionated' with ($color: #333);
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌱@at-root
+
+> ==***其中的所有内容在文档的根目录处发出***==
+
+~~~scss
+// scss 代码编辑
+.parent {
+    font-size: 13px;
+    
+    // 方式(1)
+    @at-root .child {
+        font-size: 14px;
+        @at-root .son {
+            font-size: 15px;
+        }
+    }
+    
+    // 方式(2)
+    @at-root {
+        .item-1 {
+            font-size: 13px;
+        }
+        .item-2 {
+            font-size: 14px;
+        }
+    }
+}
+
+// 编译后的 css
+.parent {
+    font-size: 13px;
+}
+.child {
+    font-size: 14px;
+}
+.son {
+    font-size: 15px;
+}
+
+.item-1 {
+    font-size: 13px;
+}
+
+.item-2 {
+    font-size: 14px;
+}
+~~~
+
+> ==*高级嵌套*==
+
+~~~scss
+// scss 代码编辑
+@mixin unify-parent($child) {
+    @at-root #{selector-unify(&, $child)} {
+        @content;
+	}
+}
+
+.wrapper .field {
+    @include unify-parent("input") {
+        /* ... */
+    }
+    @include unify-parent("select") {
+        /* ... */
+    }
+}
+
+// 编译后的 css
+.wrapper input.field {
+    /* ... */
+}
+
+.wrapper select.field {
+    /* ... */
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 超越样式规则
+
++ *`@at-root (with: <rules...>) { ... }`：包括*
++ *`@at-root (without: <rules...>) { ... }`：不包括*
+
+==***规则***==
+
+1. `all`所有
+2. `rule` 常规`CSS`
+3. `media` 媒体查询
+
+~~~scss
+// scss 代码编辑
+@media print {
+    .page {
+        width: 8in;
+
+        @at-root (without: media) {
+            color: #111;
+        }
+
+        @at-root (with: rule) {
+            font-size: 1.2em;
+        }
+    }
+}
+
+// 编译后的 css
+@media print {
+    .page {
+        width: 8in;
+    }
+}
+.page {
+    color: #111;
+}
+.page {
+    font-size: 1.2em;
 }
 ~~~
 

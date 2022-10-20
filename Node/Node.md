@@ -1363,6 +1363,36 @@ _this // { age: 11, getName: [Function (anonymous)] }
 
 
 
+### \_\_dirname,\_\_filename
+
+> :grey_exclamation:==***`__dirname,__filename`是`commonjs`规范的内置变；如果使用了`es`规范是不会注入这两个变量的***==
+
+~~~js
+// 解决方式
+import path from "path";
+import { fileURLToPath } from "url";
+
+// 获取 __filename
+const __filenameNew = fileURLToPath(import.meta.url);
+
+// 获取 __dirname
+const __dirnameNew = path.dirname(__filenameNew);
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 定时器
 
 > ###### *`setTimeout(callback, delay)`	:	循环定时器*
