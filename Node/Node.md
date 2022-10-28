@@ -1716,7 +1716,15 @@ yarn remove 包
 
 # 安装项目全部依赖
 yarn i
+
+# 查看 yarn 全局安装位置
+yarn global dir
+
+# 查看 yarn 全局cache位置
+yarn cache dir
 ```
+
+
 
 
 

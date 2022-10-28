@@ -2854,7 +2854,7 @@ function useMouse() {
 
 ## :snowflake:Vuex
 
-==***`Vuex` 是一个专为 `Vue` 应用程序开发的<span style=color:red;>状态管理模式 + 库</span>***==
+==***[Vuex](https://vuex.vuejs.org/zh/) 是一个专为 `Vue` 应用程序开发的<span style=color:red;>状态管理模式 + 库</span>***==
 
 
 
@@ -2947,10 +2947,37 @@ npm i vuex		# vue3对应版本
 + ###### ***v3***
 
   ~~~js
-  // ....
-  ~~~
-
+  import { createApp } from 'vue'
+  // 引入 createStore
+  import { createStore } from 'vuex'
   
+  // 创建一个新的 store 实例
+  const store = createStore({
+      state () {
+          return {
+              // ...
+          }
+      },
+      actions: {
+          // ...
+      },
+      mutations: {
+          // ...
+      },
+      getters: {
+          // ...
+      }
+  })
+  
+  const app = createApp({ /* 根组件 */ })
+  
+  // 将 store 实例作为插件安装
+  app.use(store)
+  ~~~
+  
+  
+
+
 
 
 
@@ -3419,6 +3446,8 @@ export default {
     }
 }
 ~~~
+
+
 
 
 
