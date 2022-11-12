@@ -3465,6 +3465,48 @@ export default {
 
 
 
+## 🍍Pinia
+
+==***[Pinia](https://pinia.vuejs.org/zh/): 是 `Vue` 的专属状态管理库***==
+
+<center><img src="images/Pinia.png" alt="Pinia" style="zoom:65%;" title="Pinia" /></center>
+
+
+
+
+
+
+
+### 安装
+
+~~~cmd
+npm install pinia
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 🌟改变
 
 - [x] :grey_exclamation:***移除 `keyCode` 修饰符，不支持  `config.keyCodes`***

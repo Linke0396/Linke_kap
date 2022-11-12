@@ -574,7 +574,7 @@ import module from '@/module-path';
    + 🔗[html-webpack-plugin - GitHub](https://github.com/jantimon/html-webpack-plugin)
 
    + ```cmd
-     npm i --save-dev html-webpack-plugin -D
+      npm i --save-dev html-webpack-plugin
      ```
 
 2. ***配置 `webpack.config.js` 文件***
@@ -635,8 +635,10 @@ import module from '@/module-path';
 
 1. ***安装***
 
-   + ```cmd
-     npm i --save-dev clean-webpack-plugin -D
+   - 🔗[clean-webpack-plugin - GitHub](https://github.com/johnagan/clean-webpack-plugin)
+
+   - ```cmd
+     npm i --save-dev clean-webpack-plugin
      ```
 
 2. ***配置 `webpack.config.js` 文件***
@@ -651,6 +653,10 @@ import module from '@/module-path';
      // 在 plugins节点中配置插件
      plugins: [ cleanWebpackPlugin, ... ]
      ```
+
+
+
+
 
 
 
@@ -708,7 +714,7 @@ module.exports = webpackConfig;
 
 #### :sunrise_over_mountains:环境配置
 
-+ ***<span style=color:red;>开发环境</span>	:	`eval-source-map`***
++ ***<span style=color:red;>开发环境</span>	:	`eval-source-map / eval-cheap-module-source-map`***
 + ***<span style=color:red;>生产环境</span>	:	`nosources-source-map / hidden-source-map`***
 
 
