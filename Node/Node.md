@@ -1708,6 +1708,9 @@ yarn add 包 # 默认安装最新版本
 yarn add 包@包版本
 yarn add 包 --dev
 
+# 安装全局包
+yarn global add 包
+
 # 更新包
 yarn upgrade 包@b包版本 # 默认更新最新版本
 

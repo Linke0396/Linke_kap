@@ -2664,10 +2664,6 @@ const attrs = useAttrs() // 等价 context.attrs
 
 
 
-
-
-
-
 ## 🍬响应性语法糖
 
 ==***响应性语法糖目前默认是关闭状态，需要你显式选择启用***==
@@ -2833,6 +2829,216 @@ function useMouse() {
 ~~~
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🎨组件CSS功能
+
+### 深度选择器
+
+> ==**使用`scoped`后，父组件的样式将不会渗透到子组件中; 如果想要影响到子组件，可以使用`:deep()`这个伪类**===
+
+~~~vue
+<style scoped>
+.selectorA :deep(..selectorB) {
+    /* ... */
+}
+</style>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 插槽选择器
+
+> ==**默认情况下，作用域样式不会影响到 `<slot/>` 渲染出来的内容,可使用 `:slotted` 伪类将插槽内容作为选择器的目标**==
+
+~~~vue
+<style scoped>
+:slotted(.selector) {
+    /* ... */
+}
+</style>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 全局选择器
+
+> ==**可以使用 `:global` 伪类来实现样式规则应用到全局**==
+
+~~~vue
+<style scoped>
+:global(.selector) {
+    /* ... */
+}
+</style>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 混合使用局部与全局样式
+
+> ==**可以在同一个组件中同时包含作用域样式和非作用域样式**==
+
+~~~vue
+<style>
+/* 全局样式 */
+</style>
+
+<style scoped>
+/* 局部样式 */
+</style>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### CSS Modules
+
+> ==**`<style module>`标签会被编译为 <i style=color:red;>CSS Modules</i> 并且将生成的 <i style=color:red;>CSS class</i> 作为`$style`对象暴露给组件**==
+>
+> :grey_exclamation:==<u>得出的<span style=color:red;>class</span>将被哈希化以避免冲突，实现了同样的将<span style=color:red;>CSS</span>仅作用于当前组件的效果</u>==
+>
+> + ==***可以通过给 `module` 属性值来自定义注入<span style=color:red;>class</span>对象的属性名***==
+
+~~~vue
+<template>
+	<div :class="$style.red">This should be red</div>
+	<div :class="classes.blue">This should be blue</div>
+</template>
+
+// 默认对象名 $style
+<style module>
+.red {
+    color: red;
+}
+</style>
+
+// 指定对象名称
+<style module="classes">
+.blue {
+    color: skyblue;
+}
+</style>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### useCssModule()
+
+> ~~~js
+> import { useCssModule } from 'vue'
+> 
+> 
+> useCssModule(classes);
+> ~~~
+>
+> ==***`useCssModule()`在`setup`中访问注入的 `class`***==
+>
+> + <span style=color:black;>`classes(string)`：匹配的 `module` 属性值，**可选**</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 使用v-bind()
+
+> *==**单文件组件的`<style>`标签支持使用`v-bind()`将 <i style=color:red;>CSS</i> 的值链接到动态的组件状态**==*
+
+~~~vue
+<template>
+	<div class="text">linke</div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+    
+const color = ref('skyblue')
+const theme = { bgc: 'silver' }
+</script>
+
+<style>
+.text {
+    color: v-bind(color);
+    background-color: v-bind('theme.bgc');
+}
+</style>
+~~~
 
 
 
@@ -3317,7 +3523,7 @@ export default {
 
 
 
-### Modules
+### 🎳Modules
 
 > :grey_exclamation:***`Vuex` 允许我们将 `store` 分割成模块`（module）`，每个模块拥有自己的 `state`、`mutation`、`action`、`getter`、甚至是嵌套子模块***
 
@@ -3495,6 +3701,680 @@ npm install pinia
 
 
 
+### 基本使用
+
++ <span style=color:black;>`main.js`安装`Pinia`</span>
+
+  ~~~js
+  import { createApp } from 'vue'
+  // 引入 pinia
+  import { createPinia } from 'pinia'
+  import App from './App.vue'
+  
+  // 创建 pinia 实例
+  const pinia = createPinia()
+  const app = createApp(App)
+  
+  // 安装 pinia
+  app.use(pinia)
+  app.mount('#app')
+  
+  // createApp(App).use(createPinia()).mount('#app') // 可链式调用
+  ~~~
+
++ <span style=color:black;>创建`src/stors/counter.js`文件</span>
+
+  ~~~js
+  import { defineStore } from 'pinia' // 导出用于 store 的函数
+  
+  // 创建 store 并暴露
+  export const useCounterStore = defineStore('counter', () => {
+      state: () => ({ count: 0 }), // state
+      actions: { // actions
+          increment() {
+              this.count++
+          }
+      }
+  })
+  ~~~
+
++ <span style=color:black;>在组件中使用</span>
+
+  ~~~vue
+  <template>
+  	<button type="button" @click="increment">count is {{ count }}</button>
+  </template>
+  
+  <script setup>
+  // 导入 stote
+  import { useCounterStore } from '@/stores/counter'
+  
+  // 获取 stote
+  const store = useCounterStore();
+      
+  // const { count } = store // 解构的属性将失去响应性
+  const { count } = storeToRefs(store) // 使用 storeToRefs() 保持属性响应性
+  
+  // action 可以直接解构
+  const { increment } = store
+  </script>
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Store
+
+> ==**`store`简单来说就是数据仓库**==
+>
+> :grey_exclamation:<span style=color:black;>*两种形式创建 `Store`:*</span>
+>
+> + <a href="#optionStore">Option Store</a>
+> + <a href="#setupStore">Setup Store</a>
+
+
+
+
+
+
+
+
+
+#### <span id="optionStore" name="optionStore">Option Store</span>
+
+> ==***`defineStore()`方法的第二个参数：可以传入一个带有 `state`、`actions` 与 `getters` 属性的 `Option`对象***==
+
+~~~js
+export const useNameStore = defineStore('name', {
+    state: () => { // store 的数据(data)
+        // ...
+        return { ... } // data
+    },
+    getters: { // store 的计算属性(computed)
+        // ...
+    },
+    actions: { // store 的方法(methods)
+        // ...
+    }
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### <span id="setupStore" name="setupStore">Setup Store</span>
+
+>==***`defineStore()`方法的第二个参数：可以传入一个函数，该函数定义了一些响应式属性和方法，并且返回一个需要暴露出去的属性和方法的对象***==
+>
+><span style=color:black;>**在 *`Setup Store`* 中：**</span>
+>
+>+ <span style=color:black;>`ref()` 就是 `state`</span>
+>+ <span style=color:black;>`computed()` 就是 `getters`</span>
+>+ <span style=color:black;>`function()` 就是 `actions`</span>
+
+~~~js
+import { ref } from 'vue'
+
+export const useNameStore = defineStore('name', {
+    const count = ref(0) // state
+
+	function fn() { } // actions
+
+	return { count, fn }
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### State
+
+> ==***`state` 是`store`的核心，在`Pinia`中，`state` 被定义为一个返回初始状态的<span style=color:red;>函数</span>***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### TypeScript
+
+> ==***`Pinia` 会自动推断出`state`的类型，，但在一些情况下，需要声明其类型***==
+
+~~~typescript
+const useStore = defineStore('storeId', {
+    // 为了完整类型推理，推荐使用箭头函数
+    state: () => {
+        return {
+            // 用于初始化空列表
+            userList: [] as UserInfo[],
+            // 用于尚未加载的数据
+            user: null as UserInfo | null,
+        }
+    },
+})
+
+interface UserInfo {
+    name: string
+    age: number
+}
+~~~
+
+> ==***也可以用一个接口定义 `state`，并添加 `state()` 的返回值的类型***==
+
+~~~typescript
+interface State {
+    userList: UserInfo[]
+    user: UserInfo | null
+}
+
+const useStore = defineStore('storeId', {
+    state: (): State => {
+        return {
+            userList: [],
+            user: null,
+        }
+    },
+})
+
+interface UserInfo {
+    name: string
+    age: number
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 访问state
+
+> ==**可以通过 `store` 实例访问 `state`，直接对其进行读写**==
+
+~~~js
+const store = useStore()
+
+store.count++
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 重置state
+
+> ==**可以通过调用 `store` 的 `$reset()` 方法将 `state` 重置为初始值**==
+>
+> ❕*<span style=color:red;>只有使用<a href="#optionStore">Option Store</a>方式构建的`store`实现了`$reset()`</span>*
+
+~~~js
+const store = useStore()
+
+store.$reset()
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 变更state
+
+> ==**可以调用 `$patch` 方法直接改变 `store`**==
+
++ <span style=color:black;>对象形式</span>
+
+  ~~~js
+  store.$patch({
+      count: store.count + 1,
+      name: 'Linke',
+  });
+  ~~~
+
++ <span style=color:black;>函数形式</span>
+
+  ~~~js
+  store.$patch((state) => {
+      state.count++
+      state.name = 'Linke'
+  })
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 替换state
+
+> ==**`Pinia`提供了方法可以直接替换整个`state`对象，使用`store`的`$state`方法**==
+
+~~~js
+// 这实际上并没有替换 $state ,而是在内部调用 $patch()
+store.$state = { count: 0 }
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 订阅state
+
+> ==**可以通过 `store` 的 `$subscribe()` 方法侦听 `state` 及其变化**==
+>
+> + <span style=color:black;>`$subscribe()` 在 `patch` 后只触发一次</span>
+> + <span style=color:black;>当组件被卸载时，将被自动删除</span>
+> + <span style=color:black;>`{ detached: true }`作为第二个参数<span style=color:red;>(可选)</span>，组件卸载后依旧保留</span>
+
+~~~js
+store.$subscribe((mutation, state) => {
+    // import { MutationType } from 'pinia'
+    mutation.type // 'direct' | 'patch object' | 'patch function'
+    // 和 store.$id 一样
+    mutation.storeId 
+    // 只有 mutation.type === 'patch object'的情况下才可用
+    mutation.payload // 传递给 cartStore.$patch() 的补丁对象
+})
+~~~
+
+> :grey_exclamation:==***可以在 `pinia` 实例上侦听整个 `state`***==
+
+~~~js
+watch(
+    pinia.state,
+    (state) => {
+        // ...
+    },
+    { deep: true }
+)
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Getter
+
+> ==***`Getter` 完全等同于 `store` 的 `state` 的计算属性<i style=color:red;>(computed)</i>***==
+>
+> + <span style=color:red;>在 `TypeScript` 中使用 `this` 的 `getter` 函数必须定义返回类型</span>
+
+~~~typescript
+export const useCounterStore = defineStore('counter', () => {
+    state: () => ({
+        count: 0,
+    }),
+    getters: {
+        doubleCount: (state) => state.count * 2, // 类型是自动推断出来的，因为没有使用 this
+        doublePlusOne(): number { // 必须明确设置返回类型
+            return this.doubleCount + 1
+	    },
+    },
+})
+~~~
+
+~~~vue
+<script setup lang="ts">
+import { useCounterStore } from '@/stores/counter'
+
+const store = useCounterStore();
+    
+store.doubleCount // doubleCount: number
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 访问其他getter
+
+> ==**没有使用 `TypeScript`，可以用 `JSDoc` 来让你的<span style=color:red;>IDE</span>提示类型**==
+
+~~~js
+export const useCounterStore = defineStore('counter', () => {
+    state: () => ({
+        count: 0,
+    }),
+    getters: {
+        doubleCount: (state) => state.count * 2,
+        // 这里我们需要自己添加类型(在 JS 中使用 JSDoc)
+        /**
+         * @returns {number}
+         */
+        doubleCountPlusOne() {
+            return this.doubleCount + 1
+        },
+    },
+})
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### getter传递参数
+
+> ==**`Getter` 只是幕后的计算属性，所以不可以向它们传递任何参数，但是可以从 `getter` 返回一个函数，该函数可以接受任意参数**==
+
+~~~js
+export const useCounterStore = defineStore('counter', () => {
+    getters: {
+        getUserById: (state) => {
+            return (userId) => state.users.find((user) => user.id === userId)
+        },
+    },
+})
+~~~
+
+~~~vue
+<script setup>
+import { useCounterStore } from '@/stores/counter'
+    
+const store = useCounterStore()
+const { getUserById } = store
+</script>
+
+<template>
+	<div>User: {{ getUserById(1) }}</div>
+</template>
+~~~
+
+> ==**以上方式 `getter` 将不再被缓存，可以在 `getter` 本身中缓存一些结果，性能会更好**==
+
+~~~typescript
+getters: {
+    getActiveUserById(state) {
+        const activeUsers = state.users.filter((user) => user)
+        return (userId: number) => activeUsers.find((user) => user.id === userId)
+    },
+},
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Action
+
+> ==***`Action` 相当于组件中的方法<i style=color:red;>(method)</i>，可以通过 `defineStore()` 中的 `actions` 属性来定义，并且它们也是定义业务逻辑的完美选择，`action`可以是同步和异步的***==
+
+~~~js
+export const useCounterStore = defineStore('counter', () => {
+    state: () => ({
+        count: 0,
+    }),
+    actions: {
+        increment() {
+            this.count++
+        },
+        randomizeCounter() {
+            this.count = Math.round(100 * Math.random())
+        },
+    },
+})
+~~~
+
+~~~vue
+<script setup>
+import { useCounterStore } from '@/stores/counter'
+    
+const store = useCounterStore()
+store.randomizeCounter()
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 订阅action
+
+> ==**可以通过 `store.$onAction()` 来监听 `action` 和它们的结果**==
+>
+> + <span style=color:black;>传递给它的回调函数会在 `action` 本身之前执行</span>
+> + <span style=color:black;>当组件被卸载时，将被自动删除</span>
+> + <span style=color:black;>`after` 表示在 `promise` 解决之后，允许你在 `action` 解决后执行一个回调函数</span>
+> + <span style=color:black;>`onError` 允许在 `action` 抛出错误或 `reject` 时执行一个回调函数</span>
+> + <span style=color:black;>将 `true` 作为第二个参数<span style=color:red;>(可选)</span>，组件被卸载后，订阅依旧会被保留</span>
+
+~~~js
+const unsubscribe = someStore.$onAction(
+    ({
+        name, // action 名称
+        store, // store 实例
+        args, // 传递给 action 的参数数组
+        after, // 在 action 返回或解决后的钩子
+        onError, // action 抛出或拒绝的钩子
+    }) => {
+        // 为这个特定的 action 调用提供一个共享变量
+        const startTime = Date.now()
+        // 这将在执行 store 的 action 之前触发
+        console.log(`Start "${name}" with params [${args.join(', ')}].`)
+
+        // 这将在 action 成功并完全运行后触发
+        // 它等待着任何返回的 promise
+        after((result) => {
+            // after ...
+        })
+
+	    // 如果 action 抛出或返回一个拒绝的 promise 这将触发
+        onError((error) => {
+            // error ...
+        })
+	}
+)
+
+// 手动删除监听器
+unsubscribe()
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### :hammer:API
+
+#### defineStore
+
+> ~~~js
+> import { defineStore } from 'pinia'
+> 
+> 
+> // 创建一个 store
+> 
+> const useNameStore = defineStore(name, options) // 推荐使用 use + storeName + Store 形式的变量名
+> ~~~
+>
+> ==***`pinia`提供的`defineStore()`方法来创建一个`store`***==
+>
+> + <span style=color:black;>`name(string)`：唯一的`id`</span>
+> + <span style=color:black;>`options(object/function)`：其他配置项,可接受两类值`Setup`函数或`Option`对象</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### storeToRefs
+
+> ~~~js
+> import { storeToRefs } from 'pinia'
+> 
+> 
+> storeToRefs(store)
+> ~~~
+>
+> ==**创建一个引用对象，包含`store`的所有`state`、`getter`和`plugin`添加的`state`属性**==
+>
+> :grey_exclamation:<span style=color:black;>***<i style=color:red;>method</i> 和 <i style=color:red;>非响应式属性</i> 会被完全忽略***</span>
+
+
+
+
+
+
+
 
 
 
@@ -3513,10 +4393,6 @@ npm install pinia
 - [x] :grey_exclamation:***移除 `.native` 修饰符，`click`默认原生事件***
 - [x] :grey_exclamation:***移除 `Filter(过滤器)`***
 - [x] ▫▫▫▫
-
-
-
-
 
 
 
