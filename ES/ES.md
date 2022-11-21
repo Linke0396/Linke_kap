@@ -617,6 +617,8 @@ fun(); // linke
 #### 作用
 
 > <span style=color:red;>**延伸变量的作用范围**</span>
+>
+> <span style=color:red;>**实现了变量私有化**</span>
 
 
 
@@ -3976,6 +3978,50 @@ reg2.test('linke\n2396') // true
 reg2.dotAll // true
 reg2.flags // 's'
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 异步迭代器
+
+> `for await...of`方法被称为**异步迭代器**，该方法是主要用来遍历异步对象，<u>语句只能在 `async function`内使用</u>
+
+~~~javascript
+function Gen(time) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => resolve(time), time)
+    })
+}
+
+async function test() {
+    let arr = [Gen(2000), Gen(100), Gen(3000)]
+    for await (let item of arr) {
+        console.log(Date.now(), item)
+    }
+}
+
+test()
+/* test() 方法执行结果
+Promise {<pending>}
+	[[Prototype]]: Promise
+	Promise[[PromiseState]]: "fulfilled"
+	[[PromiseResult]]: undefined
+1668695679115 2000
+1668695679115 100
+1668695680111 3000
+*/
+~~~
+
+
 
 
 

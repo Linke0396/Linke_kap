@@ -1,12 +1,10 @@
 [TOC]
 
-
-
 # MongoDB
 
 ****
 
-***`MongoDN`是一个基于分布式文件存储的<span style=color:red;>非关系型数据库</span>，以 `JSON` 为数据模型***
+***`MongoDB`是一个基于分布式文件存储的<span style=color:red;>非关系型数据库</span>，以 `JSON` 为数据模型***
 
 
 <center><img src="../Node/images/MongoDB.png" alt="MongoDB" style="zoom:90%;border:2px solid;" title="MongoDB" /></center>
