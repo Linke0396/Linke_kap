@@ -742,6 +742,14 @@ alert(d); // 访问不到
   }
   ~~~
 
++ **`for .. in`**
+
+  ~~~javascript
+  for (let key in obj) { // 遍历对象
+      // 循环体
+  }
+  ~~~
+
   
 
 
@@ -758,7 +766,7 @@ alert(d); // 访问不到
 
 + ***`continue`***
 
-  > ==***用于立即跳出本次循环，继续下一次循环***===
+  > ==***用于立即跳出本次循环，继续下一次循环***==
 
 + ***`break`***
 
@@ -1332,9 +1340,1078 @@ Math.random().toString(16).substr(2, 6); // 随机16进制颜色
 
 #### 🔑属性
 
->**`PI`** **: 返回圆周率<span style=color:red;>(约等于3.14159)</span>**
++ **`PI`** **: 返回圆周率<span style=color:red;>(约等于3.14159)</span>**
+
++ ◽◽◽◽◽◽
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Number
+
+> ==**数字**==
+
++ **创建**
+
+  ~~~javascript
+  new Number(value);	// 构造函数
+  Number(value);		// 转换函数
+  ~~~
+
++ **属性**
+
+  ~~~javascript
+  /* 数字最大值 */
+  Number.MAX_VALUE; // 1.7976931348623157e+308
+  /* 数字最小值 */
+  Number.MIN_VALUE; // 5e-324
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Stirng
+
+> ==**字符串**==
+
++ **创建**
+
+  ~~~javascript
+  new String(str); // 构造创建
+  String(str);	 // 转换函数
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### RegExp
+
+> ==***<span style=color:red;>正则表达式</span>：是对字符串执行模式匹配的强大工具***==
+
++ **创建**
+
+  ~~~javascript
+  var reg = new RegExp("正则表达式"); // 构造创建
+  var reg2 = /正则表达式/;	 // 隐式创建
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 方法
+
++ **`test()` : 方法用于检测一个字符串是否匹配正则的文本**
++ **`exec()` : 检索字符串中指定的值,并返回找到的值**
++ **`match()` : 找到一个或多个正则表达式的匹配**
++ **`replace()` : 替换与正则表达式匹配的子串**
++ **`search()` : 检索与正则表达式相匹配的值**
++ ◽◽◽◽◽◽
+
+~~~javascript
+//创建
+var reg1 = new RegExp("[0-9]");
+var reg2 = /[a-z]/;
+
+// 输出
+reg1 // /[0-9]/
+reg2 // /[a-z]/
+
+// test(): 匹配返回true,反之false
+reg1.test("a") // false
+reg1.test("1") // true
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🍦修饰符
+
+| 修饰符  |                            说明                            |
+| :-----: | :--------------------------------------------------------: |
+| **`i`** |                **执行对大小写不敏感的匹配**                |
+| **`g`** | **执行全局匹配（查找所有匹配而非在找到第一个匹配后停止）** |
+| **`m`** |                      **执行多行匹配**                      |
+
+
+
+
+
+
+
+
+
+
+
+#### 🍧量词
+
+|    修饰符    |                         说明                         |
+| :----------: | :--------------------------------------------------: |
+|   **`n+`**   |      **匹配<u>任何包含至少一个`n`</u>的字符串**      |
+|  **`n\*`**   |     **匹配<u>任何包含零个或多个`n`</u>的字符串**     |
+|   **`n?`**   |     **匹配<u>任何包含零个或一个`n`</u>的字符串**     |
+|  **`n{x}`**  |      **匹配<u>包含`x`个`n`的序列</u>的字符串**       |
+| **`n{x,y}`** |    **匹配<u>包含`x`至`y`个`n`的序列</u>的字符串**    |
+| **`n{x,}`**  |    **匹配<u>包含至少`x`个`n`的序列</u>的字符串**     |
+|   **`n$`**   |         **匹配<u>任何结尾为`n`</u>的字符串**         |
+|   **`^n`**   |         **匹配<u>任何开头为`n`</u>的字符串**         |
+|  **`?=n`**   |   **匹配<u>任何其后紧接指定字符串`n`</u>的字符串**   |
+|  **`?!n`**   | **匹配<u>任何其后没有紧接指定字符串`n`</u>的字符串** |
+
+
+
+
+
+
+
+
+
+
+
+#### 🍨边界词
+
+| 边界符  |                说明                |
+| :-----: | :--------------------------------: |
+| **`^`** | **表示匹配行首的文本（以谁开始）** |
+| **`$`** | **表示匹配行尾的文本（以谁结束）** |
+
+
+
+
+
+
+
+
+
+
+
+#### 🧁预定义
+
+|  边界符  |                             说明                             |
+| :------: | :----------------------------------------------------------: |
+| **`\d`** |          **匹配`0-9`之间的任一数字，相当于`[0-9]`**          |
+| **`\D`** |         **匹配所有`0-9`以外的字符，相当于`[^0-9]`**          |
+| **`\w`** |    **匹配任意的字母、数字和下划线，相当于`[A-Za-z0-9_]`**    |
+| **`\W`** | **除所有字母、数字和下划线以外的字符，相当于`[^A-Za-z0-9_]`** |
+| **`\s`** | **匹配空格（包括换行符、制表符、空格符等），相等于`[\t\r\n\v\f]`** |
+| **`\S`** |         **匹配非空格的字符，相当于`[^\t\r\n\v\f]`**          |
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Global
+
+> ==**全局对象**==
 >
->◽◽◽◽◽◽
+> :grey_exclamation:**<span style=color:black;>`Global`中封装的方法不需要对象就可以直接调用: `方法名()`</span>**
+
+
+
+
+
+
+
+
+
+#### 🔑属性
+
++ **`Infinity`: 代表正的无穷大的数值**
++ **`java`: 代表 java.\* 包层级的一个 JavaPackage**
++ **`NaN`: 指示某个值是不是数字值**
++ **`Packages`: 根 JavaPackage 对象**
++ **`undefined`: 指示未定义的值**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### FormData
+
+> ==**表单**==
+
++ **创建**
+
+  ~~~javascript
+  new FormData([表单对象]); // 构造函数
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 方法
+
++ **存储数据**
+
+  ~~~javascript
+  append(key, value); // 添加键不唯一
+  set(key, value);	   // 添加键唯一
+  ~~~
+
++ **获取数据**
+
+  ~~~javascript
+  get(key);	 // 获取指定key的value
+  getAll(key); // 获取指定kay的value(以数组返回)
+  ~~~
+
++ **删除数据**
+
+  ~~~javascript
+  delete(key); // 删除指定key
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+### 🩺console
+
+> ==**控制台**==
+
+~~~javascript
+console.log(obj); // 浏览器控制台输出信息
+console.dir(obj); // 打印对象的内部属性
+// ...
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### ✖交叉观察器
+
+> ==***`IntersectionObserver`接口提供了<span style=color:red;>一种异步观察目标元素</span>与<span style=color:red;>祖先元素</span>或顶级文档视口的交集变化的方法;<span style=color:red;>祖先元素或视区称为根</span>***==
+
+
+
+
+
+
+
+
+
+
+
+#### 🟦构造函数
+
+> ***<span style=color:black;>创建一个新对象，==<u>该对象将在检测到目标元素的可见性已超过一个或多个阈值时执行指定的回调函数</u>==</span>***
+
+
+
+
+
+
+
+
+
+#### 🍀语法
+
+> ~~~javascript
+> new IntersectionObserver(callback[, options]);
+> ~~~
+>
+> **`callback`<span style=color:black;>: 当目标元素的百分比可见时调用的函数</span>**
+>
+> ​       `entries`<span style=color:black;>: *`IntersectionObserverEntry`* 对象的数组</span>
+>
+> ​       `observer`<span style=color:black>: 为其调用回调的 *`IntersectionObserver`*</span>
+>
+> **`option`<span style=color:black;>: 自定义观察点的可选对象</span>**
+>
+> ​       `root`<span style=color:black;>: 元素或文档对象，预期目标的祖先，其边框将被视为视口</span>
+>
+> ​       `rootMargin`<span style=color:black;>: 一个字符串,指定在计算交集时要添加偏移量，默认值为`0px 0px 0px 0px`</span>
+>
+> ​       `threshold`<span style=color:black>: 单个数字或介于 `0.0` 和 `1.0` 之间的数字数组，指定观测目标的交集面积与总边界框面积的比率</span>
+
+
+
+
+
+
+
+
+
+
+
+#### 🔲方法
+
+|       **方法**       |          **作用**          |
+| :------------------: | :------------------------: |
+|  ***`observe()`***   |   **设置观察的目标元素**   |
+| ***`unobserve()`***  | **停止观察特定的目标元素** |
+| ***`disconnect()`*** |  **阻止对象观察任何目标**  |
+
+
+
+
+
+
+
+
+
+
+
+#### 🔹IntersectionObserverEntry
+
+|         **方法**         |            **作用**            |
+| :----------------------: | :----------------------------: |
+| **`boundingClientRect`** |   **返回目标元素的边界矩形**   |
+|  **`intersectionRect`**  |     **返回目标的可见区域**     |
+|     **`rootBounds`**     | **返回交集观察点根的边界矩形** |
+|       **`target`**       |  **返回与根的交集发生的元素**  |
+|        **`time`**        |   **返回交集发生记录的时间**   |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🛑预解析
+
+> ==***<span style=color:red;>预解析</span>: `js`引擎会将 `js` 里面的所有的 `var` 还有 `function` 提升到当前作用域的最前面***==
+
++ **变量预解析(变量提升): <span style=color:red;>将所有的变量声明提升到当前的作用域的最前面</span>**
++ **函数预解析(函数提升): <span style=color:red;>将所有的函数声明提升到当前的作用域的最前面</span>**
+
+~~~javascript
+/* 函数提升
+ 解析: 通过函数预编译,将函数声明在最前面定义
+ */
+fun1(); // fun1
+function fun1() {
+    console.log('fun1');
+}
+/* 相当于以下代码
+   function fun1() { ... }
+   fun1();
+ */
+
+/* 变量提升
+解析: 通过变量预编译,fun2变量定义在最前面; 未赋值还是一个为undefined的变量,
+     而使用fun2()方法调用,相当于调用了一个不存在的fun2()函数,所以报错
+ */
+fun2(); // TypeError: fun2 is not a function
+var fun2 = function () {
+    console.log('fun2');
+}
+/* 相当于以下代码
+var fun2;
+fun();
+fun2 = function() { ... }
+*/
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔺堆栈
+
+==:grey_exclamation:**堆栈空间分配区别**==
+
+1. **栈(操作系统)：**由操作系统字符分配释放存放函数的参数值，局部变量的值等
+
+   > ***<span style=color:red;>基本数据类型存放到栈里</span>***
+   >
+   > <left><img src="images/%E5%A0%86.png" style="zoom:50%;border:thin solid silver;" title="栈" /></left>
+
+2. **堆(操作系统)：**存储复杂数据类型(对象)，一般由程序员分配释放，若程序员不释放，由垃圾回收机制回收
+
+   > ***<span style=color:red;>引用数据类型存放到堆里</span>***
+   >
+   > <left><img src="images/%E6%A0%88.png" style="zoom:50%;border:thin solid silver;" title="堆" /></left>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔹立即执行函数
+
+>==***立即执行函数,不需要调用,立即执行的函数; 会独立创建了一个作用域，里面的使用变量都是局部变量***==
+
+1. ~~~javascript
+   /*  方式一 */
+   (function(args){
+   	// 函数体
+   })(args) // 可传递参数
+   ~~~
+
+2. ~~~javascript
+   /* 方式二 */
+   !(function(args){
+   	// 函数体
+   })(args) // 可传递参数
+   ~~~
+
+3. ~~~javascript
+   /* 方式三 */
+   (function(args){
+       // 函数体
+   }(args)) // // 可传递参数
+   ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<center><img src="images/img-bom.png" alt="BOM" title="BOM" /></center>
+
+# BOM
+
+==***`Browser Object Model`(浏览器对象模型）***==
+
+
+
+
+
+
+
+
+
+
+
+## 🍀概念
+
+> <span style=color:red;>**将浏览器的各个组成部分封装成对象**</span>
+
+<center><img src="images/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1.png" alt="浏览器对象" title="浏览器对象" style="border:thin solid silver;" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🗼组成
+
++ **`Window`: 窗口对象**(顶级对象)
++ **`Navigetor`: 浏览器对象**
++ **`Screen`: 显示器屏幕对象**
++ **`History`:  历史记录对象**
++ **`Location`: 地址栏对象**
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 💻Window
+
+>==**`window`对象不需要创建就可直接需要: <span style=color:red;>window.方法名()</span>**==
+>
+>==**`window`对象引用可以省略不写: <span style=color:red;>方法名()</span>**==
+>
+>:grey_exclamation:<span style=color:black;>**定义在全局作用域中的变量，函数都会变成 `window`对象的属性和方法**</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔲方法
+
+##### 📺弹出框
+
++ **`alert()`: 方法用于显示带有一条指定消息和一个 `OK` 按钮的警告框**
+
+  ~~~javascript
+  alert("在对话框中显示的纯文本");
+  ~~~
+
++ **`confirm()`: 显示带有一段消息以及确认按钮和取消按钮的对话框**
+
+  ~~~javascript
+  /*
+  confirm("在对话框中显示的纯文本") 显示带有一段消息以及确认按钮和取消按钮的对话框
+  */
+  var flag = confirm("YON");
+  flag // 点击确认返回true,	点击取消返回false
+  ~~~
+
++ **`prompt()`: 显示可提示用户输入的对话框**
+
+  ~~~javascript
+  /*
+  prompt("在对话框中显示的纯文本",输入文本) 
+      用于显示可提示用户进行输入的对话框 ,第二参数的可以不写
+  	返回第二个参数(string类型)
+  */
+  var value = prompt("kay", 123);
+  value // 123
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+##### 🎬窗口
+
++ **`open()`：打开一个新的浏览器窗口或查找一个已命名的窗口**
+
+  ~~~javascript
+  /* 打开一个窗口，并返回一个新窗口的window对象
+  	open() 没有参数的就是重新打开一个新的空窗口
+  	open(url) 只有一个参数的是把那个参数当做网址打开
+  	open(url, name) 两个参数(url地址, 新窗口名)
+  	open(url, name, size) 三个参数(url地址, 新窗口名, 新窗口的大小)
+  */
+  var ope = document.getElementById("open");
+  var wins = [];
+  ope.onclick = function(){
+      // open();  // 打开新窗口
+      // open("http://www.baidu.com"); // 打开给定参数的网址
+      // open("http://www.baidu.com","new");
+      // open("http://www.baidu.com","new","width='500',height='300'");
+      wins.push(open("http://www.baidu.com"));
+  }
+  ~~~
+
++ **`close()`：关闭浏览器窗口**
+
+  ~~~javascript
+  /* 关闭浏览器窗口, 只有通过 JavaScript 代码打开的窗口才能够由 JavaScript 代码关闭
+  close() 
+  关闭调用者的窗口
+  */
+  var clo = document.getElementById("close");
+  clo.onclick = function(){
+     wins.forEach(function(value){
+          value.close();
+     });
+  }
+  ~~~
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### ⏰定时器
+
+|     定时器     | **调用方法**                              | **取消方法**            |
+| :------------: | ----------------------------------------- | ----------------------- |
+| **一次定时器** | **`setTimeout(回调函数[, 延迟毫秒数])`**  | **`clearTimeout(ID)`**  |
+| **循环定时器** | **`setInterval(回调函数[, 间隔毫秒数])`** | **`clearInterval(ID)`** |
+
+> <span style=color:black;>**<i style=color:skyblue;>一次定时器</i>: 在指定的毫秒数后调用函数，只执行一次**</span>
+>
+> <span style=color:black;>**<i style=color:skyblue;>循环定时器</i>：按照指定的周期（以毫秒计）来调用函数**</span>
+>
+> :grey_exclamation:==**定时器方法的共同处**==
+>
+> 1. <span style=color:black;>**第一个参数: 用的函数后要执行的 `JavaScript` 代码串**</span>
+> 2. <span style=color:black;>**第二个参数: 毫秒数之后执行，延迟毫秒数默认`0`**</span>
+> 3. <span style=color:black;>**回唯一标识, 用于关闭定时器**</span>
+
+~~~javascript
+// 第三个参数是第一个参数的形参
+setTimeout(fun, 1000, 'one');
+// 从第三个参数开始以此类推都是第一个参数的形参
+setInterval(fun, 1000, 'cycle1', 'cycle2');
+
+function fun(...args) {
+    alert([...args].join(','));
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### ◽◽◽更多
+
+|        方法         |              作用              |
+| :-----------------: | :----------------------------: |
+|    **`print()`**    |     **打印当前窗口的内容**     |
+| **`scrollTo(x,y)`** |   **把内容滚动到指定的坐标**   |
+| **`scrollBy(x,y)`** | **按照指定的像素值来滚动内容** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔑属性
+
+##### 获取其他的`BOM`对象
+
++ **`history`**
++ **`location`**
++ **`navigator`**
++ **`screen`**
+
+~~~javascript
+/* BOM
+ var h = window.history
+ 	*window可以省略,例以下写法*
+    h = history
+*/
+var h = history;
+h // [object History]
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 获取`DOM`对象
+
++ **`document`**
+
+~~~javascript
+// DOM
+window.document.write("document<br/>"); // 获取 document 对象
+document.write("document<br/>"); // 省略window对象引用
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 特殊属性
+
++ **`name`**
+
+  ~~~javascript
+  window.name // ''
+  ~~~
+
++ **`devicePixelRatio`**
+
+  ~~~javascript
+  // 获取窗口的物理像素比
+  var dpr = window.devicePixelRatio || 1;
+  ~~~
+
++ **`getSelection`**
+
+  ~~~javascript
+  // 双击禁止选中文本
+  window.getSelection ? window.getSelection().removeAllRanges() : document.getSelection.empty();
+  ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🪐Location
+
+> ==**地址栏对象: 不需创建,通过`window`获取**==
+
+~~~javascript
+window.location; 
+location;
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔲方法
+
+|         方法          |                             作用                             |
+| :-------------------: | :----------------------------------------------------------: |
+| **`reload(boolean)`** | **重新加载当前文档**<span style=color:red;>(刷新当前页面:true强制刷新，默认false)</span> |
+|   **`assign(URL)`**   | **方法可加载一个新的文档**<span style=color:red;>(重新打开的某个新页面)</span> |
+| **`replace(newURL)`** | **可用一个新文档取代当前文档**<span style=color:red;>(打开一个新的页面把当前页面覆盖)</span> |
+
+~~~html
+<button id="btn1">重新加载当前文档</button>
+<button id="btn2">加载新的文档</button>
+<button id="btn3">用新的文档替换当前文档</button>
+<script>
+    // 刷新当前页面
+    btn1.onclick = function(){
+        location.reload();
+    }
+    // 重新打开的某个新页面
+    btn2.onclick = function(){
+        location.assign("https:www.baidu.com");
+    }
+    // 打开一个新的页面把当前页面覆盖
+    btn3.onclick = function(){
+        location.replace("https:www.baidu.com");
+    }
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔑属性
+
+|      属性      |                             描述                             |
+| :------------: | :----------------------------------------------------------: |
+|   **`href`**   |                  **设置或返回完整的`URL`**                   |
+|   **`host`**   |               **设置或返回<u>主机端口号</u>**                |
+|   **`hash`**   | **设置或返回从井号(`#`)开始的`URL`(锚)，也叫<span style=color:red;>Hash地址</span>** |
+| **`pathnaem`** |           **设置或返回当前`URL`的<u>路径部分</u>**           |
+|   **`port`**   |            **设置或返回当前`URL`的<u>端口号</u>**            |
+| **`protocol`** |             **设置或返回当前`URL`的<u>协议</u>**             |
+|  **`search`**  |        **设置或返回从问号(`?`)开始的`URL`(查询部分)**        |
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### ◽◽◽更多
+
+~~~javascript
+// .../Location.html?id=123&name=linke
+new URLSearchParams(location.search).get("id") // 指定url参数(123)
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🕞History
+
+> ==**历史对象: 不需创建,通过`window`获取**==
+
+~~~javascript
+window.history;
+history;
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔲方法
+
+|      方法       |                             作用                             |
+| :-------------: | :----------------------------------------------------------: |
+|  **`back()`**   |                  **返回上一个历史记录页面**                  |
+| **`forward()`** |                  **前进下一个历史记录页面**                  |
+|   **`go(n)`**   | **方法可加载历史列表中的某个具体的页面**<br><span style=color:red;>(参数数字: 正数前进`n`条历史,负数回退`n`条历史,`n`是`0`则刷新)</span> |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔑属性
+
++ **`length`: 属性声明了当前窗口历史列表中的元素数量**
+
+~~~javascript
+history.length // 历史记录列表
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<center><img src="images/img-dom.png" style="border:thin solid silver;" alt="DOM" title="DOM" /></center>
+
+# DOM
+
+==***`Document Object Moidel`(文档对象模型)***==
+
+
+
+
+
+
+
+
+
+
+
+## 🍀概念
+
+> **称为文档树模型: 是一套操作HTML和XML文档的API**
 
 
 
