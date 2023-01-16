@@ -1896,6 +1896,269 @@ fun2 = function() { ... }
 
 
 
+## 🍓JS加载机制
+
+1. 1️⃣先执行*<span style=color:red;>执行栈中的同步任务</span>*
+2. 2️⃣异步任务(回调函数)放入*<span style=color:red;>任务队列</span>*中
+3. 3️⃣*<span style=color:red;>一旦执行栈中的所有同步任务执行完毕</span>*，系统就会*<span style=color:red;>按次序读取任务队列中的异步任务</span>*，于是被读取的异步任务结束等待，进入执行栈，开始执行
+
+<center><img src="images/JS%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6.jpg" style="zoom:110%;border:thin solid silver;" title="JS执行机制" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🎇EventLoop
+
+==***`JavaScript` 主线程从<span style=color:red;>任务队列</span>中读取异步任务的回调函数，放到执行栈中依次执行，<u>这个过程是循环不断的，所以整个的这种运行机制又称为 <span style=color:red;>`EventLoop`（事件循环）</span></u>***==
+
+<center><img src="images/javascript%E7%9A%84%E6%89%A7%E8%A1%8C%E7%BA%BF%E7%A8%8B.png" alt="JavaScript的执行线程" style="zoom:90%;border: 2px solid silver;" title="JavaScript的执行线程" /></center>
+
+
+
+
+
+
+
+
+
+### 📀同步任务
+
+==***同步任务`(synchronous)`***==
+
++ *又叫做<span style=color:red;>非耗时任务</span>，指的是在主线程上排队执行的那些任务*
++ *只有前一个任务执行完毕，才能执行后一个任务*
+
+
+
+
+
+
+
+
+
+### 💿异步任务
+
+==***异步任务`(asynchronous)`***==
+
++ *又叫做<span style=color:red;>耗时任务</span>，异步任务由 `JavaScript` 委托给宿主环境进行执行*
+
++ *当异步任务执行完成后，会通知 `JavaScript` 主线程执行异步任务的回调函数*
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🍉宏队列与微队列
+
+<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97.png" alt="宏队列与微队列" style="zoom:90%;border: 2px solid silver;" title="宏队列与微队列" /></center>
+
+>     ❗==***`js`是单线程运行的，从头到尾顺序执行，如果是<span style=color:red;><u>同步代码立即执行</u></span>；如果是<u><span style=color:red;>异步事件，按类型分别放入宏队列和微队列排队执行</span>*</u>**==
+
+***`JS`中用来<span style=color:red;>存储待执行回调函数的队列包含 `2` 个不同特定的列队</span>***
+
++ <span style=color:red;>**宏队列**：用来保存待执行的宏任务（回调）</span>，比如：==***`定时器`回调/`DOM`事件回调/`ajax`回调***==
+
++ <span style=color:red;>**微队列**：用来保存待执行的微任务（回调）</span>，比如：==***`Promise`回调/`Mutation`回调/`I/O` 操作/`UI` 渲染***==
+
+```javascript
+log = (...arg) => console.log(...arg);
+
+Promise.resolve().then(() => log("p1")) // 微队列1
+log('同步1'); // 同步1
+setTimeout(() => { // 宏队列
+    log('st..同步..'); // 同步
+    Promise.resolve().then(() => log("st...p1")); // 微队列
+}, 0);
+Promise.resolve().then(() => log("p2")) // 微队列2
+log('同步2'); // 同步2
+
+// => 执行结果
+同步1
+同步2
+p1
+p2
+st..同步..
+st...p1
+```
+
+
+
+
+
+
+
+
+
+
+
+### 🔁执行顺序
+
+<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="宏队列与微队列的执行顺序" style="zoom:90%;border: 2px solid silver" title="宏队列与微队列的执行顺序" /></center>
+
+> :grey_exclamation:==***每一个宏任务执行完之后，都会检查是否存在待执行的微任务； 如果有，则执行完所有微任务之后，再继续执行下一个宏任务***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔄js异步的执行机制
+
+1. ###### 1️⃣*==**`JS`引擎先执行所有的初始化同步任务代码**==*
+
+2. ###### 2️⃣*==**将所有的微任务一个一个取出来执行**==*
+
+3. ###### 3️⃣*==**取出宏任务执行**==*
+
+<center><img src="images/EventLoop.png" alt="EventLoop" style="zoom:90%;border: 2px solid silver;" title="EventLoop" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔹防抖
+
+> ==**<span style=color:red;>策略`(debounce)`</span>是当事件触发后,延迟 `n` 秒后再执行回调,如果在这 `n` 秒内事件又被触发，则重新计时**==
+>
+> ❕❕***<span style=color:black;>如果事件被频繁触发,防抖策略能保证<u>只有最后一次触发生效</u>!,前面 `n` 次的触发都会失效</span>***
+
+~~~html
+<div class="box">
+    <input type="text" class="txt" placeholder="3秒后验证信息">
+    <span></span>
+</div>
+~~~
+
+~~~javascript
+const box = document.querySelector('.box'),
+      _txt = document.querySelector('.txt'),
+      reg = /^[\w]{5,}$/;
+
+// 方式(1)
+/* _txt.addEventListener('keyup', function () {
+	this.timer && clearTimeout(this.timer);
+    this.timer = setTimeout((function () {
+    	// 业务代码 ...
+        }).bind(this), 3000);
+}); */
+
+
+// 方式(2)
+function debounce(fn, delay = 3000) {
+    let timer = null; // timer 控制事件的触发
+    return function (...args) {
+        timer && clearTimeout(timer);
+        timer = setTimeout(fn.bind(this, ...args), delay);
+    }
+}
+
+_txt.addEventListener('keyup', debounce(function () {
+    if (reg.test(this.value)) {
+        box.classList.remove('err');
+        box.classList.add('ok');
+    } else {
+        box.classList.remove('ok');
+        box.classList.add('err');
+    }
+}));
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🔸节流
+
+> ==**<span style=color:red;>节流策略`(throttle)`</span>,可以减少一段时间内事件的触发频率**==
+>
+> <span style=color:black>**<span style=color:red;>节流阀</span>: <u>如果节流阀为空,表示可执行下一次操作;不为空，则表示不可执行下一次操作</u>**</span>
+>
+> ❕❕***<span style=color:black;>如果事件被频繁触发,节流策略能够<u>减少事件触发的频率</u>,是有选择的执行一些事件</span>***
+
+~~~html
+<div class="box">点击 2 秒切换颜色</div>
+~~~
+
+~~~javascript
+const box = document.querySelector('.box');
+
+// 方式(1)
+/* box.addEventListener('click', function () {
+	if (this.flag) return;
+    this.flag = setTimeout(() => {
+    	// 业务代码
+        this.flag = null;
+    }, 2000);
+}); */
+
+
+// 方式(2)
+function throttle(fn, delay = 2000) {
+    let flag = null; // 节流阀
+    return function (...args) {
+        if (flag) return;
+        flag = setTimeout(() => {
+            fn.call(this, ...args);
+            flag = null;
+        }, delay);
+    }
+}
+
+box.addEventListener('click', throttle(function () {
+    this.style.backgroundColor = `#${Math.random().toString(16).substr(2, 6)}`;
+}));
+~~~
+
+
+
+
+
+
+
+
+
 
 
 <center><img src="images/img-bom.png" alt="BOM" title="BOM" /></center>
@@ -2131,7 +2394,7 @@ function fun(...args) {
 
 #### 🔑属性
 
-##### 获取其他的`BOM`对象
+##### 获取其他的BOM对象
 
 + **`history`**
 + **`location`**
@@ -2160,7 +2423,7 @@ h // [object History]
 
 
 
-##### 获取`DOM`对象
+##### 获取DOM对象
 
 + **`document`**
 
@@ -2182,7 +2445,7 @@ document.write("document<br/>"); // 省略window对象引用
 
 
 
-##### 特殊属性
+##### 💎特殊属性
 
 + **`name`**
 
@@ -2389,6 +2652,214 @@ history.length // 历史记录列表
 
 
 
+## 💾本地存储
+
+### 🍀特性
+
+1. 数据存储在用户浏览器中
+2. 设置，读取方便，甚至页面刷新不丢失数据
+3. 容量比较大
+   1. *`sessionStorage`约 **`5M`***
+   2. *`localStorage`约 **`20M`***
+4. 只能存储字符串，可将对象`JSON.stringify()`后存储
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌲sessionStorage
+
++ ***生命周期为关闭浏览器窗口***
++ ***在同一个窗口(页面)下数据可共享***
++ ***以键值对的形式存储使用***
+
+*`CRUD`*
+
+|                    方法                    |       作用       |
+| :----------------------------------------: | :--------------: |
+| ***`sessionStorage.setItem(key, value)`*** |   **存储数据**   |
+|    ***`sessionStorage.getItem(key)`***     |   **获取数据**   |
+|   ***`sessionStorage.removeItem(key)`***   |   **删除数据**   |
+|       ***`sessionStorage.clear()`***       | **清空所有数据** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌳localStorage
+
++ ***声明周期永久生效，除非手动删除，否则关闭页面也会存在***
++ ***可以多窗口(页面)共享(同一浏览器可以共享)***
++ ***以键值对的形式存储使用***
+
+*`CRUD`*
+
+|                   方法                   |       作用       |
+| :--------------------------------------: | :--------------: |
+| ***`localStorage.setItem(key, value)`*** |   **存储数据**   |
+|    ***`localStorage.getItem(key)`***     |   **获取数据**   |
+|   ***`localStorage.removeItem(key)`***   |   **删除数据**   |
+|       ***`localStorage.clear()`***       | **清空所有数据** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🧭Cookie存储
+
+### 🍀特性
+
++ *以键值对的形式存储使用*
++ *单条存储有大小限制`4KB`*
++ *数量限制<span style=color:red;>(一般浏览器，限制大概在50条左右)</span>*
++ *读取有域名限制: <span style=color:red;>不可跨域读取</span>，只能由来自写入`cookie`的<span style=color:red;>同一域名</span>的网页可进行读取*
++ *时效限制: 每个`cookie`都有时效，最短的有效期是<span style=color:red;>会话级别(就是当浏览器关闭，那么`cookie`立即销毁)</span>*
+
+
+
+
+
+
+
+
+
+
+
+### 🌓cookie
+
+~~~javascript
+// 以键值对形式存储数据
+document.cookie = 'key1=value1;';
+document.cookie = 'key2=value2;';
+
+// 获取所有 Cookie
+document.cookie; // key1=value1; key2=value2
+
+// 获取数据
+let map = new Map(decodeURIComponent(cookies).split('; ').map(item => [item.split("=")[0], item.split("=")[1]]));
+map.get('key1'); // value1
+map.get('key2'); // value2
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌗cookieStore
+
+*`CRUD`*
+
+|                             方法                             |       作用       |
+| :----------------------------------------------------------: | :--------------: |
+| ***`cookieStore.set(name, value)`<br>`cookieStore.set(options)`*** |   **存储数据**   |
+| ***`cookieStore.get(name)`<br>`cookieStore.get(options)`***  |   **获取数据**   |
+| ***`cookieStore.getAll(name, value)`<br>`cookieStore.getAll(options)`*** | **获取所有数据** |
+| ***`cookieStore.delete(name)`<br>`cookieStore.delete(options)`*** |   **删除数据**   |
+
+> ==**❕❕方法返回值*`Promise`*对象**==
+>
+> <span style=color:red;>**`options` 参数以对象`{}`形式**</span>
+>
+> + <span style=color:black;>`name`: 具有 `Cookie` 名称的字符串`(必选)`</span>
+> + <span style=color:black;>`value`: 具有 `Cookie` 值的字符串`(必选)`</span>
+> + <span style=color:black;>`expires`: 包含 `Cookie` 到期日期</span>
+> + <span style=color:black;>`domain`: 一个字符串，包含 `Cookie` 的域</span>
+> + <span style=color:black;>`path`: 一个字符串，包含 `Cookie` 的路径</span>
+> + <span style=color:black;>`sameSite`: 一个字符串</span>
+>   + <span style=color:black;>`"strict"`: `Cookie` 将仅在第一方上下文中发送,不会与第三方网站发起的请求一起发送</span>
+>   + <span style=color:black;>`"lax"`: `Cookie` 不会在正常的跨站点子请求上发送</span>
+>   + <span style=color:black;>`"none"`: `Cookie` 将在所有情况下发送</span>
+
+
+
+
+
+
+
+
+
+
+
+#### 🟩使用
+
+~~~javascript
+// 只有在https协议下才使用cookieStore
+const isSupportCookieStore = typeof cookieStore === 'object' && location.protocol === 'https:';
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 💿URL编码解码
+
+|   作用   |        方法         |
+| :------: | :-----------------: |
+| **编码** | ***`encodeURI()`*** |
+| **解码** | ***`decodeURI()`*** |
+
+~~~javascript
+/* 一个中文字符 = 3组%xx */
+encodeURI('我是霖刻') // %E6%88%91%E6%98%AF%E9%9C%96%E5%88%BB
+decodeURI('%E9%9C%96%E5%88%BB') // 霖刻
+~~~
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2411,8 +2882,15 @@ history.length // 历史记录列表
 
 ## 🍀概念
 
-> **称为文档树模型: 是一套操作HTML和XML文档的API**
+> ==**称为文档树模型: 是一套操作`HTML`和`XML`文档的`API`**==
+>
+> :grey_exclamation:<span style=color:black;>可以把`HTML`和`XML`描述为一个文档树，树上的分支都可以看成一个对象，通过`DOM`可以添加、修改和移除文档上的某一部分</span>
+>
+> :heavy_exclamation_mark:<span style=color:red;>当网页被加载时，浏览器会创建页面的文档对象模型(`Document Object Model`)</span>
+>
+> ==***`HTML DOM`模型被结构化为对象树***==
 
+<center><img src="images/dom%E6%A0%91.png" style="zoom:80%;border:thin solid silver;" alt="dom树" title="dom树" /></center>
 
 
 
@@ -2426,7 +2904,14 @@ history.length // 历史记录列表
 
 
 
+## 🚩核心DOM模型
 
++ **`Docunment`: 文档对象**
++ **`Element`: 元素对象**
++ **`Attribute`: 属性对象**
++ **`Text`: 文本对象**
++ **`Comment`：注释对象**
++ **`Node`：节点对象**
 
 
 
@@ -2434,26 +2919,25 @@ history.length // 历史记录列表
 
 
 
-## EventLoop
 
-==***`JavaScript` 主线程从<span style=color:red;>任务队列</span>中读取异步任务的回调函数，放到执行栈中依次执行，<u>这个过程是循环不断的，所以整个的这种运行机制又称为 <span style=color:red;>`EventLoop`（事件循环）</span></u>***==
 
-<center><img src="images/javascript%E7%9A%84%E6%89%A7%E8%A1%8C%E7%BA%BF%E7%A8%8B.png" alt="JavaScript的执行线程" style="zoom:90%;border: 2px solid silver;" title="JavaScript的执行线程" /></center>
 
 
 
 
 
 
+### 🌳Document
 
+> ==**在`HTML DOM`模型中可以使用`window`对象来获取**==
 
+~~~javascript
+window.document;
+document;
+~~~
 
-### 同步任务
 
-==***同步任务`(synchronous)`***==
 
-+ *又叫做<span style=color:red;>非耗时任务</span>，指的是在主线程上排队执行的那些任务*
-+ *只有前一个任务执行完毕，才能执行后一个任务*
 
 
 
@@ -2463,15 +2947,29 @@ history.length // 历史记录列表
 
 
 
-### 异步任务
 
-==***异步任务`(asynchronous)`***==
+#### 🔲方法
 
-+ *又叫做<span style=color:red;>耗时任务</span>，异步任务由 `JavaScript` 委托给宿主环境进行执行*
++ **获取`Element`对象**
 
-+ *当异步任务执行完成后，会通知 `JavaScript` 主线程执行异步任务的回调函数*
+  |              方法              |                  作用                   |
+  | :----------------------------: | :-------------------------------------: |
+  |     **`getElementById()`**     | **根据唯一的`id`的属性值获取元素对象**  |
+  |   **`getElementsByName()`**    |   **根据`name`属性值获取元素对象数**    |
+  |  **`getElementsByTagName()`**  |  **根据元素的名称获取元素的对象数组**   |
+  | **`getElementsByClassName()`** | **根据`class`的属性值获取元素对象数组** |
+  |     **`querySelector()`**      |  **根据指定选择器返回第一个元素对象**   |
+  |    **`querySelectorALL()`**    | **根据指定选择器返回所有元素对象数组**  |
 
++ **创建其他`DOM`对象**
 
+  |              方法              |                         作用                         |
+  | :----------------------------: | :--------------------------------------------------: |
+  |  **`createAttribute(name)`**   | **创建拥有指定名称的属性节点，并返回新的`Attr`对象** |
+  |     **`createComment()`**      |                   **创建注释节点**                   |
+  |     **`createElement()`**      |                   **创建元素节点**                   |
+  |     **`createTextNode()`**     |                   **创建文本节点**                   |
+  | **`createDocumentFragment()`** |                   **创建文档片段**                   |
 
 
 
@@ -2483,38 +2981,30 @@ history.length // 历史记录列表
 
 
 
-## 🍉宏队列与微队列
 
-<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97.png" alt="宏队列与微队列" style="zoom:90%;border: 2px solid silver;" title="宏队列与微队列" /></center>
 
->     ❗==***`js`是单线程运行的，从头到尾顺序执行，如果是<span style=color:red;><u>同步代码立即执行</u></span>；如果是<u><span style=color:red;>异步事件，按类型分别放入宏队列和微队列排队执行</span>*</u>**==
+#### 🔑属性
 
-***`JS`中用来<span style=color:red;>存储待执行回调函数的队列包含 `2` 个不同特定的列队</span>***
+|         属性          |              描述              |
+| :-------------------: | :----------------------------: |
+|    **`referrer`**     | **返回链接上一个页面的`url`**  |
+|       **`url`**       |    **返回当前页面的`url`**     |
+|      **`body`**       |       **获取`body`元素**       |
+| **`documentElement`** |       **获取`html`元素**       |
+|   **`documentURI`**   |       **获取`url`地址**        |
+|      **`forms`**      | **获取页面中所有的`form`元素** |
 
-+ <span style=color:red;>**宏队列**：用来保存待执行的宏任务（回调）</span>，比如：==***`定时器`回调/`DOM`事件回调/`ajax`回调***==
+~~~javascript
+document.body // <body>..</body>
+document.documentElement // <html>..</html>
+document.documentURI // file:///E:/JavaWeb/Leading%20End/JS_Data/Element.html
+document.forms // HTMLCollection [form]
+document.forms[0].text1 // <input type="button" id="text1" value="a标签添加属性" />
+~~~
 
-+ <span style=color:red;>**微队列**：用来保存待执行的微任务（回调）</span>，比如：==***`Promise`回调/`Mutation`回调/`I/O` 操作/`UI` 渲染***==
 
-```javascript
-log = (...arg) => console.log(...arg);
 
-Promise.resolve().then(() => log("p1")) // 微队列1
-log('同步1'); // 同步1
-setTimeout(() => { // 宏队列
-    log('st..同步..'); // 同步
-    Promise.resolve().then(() => log("st...p1")); // 微队列
-}, 0);
-Promise.resolve().then(() => log("p2")) // 微队列2
-log('同步2'); // 同步2
 
-// 执行结果
-同步1
-同步2
-p1
-p2
-st..同步..
-st...p1
-```
 
 
 
@@ -2524,16 +3014,15 @@ st...p1
 
 
 
-### 宏队列与微队列的执行顺序
 
-<center><img src="images/%E5%AE%8F%E9%98%9F%E5%88%97%E4%B8%8E%E5%BE%AE%E9%98%9F%E5%88%97%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="宏队列与微队列的执行顺序" style="zoom:90%;border: 2px solid silver" title="宏队列与微队列的执行顺序" /></center>
 
-> :grey_exclamation:==***每一个宏任务执行完之后，都会检查是否存在待执行的微任务； 如果有，则执行完所有微任务之后，再继续执行下一个宏任务***==
 
 
 
 
+### 🍃Element
 
+> ==**通过`window`对象来获取与创建**==
 
 
 
@@ -2542,15 +3031,16 @@ st...p1
 
 
 
-### js 异步的执行机制
 
-1. ###### 1️⃣*`JS`引擎首先必须 ==**先执行所有的初始化同步任务代码**==*
 
-2. ###### 2️⃣*第二步 ==**将所有的微任务一个一个取出来执行**==*
 
-3. ###### 3️⃣*最后再 ==**取出宏任务执行**==*
+#### 🔲方法
 
-<img src="images/EventLoop.png" alt="EventLoop" style="zoom:90%;border: 2px solid silver;" title="EventLoop" />
+|          方法           |        作用        |
+| :---------------------: | :----------------: |
+| **`removeAttribute()`** | **删除指定的属性** |
+|  **`setAttribute()`**   |   **添加新属性**   |
+|  **`getAttribute()`**   |  **获取指定属性**  |
 
 
 
@@ -2559,4 +3049,1090 @@ st...p1
 
 
 
+
+
+
+
+
+
+
+#### 🔑属性
+
+> ==**<span style=color:red;>❗❗`H5`规定自定义属性必须与`data-`开头为属性名并赋值</span>**==
+>
+> | :grey_exclamation:`H5`获取`data-`开头的自定义属性 |
+> | :-----------------------------------------------: |
+> |           **`element.dataset.keyname`**           |
+> |         **`element.dataset['keyname']`**          |
+>
+> > ❕***<span style=color:black;>移除自定义属性，可以使用`delete`运算符</span>***
+> >
+> > ❕***<span style=color:black;>多个链接单词使用<i style=color:red;>驼峰命名法</i></span>***
+
+~~~html
+<html>
+<body>
+    <form action="#">
+        <a data-index="1" data-list-item="11">一个超链接</a>
+        <input type="button" id="text1" value="a标签添加属性" />
+        <input type="button" id="text2" value="删除a标签属性" />
+        <input type="button" id="text3" value="获取a标签属性" />
+    </form>
+    <script>
+        // 获取指定a标签对象
+        var ele_a = document.getElementsByTagName("a")[0];
+        
+        document.getElementById("text1").onclick = function () {
+            // 给该对象添加属性
+            // ele_a.setAttribute("href","https:baidu.cn");
+            ele_a.href = "https:baidu.cn";
+        }
+        
+        document.getElementById("text2").onclick = function () {
+            // 删除对象属性
+            ele_a.removeAttribute("href");
+            // ele_a.href = "";
+        }
+        
+        document.querySelector('#text3').onclick = function () {
+            /* H5 获取自定义属性 
+	            1.element.dataset.index
+	            2.element.dataset['index']
+            */
+            alert(ele_a.dataset.index);
+            console.log(ele_a.dataset['index']);
+            
+            // 多个链接单词使用 驼峰命名法
+            console.log(ele_a.dataset.listItem);
+            delete ele_a.dataset.listItem; // 删除自定义属性
+            console.log(ele_a.dataset['listItem']);
+        };
+
+        console.log(document.body); // <body>..</body>
+        console.log(document.documentElement); // <html>..</html>
+        console.log(document.documentURI); // file:///E:/JavaWeb/Leading%20End/JS_Data/Element.html
+        console.log(document.forms); // HTMLCollection [form]
+        console.log(document.forms[0].text1); // <input type="button" id="text1" value="a标签添加属性" />
+    </script>
+</body>
+</html>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌱Node
+
+> ==**所有`dom`对象都可以被认为是一个节点**==
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔲方法
+
+|                            方法                             |                             作用                             |
+| :---------------------------------------------------------: | :----------------------------------------------------------: |
+|               **`appendChild(所添加的节点)`**               |           **指定节点内的子节点列表末尾添加新节点**           |
+|            **`removeChild(指定需要删除的节点)`**            |             **删除(并返回)当前节点的指定子节点**             |
+|      **`replaceChild(指定新的节点,指定被替换的节点)`**      | **用新节点替换一个子节点<br><span style=color:red;>必须使用被替换的节点的父节点调用</span>** |
+|   **`insertBefore(需要插入的节点对象,插入节点的子节点)`**   | **在指定的已有的子节点之前插入新节点<br/><span style=color:red;>必须使用被替换的节点的父节点调用</span>** |
+| **`insertAdjacentHTML(插入的位置(字符串),插入解析的HTML)`** | **将文件解析`HTML`后插入到指定节点的指定位置中<br>*`beforebegin`(元素自身的前面)*<br>*`afterend`(元素自身的后面)*<br>*`afterbegin`(元素首个子节点的前面)*<br>*`beforeend`(元素末尾子节点的后面)*** |
+|         **`cloneNode(是否隆所有后代(默认false))`**          |          **克隆指定节点,包括所有属性以及它们的值**           |
+|               **`setPointerCapture(指针Id)`**               |     **捕获指针后，应用会触发与该指针关联的所有后续事件**     |
+|                **`getBoundingClientRect()`**                | **获取元素到窗口四周的距离**<br><img src="images/getBoundingClientRect.png" style="zoom:30%;" title="getBoundingClientRect" /> |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔑属性
+
+|             属性             |                 描述                 |
+| :--------------------------: | :----------------------------------: |
+|       **`parentNode`**       |         **返回节点的父节点**         |
+|       **`childNodes`**       |    **返回节点到子节点的节点列表**    |
+|        **`children`**        |     **返回节点的所有子元素节点**     |
+|       **`firstChild`**       |       **返回节点的首个子节点**       |
+|       **`lastChild`**        |     **返回节点的最后一个子节点**     |
+|   **`firstElementChild`**    |     **返回节点的首个子元素节点**     |
+|    **`lastElementChild`**    |   **返回节点的最后一个子元素节点**   |
+|      **`nextSibling`**       |     **返回节点的下一个兄弟节点**     |
+|   **`nextElementSibling`**   |   **返回节点的下一个兄弟元素节点**   |
+|    **`previousSibling`**     |     **返回节点的上一个兄弟节点**     |
+| **`previousElementSibling`** |   **返回节点的上一个兄弟元素节点**   |
+|       **`localName`**        |        **返回节点的本地名称**        |
+|        **`nodeName`**        |    **返回节点的名称，根据其类型**    |
+|       **`nodeValue`**        |  **设置或返回节点的值，根据其类型**  |
+|     **`hasChildNodes`**      |       **判断元素是否有子节点**       |
+|      **`textContent`**       | **设置或返回节点及其后代的文本内容** |
+|       **`innerText`**        |    **设置或返回节点的纯文本内容**    |
+|       **`outerHTML`**        | **设置或返回节点序列化的`HTML`片段** |
+|         **`value`**          |         **返回文本框的内容**         |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🧀元素创建方式
+
+|               方式               |                        描述                        |
+| :------------------------------: | :------------------------------------------------: |
+|     ***`document.write()`***     |   **当文档流执行加载完毕，则它会覆盖页面的全部**   |
+|    ***`document.innerHTML`***    | **创建多个元素效率高*(使用数组式拼接)*，结构复杂** |
+| ***`document.createElement()`*** |         **创建多个元素效率偏低，结构清晰**         |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔺三大系列 
+
+#### 🔰元素偏移量
+
+>==**<span style=color:red;>动态</span>获取元素的<span style=color:red;>位置(偏移)</span>，<span style=color:red;>盒子大小</span>*`(包括padding，边框，内容大小)`*等**==
+>
+>**❕❕<span style=color:black;><u>返回的数值都不带定位</u></span>**
+
+|          属性          |                         作用                         |
+| :--------------------: | :--------------------------------------------------: |
+| ***`e.ffsetParent`***  |   **返回带<u>有定位的父元素</u>，反之返回`body`**    |
+|  ***`e.offsetTop`***   | **返回元素的<u>垂直偏移</u>位置,以带有定位元素为准** |
+|  ***`e.offsetLeft`***  | **返回元素的<u>水平偏移</u>位置,以带有定位元素为准** |
+| ***`e.offsetWidth`***  |              **返回元素的<u>宽度</u>**               |
+| ***`e.offsetHeight`*** |              **返回元素的<u>高度</u>**               |
+
+<center><img src="images/offset.png" style="zoom:50%;border:thin solid silver;" title="offset" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🔳元素可视化
+
+>==**<span style=color:red;>动态</span>获取元素的<span style=color:red;>边框大小</span>，<span style=color:red;>元素大小</span>*`(包含padding,内容区域)`*等**==
+>
+>❕❕**<span style=color:black;><u>返回的数值都不带定位</u></span>**
+
+|          属性          |              作用               |
+| :--------------------: | :-----------------------------: |
+|  ***`e.clientTop`***   | **返回元素<u>上边框</u>的大小** |
+|  ***`e.clientLeft`***  | **返回元素<u>左边框</u>的大小** |
+| ***`e.clientWidth`***  |  **返回元素的<u>宽度</u>大小**  |
+| ***`e.clientHeight`*** |  **返回元素的<u>高度</u>大小**  |
+
+<center><img src="images/client.png" style="zoom:50%;border:thin solid silver;" title="client" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🛹元素滚动
+
+> ==**<span style=color:red;>动态</span>获取元素的<span style=color:red;>滚动距离</span>，<span style=color:red;>内容大小</span>*`(只包含内容)`*等**==
+
+|          属性          |                             作用                             |
+| :--------------------: | :----------------------------------------------------------: |
+| ***`e.scrollWidth`***  |                **返回元素的<u>整体宽度</u>**                 |
+| ***`e.scrollHeight`*** |                **返回元素的<u>整体高度</u>**                 |
+|  ***`e.scrollTop`***   | **返回<span style=color:red;>元素</span><u>上边缘与视图之间的距离</u>** |
+|  ***`e.scrollLeft`***  | **返回<span style=color:red;>元素</span><u>左边缘与视图之间的距离</u>** |
+
+<center><img src="images/scroll.png" style="zoom:50%;border:thin solid silver;" title="scroll" /></center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 📄页面滚动
+
+> ==**❕❕获取页面滚动的距离**==
+
+|         属性          |                             作用                             |
+| :-------------------: | :----------------------------------------------------------: |
+| ***`w.pageYOffset`*** | **返回<span style=color:red;>页面</span><u>上边缘与视图之间的距离</u>** |
+| ***`w.pageXOffset`*** | **返回<span style=color:red;>页面</span><u>左边缘与视图之间的距离</u>** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🌟HTML DOM
+
+#### 🎁标签体的设置和获取
+
++ ***`innerHTMl`***
+
+~~~html
+<div id="linke">一个div</div>
+<script>
+    // 绑定事件
+    var ele = document.getElementById("linke");
+    // 当点击鼠标时
+    ele.onclick = function(){
+        // 文本替换
+        ele.innerHTML = "<input type='button' value='按钮'/>";
+        // 追加文本
+        ele.innerHTML += "<hr/>";
+    }
+</script>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🎨控制元素样式
+
++ **`style`: 使用元素的`style`属性设置元素的样式**<span style=color:red;>(某个元素都有`style`属性)</span>
+
+  + **`cssText`：获取所有`(字符串)`并设置多个行内样式**
+
+    ~~~javascript
+    var el = document.querySelector('.el');
+    // style写法
+    el.style.borderLeft = '1px';
+    el.style.borderRight = '2px';
+    el.style.padding = '5px';
+    // classText写法
+    el.style.cssText = 'border-left: 1px; border-right: 2px; padding: 5px;';
+    ~~~
+
++ **`className`: 提前设置类`(class)`选择器,通过元素的`className`来设置`class`属性值**
+
++ **`classList`: 获取并设置多个`class`类,返回伪数组**
+
+  + |          方法          |                  作用                   |
+    | :--------------------: | :-------------------------------------: |
+    |   **`add('类名')`**    |             **添加一个类**              |
+    |  **`remove('类名')`**  |           **删除指定一个类**            |
+    |  **`toggle('类名')`**  |     **切换类；有则删除，反之添加**      |
+    | **`contains('类名')`** | **查询类；有则返回`true`，反之`false`** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🎮事件
+
+> ==**`HTML DOM Event`：某些组件被执行了某些操作后，触发某些代码的执行**==
+
+
+
+
+
+
+
+
+
+
+
+##### 🌲三要素
+
+1. ==***事件源***==
+2. ==***事件类型***==
+3. ==***事件处理程序***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🎯事件句柄
+
+> :heavy_exclamation_mark:==***事件函数中`this`对象：表示当前事件函数的调用者对象***==
+
+
+
+
+
+
+
+##### 点击事件
+
+|       事件       |                  描述                  |
+| :--------------: | :------------------------------------: |
+|  **`onclick`**   |          **鼠标点击某个对象**          |
+| **`ondblclick`** | **当用户双击某个对象时调用的事件句柄** |
+
+~~~html
+<!-- 绑定事件的方式(2) -->
+<img id="linke" src="index/linke.jpg" onclick="fun()"/>
+<h2 id="text">dudududu</h2>
+
+<!-- <input type="button" value="换图片" onclick="fun()"/> -->
+<!-- <input type="button" value="换字体" onclick="fun2()"/> -->
+~~~
+
+~~~javascript
+function fun() {
+    // 修改标签内的属性值
+    var obj = document.getElementById("linke");
+    obj.src = "index/shuangshuang.jpg";
+}
+function fun2() {
+    // innerHTML 修改标签体的内容
+    document.getElementById("text").innerHTML = "嘟嘟嘟嘟";
+}
+
+// 绑定事件方式(1)
+var text = document.getElementById("text");
+text.onclick = fun2;
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 焦点事件
+
+|     事件      |       描述       |
+| :-----------: | :--------------: |
+| **`onblur`**  | **元素失去焦点** |
+| **`onfocus`** | **元素获得焦点** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 加载事情
+
+|          事件           |              描述              |
+| :---------------------: | :----------------------------: |
+|      **`onload`**       | **一张页面或一幅图像完成加载** |
+|      **`onabort`**      |      **图像的加载被中断**      |
+| **🔴`DOMContentLoaded`** |      **当`DOM`加载完成**       |
+|    **`onpageshow`**     |        **页面加载完成**        |
+|  **`onbeforeunload`**   |  **跳转、回退前进、关闭窗口**  |
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 鼠标事件
+
+|        事件         |                             描述                             |
+| :-----------------: | :----------------------------------------------------------: |
+|  **`onmousedown`**  |                      **鼠标按钮被按下**                      |
+|   **`onmouseup`**   |                      **鼠标按键被松开**                      |
+|  **`onmousemove`**  |                        **鼠标被移动**                        |
+|  **`onmouseover`**  | **鼠标移到某元素之上**<span style=color:red;>(会冒泡)</span> |
+|  **`onmouseout`**   |  **鼠标从某元素移开**<span style=color:red;>(会冒泡)</span>  |
+| **`oncontextmenu`** |                         **鼠标右键**                         |
+| **`onselectstart`** |                         **鼠标选中**                         |
+| **`onmouseenter`**  | **鼠标移动到元素上**<span style=color:red;>(不会冒泡)</span> |
+| **`onmouseleave`**  | **鼠标从某元素移开**<span style=color:red;>(不会冒泡)</span> |
+
+> **==❕*`mouseover`与`mouseenter`的区别*==**
+>
+> + <span style=color:black;>**`over`: <u>鼠标经过自身盒子之上触发,经过子盒子还会触发</u>**</span>
+> + <span style=color:black;>**`enter`: <u>鼠标只有经过自身盒子之上才触发,不会冒泡</u>**</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 键盘事件
+
+|       事件       |             描述             |
+| :--------------: | :--------------------------: |
+| **`onkeydown`**  |    **某个键盘按键被按下**    |
+|  **`onkeyup`**   |    **某个键盘按键被松开**    |
+| **`onkeypress`** | **某个键盘按键被按下并松开** |
+
+> ==**❕*`keypress`事件不能认识别功能键***==
+>
+> <span style=color:black;>**键盘事件的执行顺序: **</span>
+> $$
+> keydowm -> keypress -> keyup
+> $$
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 改变事件
+
+|      事件      |           描述            |
+| :------------: | :-----------------------: |
+| **`onchange`** |    **域的内容被改变**     |
+| **`oninput`**  | **`input`框内容发生改变** |
+| **`onselect`** |      **文本被选中**       |
+| **`onresize`** |    **窗口被调整大小**     |
+| **`onscroll`** |      **元素被滚动**       |
+| **`onwheel`**  |   **鼠标滚轮上下滚动**    |
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 表单事件
+
+|      事件      |        描述        |
+| :------------: | :----------------: |
+| **`onsubmit`** | **确认按钮被点击** |
+| **`onreset`**  | **重置按钮被点击** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 拖动事件
+
+|       事件        |                  描述                  |
+| :---------------: | :------------------------------------: |
+|   **`ondrag`**    |             **元素被拖动**             |
+|   **`ondrop`**    |    **元素被丢弃在有效的放置目标上**    |
+| **`ondragstart`** |            **开始拖动元素**            |
+|  **`ondragend`**  |            **拖动操作结束**            |
+| **`ondragenter`** |    **拖动的元素进入有效的放置目标**    |
+| **`ondragleave`** |    **拖动的元素离开有效的放置目标**    |
+| **`ondragover`**  | **拖动的元素在有效的放置目标上被拖动** |
+
+> ==:grey_exclamation:***`draggable`: 设置是否可以拖动`HTML`元素; 设置`true`(可以拖动元素)，反之`false`(无法拖动元素)***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 触屏事件
+
+| 触屏`touch`事件  |                         描述                         |
+| :--------------: | :--------------------------------------------------: |
+| **`touchstart`** |  **元素被<span style=color:red;>触摸</span>时触发**  |
+| **`touchmove`**  | **在元素上<span style=color:red;>滑动</span>时触发** |
+|  **`touchend`**  | **在元素上<span style=color:red;>移开</span>时触发** |
+
+> :grey_exclamation:==***`touch`*对象代表一个触摸点**==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 其他事件
+
+|         事件          |     描述     |
+| :-------------------: | :----------: |
+| **`ontransitionend`** | **过渡结束** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🧊事件注册与解绑
+
+##### 🔺传统方式
+
+> :grey_exclamation:==**注册事件的唯一性**==
+>
+> :grey_exclamation:==**最后注册的事件函数会覆盖之前的注册的事件函数**==
+>
+> :heavy_exclamation_mark:==**<u>传统解绑事件将事件赋值`null`</u>**==
+
+~~~html
+<button type="button" id="linke">传统方式注册事件</button>
+~~~
+
+~~~javascript
+let ke = document.querySelector('#linke');
+ke.onclick = function() {
+    alert('传统注册111');
+}
+// 会将原有的事件覆盖
+ke.onclick = function() {
+    alert('传统注册222');
+}
+
+// 解绑事件
+// ke.onclick = null;
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 🔻监听方式
+
+>:grey_exclamation:==**同一个元素可以注册多个监听器**==
+>
+>:grey_exclamation:==**按注册事件的顺序依次执行**==
+
+|          |                          方法                          |                             参数                             |
+| :------: | :----------------------------------------------------: | :----------------------------------------------------------: |
+| **监听** |   **`addEventListener(type,listener[,useCapture])`**   | **`type`: 事件类型字符串(*不带`on`*)<br>`listener`: 事件处理函数<br>`useCsapture`: 可选,是否将要注册的事件侦听器注册为捕获侦听器(默认`false`)** |
+| **解绑** | **`removeEventListener(type,listener[，useCapture])`** | **`type`: 删除事件监听器的事件类型字符串(*不带`on`*)<br/>`listener`: 删除的事件处理程序的事件监听函数<br/>`useCsapture`: 可选,是否将要删除的事件侦听器注册为捕获侦听器(默认`false`)** |
+
+~~~html
+<button type="button" id="linke">监听方式注册事件</button>
+<button type="button" id="baili">监听方式解绑事件</button>
+~~~
+
+~~~javascript
+let ke = document.querySelector('#linke');
+
+function fun(){
+    alert('触发linke的 [click] 事件处理函数');
+}
+
+// 监听事件
+ke.addEventListener('click', function(){
+    alert('方法监听注册111'); // 最先执行
+});
+ke.addEventListener('click', fun); // 不需要添加小括号
+ke.addEventListener('click', ()=> {
+    alert('方法监听注册222'); // 最后执行
+});
+
+// 解绑事件
+document.querySelector('#baili').addEventListener('click', ()=>{
+    ke.removeEventListener('click', fun);
+    alert('解绑成功');
+});
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 🍄DOM事件流
+
+> :grey_exclamation:==***<span style=color:red;>事件发生时</span>*会在元素节点之间按照*<span style=color:red;>指定的顺序传播</span>*，这个*<span style=color:red;>传播过程</span>*即*<span style=color:red;>`DOM`事件流</span>***==
+
+
+
+
+
+
+
+
+
+
+
+##### 💡阶段
+
+>==`DOM`事件分为**<span style=color:red;>3个阶段</span>**==
+>
+>1. **<span style=color:black;><big style=color:red;>捕获</big>阶段</span>**
+>2. **<span style=color:black;><big style=color:red;>当前目标</big>阶段</span>**
+>3. **<span style=color:black;><big style=color:red;>冒泡</big>阶段</span>**
+
+<center><img src="images/DOM%E4%BA%8B%E4%BB%B6%E6%B5%81.png" style="zoom:50%;border:thin solid silver;" title="DOM事件流" /></center>
+
+~~~html
+<div class="father">
+    father盒子
+    <div class="son">son盒子</div>
+</div>
+~~~
+
+~~~javascript
+/* 
+	捕获阶段
+        addEventListener()方法的第三个参数为true,则指定事件为捕获事件
+        顺序: document -> html -> body -> 当前目标
+    冒泡阶段
+        addEventListener()方法的第三个参数为false,则指定事件为冒泡事件
+        顺序: 当前目标 -> body ->  html ->  document
+ */
+// 该事件处于捕获阶段
+document.querySelector('.father').addEventListener('click', ()=>{
+    alert('.father的事件处理函数');
+}, true);
+document.querySelector('.son').addEventListener('click', ()=> {
+    alert('.son的事件处理函数');
+});
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### ❕注意
+
++ *`JS` 代码<span style=color:red;>只能执行捕获或冒泡其中一个阶段</span>*
++ *<span style=color:red;>`onclick`只能得到冒泡阶段</span>*
++ *`addEventListener()`方法的第三个可选参，表示使用**<span style=color:red;>事件冒泡`(false)`</span>**还是**<span style=color:red;>事件捕获`(true)`</span>***
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### ⚓事件委托
+
+> ==***<span style=color:red;>🌟不是每个子节点设置事件监听器，而是将事件监听器设置在器父节点上，然后利用冒泡原理影响设置某个字节点</span>***==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 💧事件对象
+
+|        对象         |                      描述                      |
+| :-----------------: | :--------------------------------------------: |
+|     **`event`**     | **<span style=color:red;>事件集合</span>对象** |
+|  **`MouseEvent`**   | **<span style=color:red;>鼠标事件</span>对象** |
+| **`KeyboardEvent`** | **<span style=color:red;>键盘事件</span>对象** |
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 🔴event
+
+> ==***<span style=color:red;>事件的对象</span><span style=color:black;>：<u>比如事件在其中发生的元素、键盘按键的状态、鼠标的位置、鼠标按钮的状态</u></span>***==
+>
+> ==❕简写"`e`"==
+
+
+
+
+
+
+
+
+
+###### 🔑属性
+
+|       属性       |                    描述                    |
+| :--------------: | :----------------------------------------: |
+|   **`button`**   | **返回当事件被触发时，哪个鼠标按钮被点击** |
+|  **`keyCode`**   |  **返回被敲击的键生成的`Unicode`字符码**   |
+|    **`code`**    |          **返回被敲击的键`code`**          |
+|    **`key`**     |          **返回被敲击的键`key`**           |
+|    **`type`**    |           **触发事件的事件名称**           |
+|   **`target`**   |         **返回触发事件的元素对象**         |
+|  **`bubbles`**   |            **事件是否冒泡类型**            |
+| **`cancelable`** |      **是否取消与事件关联的默认动作**      |
+| **`eventPhase`** |         **返回事件传播的当前阶段**         |
+| **`persisted`**  |         **是否缓存中页面触发事件**         |
+
+>:grey_exclamation:==*`target`返回<span style=color:red;>触发事件</span>的对象，`this`返回<span style=color:red;>注册事件</span>的对象*==
+
+
+
+
+
+
+
+
+
+###### 🔲方法
+
+|          方法           |             作用             |
+| :---------------------: | :--------------------------: |
+| **`preventDefault()`**  | **阻止与事件关联的默认动作** |
+| **`stopPropagation()`** |      **阻止事件的传播**      |
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 🟡MouseEvent
+
+###### 🔑属性
+
+|   鼠标事件对象    |                          事件触发时                          |
+| :---------------: | :----------------------------------------------------------: |
+| ***`e.clientX`*** | **鼠标相当于<span style=color:red;>浏览器窗口页面</span>的<u>水平坐标</u>** |
+| ***`e.clientY`*** | **鼠标相当于<span style=color:red;>浏览器窗口页面</span>的<u>垂直坐标</u>** |
+|  ***`e.pageX`***  | **鼠标相当于<span style=color:red;>文档页面</span>的<u>水平坐标</u>** |
+|  ***`e.pageY`***  | **鼠标相当于<span style=color:red;>文档页面</span>的<u>垂直坐标</u>** |
+| ***`e.screenX`*** | **鼠标相当于<span style=color:red;>屏幕</span>的<u>水平坐标</u>** |
+| ***`e.screenY`*** | **鼠标相当于<span style=color:red;>屏幕</span>的<u>垂直坐标</u>** |
+
+~~~javascript
+ document.addEventListener('mouseover', (e)=> {
+     // 1.client 返回鼠标在浏览器可视化页面的x,y坐标
+     console.log('相对浏览器窗口页面的 X坐标['+e.clientX+'] Y坐标['+e.clientY+']');
+     // 2.page 返回鼠标在文档页面的x,y坐标
+     console.log('相对文档页面的 X坐标['+e.pageX+'] Y坐标['+e.pageY+']');
+     // 3.screen 返回鼠标在屏幕的x,y坐标
+     console.log('相对屏幕的 X坐标['+e.screenX+'] Y坐标['+e.screenY+']');
+});
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 🟢TouchEvent
+
+###### 🔑属性
+
+|       触屏事件对象       |                             描述                             |
+| :----------------------: | :----------------------------------------------------------: |
+|    ***`e.touches`***     | **返回<span style=color:red;>触摸屏幕</span>的所有触摸点列表** |
+| ***`e.targetTouches`***  | **返回<span style=color:red;>触摸当前`DOM`元素</span>的所有触摸点列表** |
+| ***`e.changedTouches`*** |   **返回<span style=color:red;>触摸点发生改变</span>列表**   |
+
+~~~javascript
+let touch = e.targetTouches[0]; // 第一个触屏点对象
+console.log('1' + touch.clientX + '---' + touch.clientY);
+console.log('2' + touch.pageX + '---' + touch.pageY);
+console.log('3' + touch.screenX + '---' + touch.screenY);
+console.log('4' + touch.radiusX + '---' + touch.radiusY);
+console.log(touch.identifier); // 返回此对象的唯一标识符
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 📲click事件延时解决方案(移动)
+
+> ==**<span style=color:red;>移动端 `click` 事件会有 `300ms` 的延时，原因是移动端双击屏幕会缩放页面</span>**==
+
+1. **禁用缩放**：浏览器禁用默认的双击缩放行为并自动去除 `300ms` 的点击延时
+
+   ~~~html
+   <meta name="viewport" content="user-scalable=no">
+   ~~~
+
+2. **封装事件**：利用`touch`事件封装事件解决 `300ms` 延迟
+
+   ~~~javascript
+   //封装tap解决click 300ms 延时
+   function tap(obj, callback) {
+       let isMove = false;
+       let startTime = 0; // 记录触摸时候的时间变量
+       obj.addEventListener('touchstart', function (e) {
+           startTime = Date.now(); // 记录触摸时间
+       });
+       obj.addEventListener('touchmove', function (e) {
+           isMove = true;  // 看看是否有滑动，有滑动算拖拽，不算点击
+       });
+       obj.addEventListener('touchend', function (e) {
+           if (!isMove && (Date.now() - startTime) < 150) {  // 如果手指触摸和离开时间小于150ms 算点击
+               callback && callback(); // 执行回调函数
+           }
+           isMove = false;  // 取反 重置
+           startTime = 0;
+       });
+   }
+   
+   //调用 
+   tap(element, function() {
+       // 执行代码 
+   });
+   ~~~
+
+3. **`fastclick`插件**
+
+   1. *引入🔗[fastclick.js](https://github.com/ftlabs/fastclick)*
+
+   2. *按照语法使用*
+
+      ~~~javascript
+      // javaScript
+      if ('addEventListener' in document) {
+      	document.addEventListener('DOMContentLoaded', function() {
+      		FastClick.attach(document.body);
+      	}, false);
+      }
+      
+      // jQuery
+      $(function() {
+          FastClick.attach(document.body);
+      });
+      ~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ▫▫▫终
+
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
 
