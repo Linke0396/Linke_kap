@@ -1305,7 +1305,9 @@ Boolean(value);		// 转换函数
 
 ~~~javascript
 Math.random().toString(36).slice(2).substr(0, 4); // 随机4位数验证码
-Math.random().toString(16).substr(2, 6); // 随机16进制颜色
+Math.random().toString(16).substr(2, 6); // 随机16进制颜色(1)
+parseInt(Math.random()*0xffffff).toString(16); // 随机16进制颜色(2)
+`rgb(${parseInt(Math.random()*256)},${parseInt(Math.random()*256)},${parseInt(Math.random()*256)})`; // 随机rgb颜色
 ~~~
 
 

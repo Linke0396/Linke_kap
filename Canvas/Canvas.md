@@ -291,7 +291,7 @@ function line(x1, y1, x2, y2, color) {
 
 |                  方法                  |       作用       |
 | :------------------------------------: | :--------------: |
-| **`ctx.clearRect(x,y,width,height)`**  |   **绘制矩形**   |
+|    **`ctx.rect(x,y,width,height)`**    |   **绘制矩形**   |
 |  **`ctx.fiilRect(x,y,width,height)`**  | **绘制实心矩形** |
 | **`ctx.strokeRect(x,y,width,height)`** | **绘制空心矩形** |
 
@@ -328,3 +328,92 @@ ctx.strokeStyle = 'pink';
 ctx.strokeRect(300, 300, 100, 100);
 ~~~
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 🧻清除画布
+
+|                 方法                  |     作用     |
+| :-----------------------------------: | :----------: |
+| **`ctx.clearRect(x,y,width,height)`** | **清除画布** |
+
+> + <span style=color:black;>**`x`**: 左上角的`x`坐标</span>
+> + <span style=color:black;>**`y`**: 左上角的`y`坐标</span>
+> + <span style=color:black;>**`width`**: 宽度`(px)`</span>
+> + <span style=color:black;>**`height`**: 高度`(px)`</span>
+
+<center><img src="images/%E6%B8%85%E9%99%A4%E7%94%BB%E5%B8%83.png" style="zoom:40%;border:thin solid silver;" title="清除画布" /></center>
+
+~~~javascript
+ctx.fillStyle = 'skyblue';
+ctx.fillRect(100,100,300,300);
+
+// 清除画布
+ctx.clearRect(200,200,100,100);
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ⚪绘制圆形
+
+|                             方法                             | 作用     |
+| :----------------------------------------------------------: | -------- |
+| **`ctx.arc(x,y,radius,startAngle,endAngle[,counterclockwise])`** | 绘制圆形 |
+
+> - <span style=color:black;>**`x`**: 圆弧中心的水平坐标</span>
+> - <span style=color:black;>**`y`**: 圆弧中心的垂直坐标</span>
+> - <span style=color:black;>**`radius`**: 弧的半径`(px)`</span>
+> - <span style=color:black;>**`startAngle`**: 弧以弧度开始的角度</span>
+> - <span style=color:black;>**`endAngle`**: 弧结束的角度`(以弧度为单位)`</span>
+> - <span style=color:black;>**`counterclockwise`**: 可选的布尔值。如果`true`，绘制圆弧在起点和终点角度之间<u>逆时针</u>方向移动。默认值`false`<u>(顺时针)</u></span>
+>
+> <center><img src="images/%E5%9C%86.png" style="zoom:35%;border:thin solid silver;" title="圆" /></center>
+
+<center><img src="images/%E5%9C%86(2).png" style="zoom:30%;border:thin solid silver;" title="圆" /></center>
+
+~~~javascript
+ctx.beginPath();
+ctx.arc(150, 150, 100, 0, 1.5 * Math.PI);
+ctx.stroke(); // 空心
+
+ctx.beginPath();
+ctx.arc(350, 350, 100, 0, 1.5 * Math.PI);
+ctx.fill(); // 填充
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ▫▫▫终
+
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
