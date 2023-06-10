@@ -1,6 +1,6 @@
 [TOC]
 
-# React
+# React-Class
 
 <div style="display: flex; align-items: center;">
     <hr/>
@@ -213,7 +213,7 @@ root.render(
 
 ## ⚛基本使用
 
-+ ==*Before*==
++ ==*Class*==
 
   ~~~jsx
   // 导入 React
@@ -228,7 +228,7 @@ root.render(
   render(<h1>Hello React</h1>, document.getElementById('root'));
   ~~~
 
-+ ==*After*==
++ ==*Hooks*==
 
   ~~~jsx
   // 导入 React
@@ -3542,14 +3542,7 @@ yarn add react-redux
 
 
 
+## ▫▫▫终
 
+<center><b><i><u>- 我想成为你刻骨铭心之人 -</u></i></b></center>
 
-
-
-
-
-
-
-
-
-#### 基本使用
